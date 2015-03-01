@@ -43,18 +43,18 @@ for u in xrange(len(page_url)):
             pass
 
     for product_item in product_lst:
-            try: 
-                
-                product_id2 = re.search(r"(\w+)\-(?P<product_id>\d+)",product_item['id']).group("product_id")
-                product_link = product_item['href']
+        try: 
+            
+            product_id2 = re.search(r"(\w+)\-(?P<product_id>\d+)",product_item['id']).group("product_id")
+            product_link = product_item['href']
 
-                if product_link.startswith('http'):
-                    product_dict_url [product_id2] = product_link
+            if product_link.startswith('http'):
+                product_dict_url [product_id2] = product_link
 
-                    w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductURL_boots.txt', 'w')
-                    w.write(str(product_dict_url))
-            except:
-                pass
+                w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductURL_boots.txt', 'w')
+                w.write(str(product_dict_url))
+        except:
+            pass
 
 
 

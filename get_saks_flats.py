@@ -3,7 +3,7 @@ import requests
 import re
 
 
-base_url = 'http://www.saksfifthavenue.com/Shoes/Boots/shop/_/N-52k0sa/Ne-6lvnb5?FOLDER%3C%3Efolder_id=2534374306624250&Nao='
+base_url = 'http://www.saksfifthavenue.com/Shoes/Flats/shop/_/N-52k0s8/Ne-6lvnb5?FOLDER%3C%3Efolder_id=2534374306624248&Nao='
 page_url = [base_url + str(i*60) for i in range(0,8)]
 
 
@@ -13,7 +13,7 @@ product_dict_name = {}
 product_dict_url  = {}
 
 for u in xrange(len(page_url)):
-# # Category = 'boots'
+# # Category = 'flats'
     response = requests.get(page_url[u])
     soup = BeautifulSoup(response.content, 'html.parser')
     img_lst = soup.select('div.image-container-large .pa-product-large')
@@ -31,11 +31,11 @@ for u in xrange(len(page_url)):
                 image = requests.get(image_link).content
 
                 counter += 1
-                # f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/images/saks/flats%s.png' % str(counter)
-                #          , 'w')
-                f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/images/boots_%s.png' % str(product_id)
+
+                print counter, ',', product_id
+                f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/images/flats_%s.png' % str(product_id)
                          , 'w')
-                b = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductNames_boots.txt','w')
+                b = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductNames_flats.txt','w')
         
                 f.write(image)
                 b.write(str(product_dict_name))
@@ -43,18 +43,18 @@ for u in xrange(len(page_url)):
             pass
 
     for product_item in product_lst:
-            try: 
-                
-                product_id2 = re.search(r"(\w+)\-(?P<product_id>\d+)",product_item['id']).group("product_id")
-                product_link = product_item['href']
+        try: 
+            
+            product_id2 = re.search(r"(\w+)\-(?P<product_id>\d+)",product_item['id']).group("product_id")
+            product_link = product_item['href']
 
-                if product_link.startswith('http'):
-                    product_dict_url [product_id2] = product_link
+            if product_link.startswith('http'):
+                product_dict_url [product_id2] = product_link
 
-                    w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductURL_boots.txt', 'w')
-                    w.write(str(product_dict_url))
-            except:
-                pass
+                w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductURL_flats.txt', 'w')
+                w.write(str(product_dict_url))
+        except:
+            pass
 
 
 
