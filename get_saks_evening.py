@@ -31,7 +31,7 @@ for u in xrange(len(page_url)):
                 image = requests.get(image_link).content
 
                 counter += 1
-                print counter, ',', product_id
+                # print counter, ',', product_id
                 f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/images/evenings_%s.png' % str(product_id)
                          ,'w')
 

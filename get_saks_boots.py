@@ -31,8 +31,7 @@ for u in xrange(len(page_url)):
                 image = requests.get(image_link).content
 
                 counter += 1
-                # f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/images/saks/flats%s.png' % str(counter)
-                #          , 'w')
+
                 f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/images/boots_%s.png' % str(product_id)
                          , 'w')
                 b = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/saks/text/ProductNames_boots.txt','w')
