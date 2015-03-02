@@ -3,8 +3,8 @@ import requests
 import re
 
 
-base_url = 'http://www.barneys.com/barneys-new-york/women/shoes/heels#sz=48'
-num_pages = 13
+base_url = 'http://www.barneys.com/barneys-new-york/women/shoes/flats#sz=48'
+num_pages = 8
 
 
 
@@ -14,7 +14,7 @@ product_dict_url  = {}
 product_dict_brand = {}
 
 for u in xrange(num_pages):
-# # Category = 'heels'
+# # Category = 'flats'
     params = { 'start' : str(int(u*48))}
     response = requests.get(base_url, params=params)
     # r = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/text/test.html', 'w')
@@ -37,9 +37,9 @@ for u in xrange(num_pages):
                 counter += 1
 
                 print counter, ',', product_id
-                f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/images/heels_%s.png' % str(product_id)
+                f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/images/flats_%s.png' % str(product_id)
                          , 'w')
-                b = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/text/ProductNames_heels.txt','w')
+                b = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/text/ProductNames_flats.txt','w')
         
                 f.write(image)
                 b.write(str(product_dict_name))
@@ -56,7 +56,7 @@ for u in xrange(num_pages):
                 product_dict_url[product_id] = product_link
                 product_dict_brand[product_id] = product_brand
 
-                w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/text/ProductURL_heels.txt', 'w')
+                w = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/barneys/text/ProductURL_flats.txt', 'w')
                 w.write(str(product_dict_url))
                 w.write(str(product_dict_brand))
         except:

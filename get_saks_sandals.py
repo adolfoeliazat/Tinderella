@@ -4,7 +4,7 @@ import re
 
 
 base_url = 'http://www.saksfifthavenue.com/Shoes/Sandals/shop/_/N-52k0st/Ne-6lvnb5?FOLDER%3C%3Efolder_id=2534374306624269&Nao='
-page_urls = [base_url + str(i*60) for i in range(0,24)]
+page_url = [base_url + str(i*60) for i in range(0,24)]
 
 
 
@@ -12,9 +12,9 @@ counter = 0
 product_dict_name = {}
 product_dict_url  = {}
 
-for u in xrange(len(page_urls)):
+for u in xrange(len(page_url)):
 # # Category = 'sandals'
-    response = requests.get(page_urls[u])
+    response = requests.get(page_url[u])
     soup = BeautifulSoup(response.content, 'html.parser')
     img_lst = soup.select('div.image-container-large .pa-product-large')
     product_lst = soup.select('div.image-container-large a[href]')
