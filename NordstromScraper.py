@@ -39,13 +39,13 @@ class NordstromScraper(object):
 		"""
 		Concatenate the base_url and category and page number
 		"""
-		category_dict = {'athletic': 'womens-athletic-shoes-shop' 
-						'booties': 'booties'
+		category_dict = {'athletic': 'womens-athletic-shoes-shop',
+						'booties': 'booties',
 						'boots':'womens-boots',
-						'espadrilles': 'espadrilles-for-women'
+						'espadrilles': 'espadrilles-for-women',
 					 	'evening':'womens-evening-shoes',
 						'flats':'womens-flats',
-						'mules_clogs': 'womens-mules-clogs'
+						'mules_clogs': 'womens-mules-clogs',
 					  	'wedges':'wedges-for-women',
 					 	'pumps':'womens-pumps',
 					  	'sandals':'womens-sandals-shop',
@@ -55,7 +55,7 @@ class NordstromScraper(object):
 		for key, val in self.params.iteritems():
 			param_str += '&%s=%s' % (key, val)
 
-		return str(self.base_url + category_url + '?origin=leftnav' + param_str)
+		return str(self.base_url + category_url + '?origin=leftnav')
 
 
 	def get_page_links(self):
@@ -67,7 +67,8 @@ class NordstromScraper(object):
 		initial_link = self.join_url()
 		soup = BeautifulSoup(requests.get(initial_link).content, 'html.parser')
 		# Get the number of total products, then get the number of total pages
-		total_num_products = soup.select('count')
+		total_num_products = int(soup.select('span.count')[0].text)
+		print total_num_products
 		total_pages = int(math.ceil(float(total_num_products)/100))
 		# Produce the links to each of the pages (each page has 180 results)
 		for ipage in range(1, total_pages + 1):
@@ -83,17 +84,23 @@ class NordstromScraper(object):
 			raise Exception('Number of Descriptions and Images Do Not Match!')
 
 
-	def _get_img(self, img_tags, category, orientation='front'):
+	def _get_img(self, img_tags, product_tags, category, orientation='front'):
 		img_lst = []
+		product_id = []
+
+		for i, id_tag in enumerate(product_tags):
+			product_id.append(id_tag['data-style-number'])
+
 		for i, tag in enumerate(img_tags):
-			img_link = tag['data-original']
+			img_link = tag.img['data-original']
 			img = requests.get(img_link).content
-			product_id = re.search(r"\_(?P<product_id>\d+)\.", img_link).group("product_id")
 			img_lst.append(img)
+			
+			self._check_data_len([product_id[:i+1], img_lst])
 			path = 'Images/%s/%s' % (self.company, category)
 			if not os.path.exists(path):
 				os.makedirs(path)
-			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company, product_id), 'w')
+			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company, product_id[i]), 'w')
 			f.write(img)
 			f.close()
 
@@ -113,39 +120,45 @@ class NordstromScraper(object):
 		"""
 		print link[0]
 		print link[1]
-		html = requests.get(link[0], params =link[1] ).content
+		html = requests.get(link[0], params =link[1]).content
 		soup = BeautifulSoup(html, 'html.parser')
 
-		desinger_name_tags = []
+		r = open('/Users/heymanhn/Desktop/r.html', 'w')
+		r.write(str(soup))
+		r.close()
+		designer_name_tags = []
 		description_tags =[]
 		product_id = []
 		product_link = []
 
 		# Use CSS selectors to get the tags containing the info we want
 		title_tags = soup.select('a.title')
-		price_tags = soup.select('"span.price.regular"')
+		price_tags = [i.text for i in soup.findAll("span", {"class":'price'}) if 'Was' not in i.text and 'OFF' not in i.text]
 		front_img_tags = soup.select('div.fashion-photo')
-		product_link_tags = soup.select('div.info.default.women.adult')
+		product_id_tags = soup.select('div.fashion-item')
+		product_link_tags = soup.select('a.fashion-href')
+
 
 		# css selector for product id and product link
-		for item in title_tags:
-			desinger_name_tags.append(re.split("'", item)[0])
-			description_tags.append("".join(re.split("'",item)[1:]))''
-		for tag in front_img_tags:
-			product_id.append(re.search(r"\_(?P<product_id>\d+)\.", tag['data-original']).group("product_id"))
+		for tit_tag in title_tags:
+			designer_name_tags.append(re.split("'", tit_tag.text)[0])
+			description_tags.append("".join(re.split("'",tit_tag.text)[1:]))
+			product_link.append('http://shop.nordstrom.com' + tit_tag['href'])
 
-			product_link.append(item['href'])
+		for id_tag in product_id_tags:
+			product_id.append(id_tag['data-style-number'])
 
-
+		for link_tag in product_link_tags:
+			product_link.append(link_tag['href'])
 
 		# Check if the list of tags are all of the same length
 		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
 
 		# Scrape all the info from the page
-		designer_name = self._get_text(designer_name_tags)
-		description = self._get_text(description_tags)
-		price = self._get_text(price_tags)
-		self._get_img(front_img_tags, self.category, orientation='front')
+		designer_name = designer_name_tags
+		description = description_tags
+		price = price_tags
+		self._get_img(front_img_tags, product_id_tags, self.category, orientation='front')
 		category = [self.category for i in xrange(len(product_id))]
 		company = [self.company for i in xrange(len(product_id))]
 		return izip(category, company, product_id, designer_name, description, price, product_link)
@@ -175,8 +188,8 @@ class NordstromScraper(object):
 				if len(fields) != len(tup):
 					raise Exception('Fields Must Have The Same Length As Values') 	
 				json = dict(zip(fields, tup))
-				# self._insert_into_db(json)
-				self._print_result(json)
+				self._insert_into_db(json)
+				# self._print_result(json)
 		print 'total_items: ', count
 		print 'Done!'
 
