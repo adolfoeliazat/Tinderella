@@ -40,15 +40,15 @@ class SaksScraper(object):
 		"""
 		category_dict = {'boots':'Boots/shop/_/N-52k0sa/Ne-6lvnb5?FOLDER<>folder_id=2534374306624250',
 					 		'evening':'Evening/shop/_/N-52k0sg/Ne-6lvnb5?FOLDER<>folder_id=2534374306624256',
-							'exotic':'Exotics/shop/_/N-52k0sh/Ne-6lvnb5?FOLDER<>folder_id=2534374306624257',
+							'exotics':'Exotics/shop/_/N-52k0sh/Ne-6lvnb5?FOLDER<>folder_id=2534374306624257',
 							'flats':'Flats/shop/_/N-52k0s8/Ne-6lvnb5?FOLDER<>folder_id=2534374306624248',
-					 		'mules&slides':'Mules-and-Slides/shop/_/N-52k29y/Ne-6lvnb5?FOLDER<>folder_id=2534374306626182',
+					 		'mules-and-slides':'Mules-and-Slides/shop/_/N-52k29y/Ne-6lvnb5?FOLDER<>folder_id=2534374306626182',
 					  		'wedges':'Wedges/shop/_/N-52k0t0/Ne-6lvnb5?FOLDER<>folder_id=2534374306624276',
-					 		'pumps&slingbacks':'Pumps-and-Slingbacks/shop/_/N-52k0sm/Ne-6lvnb5?FOLDER<>folder_id=2534374306624262',
+					 		'pumps-and-slingbacks':'Pumps-and-Slingbacks/shop/_/N-52k0sm/Ne-6lvnb5?FOLDER<>folder_id=2534374306624262',
 					  		'sandals':'Sandals/shop/_/N-52k0st/Ne-6lvnb5?FOLDER<>folder_id=2534374306624269',
 					 		'sneakers':'Sneakers/shop/_/N-52k0sy/Ne-6lvnb5?FOLDER<>folder_id=2534374306624274', 
 					 		'wedding':'Wedding/shop/_/N-52k0sz/Ne-6lvnb5?FOLDER<>folder_id=2534374306624275',
-					 		'oxfords&loafers&moccasins':'Oxfords-Loafers-and-Moccasins/shop/_/N-52k0si/Ne-6lvnb5?FOLDER<>folder_id=2534374306624258'}
+					 		'oxfords-loafers-and-moccasins':'Oxfords-Loafers-and-Moccasins/shop/_/N-52k0si/Ne-6lvnb5?FOLDER<>folder_id=2534374306624258'}
 
 		param_str = ''
 		category_url = category_dict[self.category]
@@ -152,7 +152,7 @@ class SaksScraper(object):
 		Runs the scraping looping through the pages
 		"""
 		self.get_page_links()
-		print self.category
+		print 'category = ' , self.category
 		print 'Number of Pages = ' ,len(self.all_links)
 		for i, link in enumerate(self.all_links):
 			# For each page, each product gets assigned a tuple containing 
@@ -165,6 +165,7 @@ class SaksScraper(object):
 				json = dict(zip(fields, tup))
 				# self._print_result(json)
 				self._insert_into_db(json)
+		print 'Done!'
 
 if __name__ == '__main__':
 	sk = SaksScraper(args.category)
