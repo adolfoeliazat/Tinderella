@@ -127,8 +127,6 @@ class SaksScraper(object):
 
 		for link_item in product_link_tags:
 			product_link.append(link_item['href'])
-		print len(product_id)
-		print len(product_link)
 
 		# Check if the list of tags are all of the same length
 		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
@@ -165,9 +163,8 @@ class SaksScraper(object):
 				if len(fields) != len(tup):
 					raise Exception('Fields Must Have The Same Length As Values') 	
 				json = dict(zip(fields, tup))
-				# json ['product_id'] = '%s_%s_%s' %(self.company,self.category, i)
-				self._print_result(json)
-				# self.__insert_into_db(json)
+				# self._print_result(json)
+				self._insert_into_db(json)
 
 if __name__ == '__main__':
 	sk = SaksScraper(args.category)
