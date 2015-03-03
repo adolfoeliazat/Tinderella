@@ -43,7 +43,7 @@ class BarneysScraper(object):
 					 	'evening':'evening',
 						'flats':'flats',
 					  	'wedges':'wedges',
-					 	'pumps-and-slingbacks':'heels',
+					 	'pumps_slingbacks':'heels',
 					  	'sandals':'sandals',
 					 	'sneakers':'sneakers'}
 		param_str = ''

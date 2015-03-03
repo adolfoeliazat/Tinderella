@@ -7,6 +7,7 @@ import argparse
 import os
 from mongodb import MongoDB
 from itertools import izip
+import math
 
 # Command line arguments
 
@@ -14,7 +15,7 @@ parser = argparse.ArgumentParser(description='Input Category and Number of Pages
 parser.add_argument("category", help="Category of shoes", type=str)
 args = parser.parse_args()
 
-class SaksScraper(object):
+class NordstromScraper(object):
 
 	def __init__(self, category):
 
@@ -24,12 +25,12 @@ class SaksScraper(object):
 		Define the category, base url and a variable to store the links to all pages.
 		"""
 		self.category = category.lower()
-		self.company = 'saks'
-		self.base_url = 'http://www.saksfifthavenue.com/Shoes/'
+		self.company = 'nordstrom'
+		self.base_url = 'http://shop.nordstrom.com/c/'
 		
 		self.all_links = []
 		
-		self.params = {'Nao': 0}
+		self.params = {'page': 1}
 		self.mongo = MongoDB(db_name = 'shoes', table_name = self.category)
 
 
@@ -38,24 +39,23 @@ class SaksScraper(object):
 		"""
 		Concatenate the base_url and category and page number
 		"""
-		category_dict = {'boots':'Boots/shop/_/N-52k0sa/Ne-6lvnb5?FOLDER<>folder_id=2534374306624250',
-					 		'evening':'Evening/shop/_/N-52k0sg/Ne-6lvnb5?FOLDER<>folder_id=2534374306624256',
-							'exotics':'Exotics/shop/_/N-52k0sh/Ne-6lvnb5?FOLDER<>folder_id=2534374306624257',
-							'flats':'Flats/shop/_/N-52k0s8/Ne-6lvnb5?FOLDER<>folder_id=2534374306624248',
-					 		'mules_slides':'Mules-and-Slides/shop/_/N-52k29y/Ne-6lvnb5?FOLDER<>folder_id=2534374306626182',
-					  		'wedges':'Wedges/shop/_/N-52k0t0/Ne-6lvnb5?FOLDER<>folder_id=2534374306624276',
-					 		'pumps_slingbacks':'Pumps-and-Slingbacks/shop/_/N-52k0sm/Ne-6lvnb5?FOLDER<>folder_id=2534374306624262',
-					  		'sandals':'Sandals/shop/_/N-52k0st/Ne-6lvnb5?FOLDER<>folder_id=2534374306624269',
-					 		'sneakers':'Sneakers/shop/_/N-52k0sy/Ne-6lvnb5?FOLDER<>folder_id=2534374306624274', 
-					 		'wedding':'Wedding/shop/_/N-52k0sz/Ne-6lvnb5?FOLDER<>folder_id=2534374306624275',
-					 		'oxfords_loafers_moccasins':'Oxfords-Loafers-and-Moccasins/shop/_/N-52k0si/Ne-6lvnb5?FOLDER<>folder_id=2534374306624258'}
-
+		category_dict = {'athletic': 'womens-athletic-shoes-shop' 
+						'booties': 'booties'
+						'boots':'womens-boots',
+						'espadrilles': 'espadrilles-for-women'
+					 	'evening':'womens-evening-shoes',
+						'flats':'womens-flats',
+						'mules_clogs': 'womens-mules-clogs'
+					  	'wedges':'wedges-for-women',
+					 	'pumps':'womens-pumps',
+					  	'sandals':'womens-sandals-shop',
+					 	'sneakers':'womens-sneakers'}
 		param_str = ''
 		category_url = category_dict[self.category]
 		for key, val in self.params.iteritems():
 			param_str += '&%s=%s' % (key, val)
 
-		return str(self.base_url + category_url + param_str)
+		return str(self.base_url + category_url + '?origin=leftnav' + param_str)
 
 
 	def get_page_links(self):
@@ -66,13 +66,14 @@ class SaksScraper(object):
 		"""
 		initial_link = self.join_url()
 		soup = BeautifulSoup(requests.get(initial_link).content, 'html.parser')
-		# Get the number of total pages
-		total_pages = int(soup.select('span.totalNumberOfPages')[0].text)
+		# Get the number of total products, then get the number of total pages
+		total_num_products = soup.select('count')
+		total_pages = int(math.ceil(float(total_num_products)/100))
 		# Produce the links to each of the pages (each page has 180 results)
-		for ipage in range(total_pages):
-		    self.params['Nao'] = ipage * 60
+		for ipage in range(1, total_pages + 1):
+		    self.params['page'] = ipage
 		    page_link = self.join_url()
-		    self.all_links.append(page_link)
+		    self.all_links.append((page_link,{'page': ipage}))
 
 
 	@staticmethod
@@ -85,9 +86,9 @@ class SaksScraper(object):
 	def _get_img(self, img_tags, category, orientation='front'):
 		img_lst = []
 		for i, tag in enumerate(img_tags):
-			img_link = tag['src']
+			img_link = tag['data-original']
 			img = requests.get(img_link).content
-			product_id = re.search(r"(?P<product_id>\d+)\_(\d+)",img_link).group("product_id")
+			product_id = re.search(r"\_(?P<product_id>\d+)\.", img_link).group("product_id")
 			img_lst.append(img)
 			path = 'Images/%s/%s' % (self.company, category)
 			if not os.path.exists(path):
@@ -110,24 +111,32 @@ class SaksScraper(object):
 		:return: None
 		Get all info
 		"""
-		html = requests.get(link).content
+		print link[0]
+		print link[1]
+		html = requests.get(link[0], params =link[1] ).content
 		soup = BeautifulSoup(html, 'html.parser')
+
+		desinger_name_tags = []
+		description_tags =[]
 		product_id = []
 		product_link = []
 
 		# Use CSS selectors to get the tags containing the info we want
-		designer_name_tags = soup.select('span.product-designer-name')
-		description_tags = soup.select('p.product-description')
-		price_tags = soup.select('span.product-price')
-		front_img_tags = soup.select('img.pa-product-large')
-		product_link_tags = soup.select('a.mainBlackText')
+		title_tags = soup.select('a.title')
+		price_tags = soup.select('"span.price.regular"')
+		front_img_tags = soup.select('div.fashion-photo')
+		product_link_tags = soup.select('div.info.default.women.adult')
 
 		# css selector for product id and product link
-		for img_item in front_img_tags:
-			product_id.append(re.search(r"(?P<product_id>\d+)\_(\d+)",img_item['src']).group("product_id"))
+		for item in title_tags:
+			desinger_name_tags.append(re.split("'", item)[0])
+			description_tags.append("".join(re.split("'",item)[1:]))''
+		for tag in front_img_tags:
+			product_id.append(re.search(r"\_(?P<product_id>\d+)\.", tag['data-original']).group("product_id"))
 
-		for link_item in product_link_tags:
-			product_link.append(link_item['href'])
+			product_link.append(item['href'])
+
+
 
 		# Check if the list of tags are all of the same length
 		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
@@ -155,7 +164,7 @@ class SaksScraper(object):
 		self.get_page_links()
 		print 'category = ' , self.category
 		print 'Number of Pages = ' ,len(self.all_links)
-		count = 0		
+		count = 0
 		for i, link in enumerate(self.all_links):
 			# For each page, each product gets assigned a tuple containing 
 			# prpduct_id,description, designer_name, price
@@ -166,12 +175,12 @@ class SaksScraper(object):
 				if len(fields) != len(tup):
 					raise Exception('Fields Must Have The Same Length As Values') 	
 				json = dict(zip(fields, tup))
-				# self._print_result(json)
-				self._insert_into_db(json)
+				# self._insert_into_db(json)
+				self._print_result(json)
 		print 'total_items: ', count
 		print 'Done!'
 
 if __name__ == '__main__':
-	sk = SaksScraper(args.category)
-	sk.main()
+	br = NordstromScraper(args.category)
+	br.main()
 
