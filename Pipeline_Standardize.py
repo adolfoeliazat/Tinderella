@@ -6,6 +6,8 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 import os
+import matplotlib.pyplot as plt
+import sys
 
 # pwd = u'/Users/heymanhn/Virginia/Zipfian/Capstone_Project/Images'
 
@@ -67,24 +69,26 @@ class Standardize_Images(object):
 				subdir_path = os.path.join(self.parent_dir_path, subdir)
 				clean_subdir = self.clean_file_lst(os.listdir(subdir_path), jpg=True)
 				for img_file in clean_subdir:
-					self.output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform')
+					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform')
 					img_path = os.path.join(subdir_path, img_file)
 					resized_img_arr = self.do_standardize(img_path)
-					uniform_img_path = os.path.join(self.output_dir_path_pop, img_file)
+					uniform_img_path = os.path.join(output_dir_path_pop, img_file)
 					io.imsave(uniform_img_path, resized_img_arr)
 
-					# print self.output_dir_path
-					# print img_path
-					# io.imsave('%s/%s' % self.output_dir_path, resized_img_arr)
+	# def show_img(self, arr):
+	# 	"""this prints the image"""
+	# 	plt.imshow(arr)
+	# 	plt.show()
+	# 	sys.exit()
 
 	def do_standardize(self, img_path):
 		"""
 		Reshape each image
 		"""
-		print img_path
-
-		img = data.imread(img_path, as_grey=False).astype('int32')
+		# print img_path
+		img = io.imread(img_path)
 		resized_img_arr = resize(img, self.img_size)
+		# self.show_img(resized_img_arr)
 		return resized_img_arr
 
 
