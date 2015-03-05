@@ -8,10 +8,12 @@ class MongoDB(object):
         client = pymongo.MongoClient()
         self.db = client[self.db_name]
         self.table = self.db[self.table_name]
-        self.table.remove()
+        # self.table.remove()
 
     def get_table(self):
         return self.table
 
     def insertion(self, json):
         self.table.insert(json)
+
+

@@ -70,8 +70,8 @@ class Standardize_Images(object):
 				clean_subdir = self.clean_file_lst(os.listdir(subdir_path), jpg=True)
 				for img_file in clean_subdir:
 					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform')
-					img_path = os.path.join(subdir_path, img_file)
-					resized_img_arr = self.do_standardize(img_path)
+					img_file_path = os.path.join(subdir_path, img_file)
+					resized_img_arr = self.do_standardize(img_file_path)
 					uniform_img_path = os.path.join(output_dir_path_pop, img_file)
 					io.imsave(uniform_img_path, resized_img_arr)
 
@@ -81,12 +81,12 @@ class Standardize_Images(object):
 	# 	plt.show()
 	# 	sys.exit()
 
-	def do_standardize(self, img_path):
+	def do_standardize(self, img_file_path):
 		"""
 		Reshape each image
 		"""
-		# print img_path
-		img = io.imread(img_path)
+		# print img_file_path
+		img = io.imread(img_file_path)
 		resized_img_arr = resize(img, self.img_size)
 		# self.show_img(resized_img_arr)
 		return resized_img_arr
