@@ -11,6 +11,7 @@ import os
 import matplotlib.pyplot as plt
 import sys
 from Pipeline_CommonFunctions.py import clean_file_lst
+from test_color_clustering import color_kmeans
 
 class Feature_Engineer(object):
 
@@ -25,7 +26,7 @@ class Feature_Engineer(object):
 		"""
 		self.stand_img_directory = stand_img_directory
 		self.img_size = img_size
-		target_size = None
+		self.target_size = target_size
 
 	@staticmethod
 	def _check_img_size(img_arr, img_file_path):
@@ -37,6 +38,8 @@ class Feature_Engineer(object):
 
 	def pre_trans(self, img_arr):
 		# return pre-filter feature extraction
+		#  for color extraction: color_kmeans(img_arr)
+
 		pass
 
 	def filter_transform(self, img_arr):
@@ -51,15 +54,8 @@ class Feature_Engineer(object):
 
 	def post_trans(self, trans_img_arr):
 		# return post-filter feature extraction
+		# dominant edges
 		pass
-
-	def flatten(self, img_arr):
-		flat_img_arr = img_arr.flatten()[np.newaxis, :]
-
-		return flat_img_arr
-
-
-
 
 
 	def rescaling(self, flat_img_arr):
@@ -74,7 +70,8 @@ class Feature_Engineer(object):
 		main feature preprocessing done
 		output: feature_matrix
 		"""
-	
+		X = []
+		y = []
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -106,9 +103,13 @@ class Feature_Engineer(object):
 				full_matrix_label.append((feat_vector,label))
 
 		# Extract feature matrix from full image matrix
-		X = full_matrix_label[:1]
 		# Extract labels from full image_matrix
-		y = full_matrix_label[0]
+		for i in xrange(len(full_matrix_label)):
+			X.append(full_matrix_label[i][0])
+			y.append(full_matrix_label[i][1])
+
+		X = np.array(X)
+		y = np.array(y)
 		
 		# Apply StandardScaler to feature matrix
 		rescaled_feat_matrix = self.rescaling(X)
