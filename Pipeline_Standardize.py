@@ -67,8 +67,8 @@ class Standardize_Images(object):
 
 		for subdir in clean_parent_dir:
 				subdir_path = os.path.join(self.parent_dir_path, subdir)
-				clean_subdir = self.clean_file_lst(os.listdir(subdir_path), jpg=True)
-				for img_file in clean_subdir:
+				clean_img_list = self.clean_file_lst(os.listdir(subdir_path), jpg=True)
+				for img_file in clean_img_lst:
 					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform')
 					img_file_path = os.path.join(subdir_path, img_file)
 					resized_img_arr = self.do_standardize(img_file_path)

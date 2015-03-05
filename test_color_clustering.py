@@ -21,7 +21,7 @@ class Color_Clustering(object):
 		img = img.resize(self.img_size, Image.ANTIALIAS) 
 		arr = scipy.misc.fromimage(img)
 		ar = arr.reshape((scipy.product(arr.shape[:2]), arr.shape[2]))
-		print 'img_reshaped to size:'ar.shape
+		print 'img_reshaped to size:', ar.shape
 		print 'finding clusters'
 		codes, dist = scipy.cluster.vq.kmeans(ar, self.num_clusters)
 		print 'cluster centres:\n', codes
@@ -33,6 +33,8 @@ class Color_Clustering(object):
 		for i in codes[index_max]:
 			colour = ''.join(chr(c) for c in i).encode('hex')
 			print 'most frequent is %s (#%s)' % (i, colour)
+
+		return codes[index_max]
 
 
 		# # bonus: save image using only the N most common colours
