@@ -6,16 +6,68 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import StandardScaler
-from skimage.filter import roberts, sobel, canny
+from skimage.filter import roberts, sobel, canny, scharr
 import os
 import matplotlib.pyplot as plt
 import sys
 from Pipeline_CommonFunctions import clean_file_lst
 from test_color_clustering import Color_Clustering
+from skimage.feature import (match_descriptors, corner_harris,
+                             corner_peaks, ORB, plot_matches)
+from skimage.feature import CENSURE
+
+IMAGE_SIZE = (28,28)
+
+def filter_function(img_grey, filt = 'canny'):
+	"""
+	Grayscales and apply edge detectors to image.
+	Returns the flattened filtered image array.
+	input: raw image 3d tensor
+	output: filtered image
+	filters: 'sobel', 'roberts', 'scharr'
+	default filter = 'canny'
+	"""
+
+
+	# grayscale filters:
+	if filt ='sobel':
+		return np.ravel(sobel(img_grey))
+
+	elif filt = 'roberts'
+		return np.ravel(roberts(img_grey))
+	elif filt = 'canny'
+		return np.ravel(canny(img_grey))
+	elif filt = 'scharr'
+		return np.ravel(scharr(image_grey))
+	else
+		raise Exception('No Such Filter!')
+
+def feature_detectors(img_grey):
+	"""
+	Extracts features from raw 3d tensor/grayscaled/filtered
+	images.
+
+	"""
+	# feature detectors:
+	censure_detector = CENSURE(mode ='Octagon')
+	censure_detector.detect(img_grey)
+	censure_keypoints = censure_detector.keypoints
+	censure_vec = np.ravel(censure_keypoints)
+
+	descriptor_extractor = ORB(n_keypoints=200)
+	orb_descriptor_extractor.detect_and_extract(img_grey)
+	orb_keypoints = orb_descriptor_extractor.keypoints
+	descriptors = orb_descriptor_extractor.descriptors
+	orb_vec = np.ravel(orb_keypoints)
+
+	feat_det_vec = np.concatneate(censure_vec, orb_vec, axis=0)
+	return 	feat_det_vec
+
 
 class Feature_Engineer(object):
 
-	def __init__(self, stand_img_directory, img_size, target_size= (28,28)):
+	def __init__(self, stand_img_directory, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
+		,filter_funct=filter_function, feat_detect = feature_detectors):
 		"""
 		inputs: 
 			 main directory containing all lable directories with standardized images
@@ -24,9 +76,12 @@ class Feature_Engineer(object):
 						   default = current shape
 		output: feature_matrix
 		"""
+		self.filter_funct = filter_funct
+		self.feat_detect = feat_detect
 		self.stand_img_directory = stand_img_directory
 		self.img_size = img_size
 		self.target_size = target_size
+
 
 	def _check_img_size(self, img_arr, img_file_path):
 		# assert size: img.arr.shape = self.shape
@@ -51,47 +106,30 @@ class Feature_Engineer(object):
 		input: transformed image array
 		color filters: 
 		grayscale filters: sobel, roberts
-		feature detectors: CENSURE, 
+		feature detectors: CENSURE, ORB
 		"""
-
-		# grayscale filters:
 		img_arr_grey = color.rgb2gray(img_arr)
-		sobel = sobel(img_arr_grey)
-		roberts = roberts(img_arr_grey)
-		canny = canny(img_arr_grey)
-		scharr = scharr(image_arr_grey)
 
-		print sobel.shape
-		print roberts.shape
-		# feature detectors:
-		censure = 
-		descriptor_extractor.detect_and_extract(img1)
-		keypoints1 = descriptor_extractor.keypoints
-		descriptors1 = descriptor_extractor.descriptors
+		trans_img_arr = self.filter_funct(img_arr_grey)
 
+		trans_img_arr_feat_detect = self.feat_detect(img_arr_grey)
 
-		orb = keypoints1
+		trans_img_arr_final = np.concatneate(trans_img_arr, trans_img_arr_feat_detect, axis=0)
 
-		
+		return np.ravel(trans_img_arr_final)
 
-		print censure.shape
-		trans_img_arr = np.concatneate(sobel, roberts, axis=0)
-
-		return np.ravel(trans_img_arr)
-
-		pass
 
 	def post_trans(self, trans_img_arr):
 		# return post-filter feature extraction
 		# dominant edges
 
 		'''
-	    sobel_trans = sobel(trans_img_arr)
+	    Input: 2d filtered falttened image array
 		post_trans = np.concatneate(sobel_trans,......, axis=0)
 
 		return np.ravel(post_trans)
 		'''
-		pass
+		trans_img_arr_feat_detect = self.feat_detect(trans_img_arr)
 
 
 
@@ -173,7 +211,7 @@ class Feature_Engineer(object):
 if __name__ == '__main__':
 	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
 	full_dir_path = os.path.join(dir_path, 'Test_Output_Images')
-	fm = Feature_Engineer(full_dir_path, (28, 28))
+	fm = Feature_Engineer(full_dir_path, target_size =(100,100))
 	fm.feature_preprocessing()
 
 
