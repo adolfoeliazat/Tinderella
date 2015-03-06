@@ -37,10 +37,11 @@ class Feature_Engineer(object):
 	def pre_trans(self, img_arr):
 		# return pre-filter feature extraction
 		# For color extraction use color_kmeans()
-
+		# Segmentation algorithms: felzenszwalb, slic, quickshift
 		'''
 		pre_trans = color_kmeans(img_arr)
 		return np.ravel(pre_trans)
+
 		'''
 		pass
 
@@ -50,14 +51,30 @@ class Feature_Engineer(object):
 		input: transformed image array
 		color filters: 
 		grayscale filters: sobel, roberts
+		feature detectors: CENSURE, 
 		"""
 
 		# grayscale filters:
-		img_arr_grey = color.rgb2gray(resized_image)
+		img_arr_grey = color.rgb2gray(img_arr)
 		sobel = sobel(img_arr_grey)
 		roberts = roberts(img_arr_grey)
+		canny = canny(img_arr_grey)
+		scharr = scharr(image_arr_grey)
+
 		print sobel.shape
 		print roberts.shape
+		# feature detectors:
+		censure = 
+		descriptor_extractor.detect_and_extract(img1)
+		keypoints1 = descriptor_extractor.keypoints
+		descriptors1 = descriptor_extractor.descriptors
+
+
+		orb = keypoints1
+
+		
+
+		print censure.shape
 		trans_img_arr = np.concatneate(sobel, roberts, axis=0)
 
 		return np.ravel(trans_img_arr)
