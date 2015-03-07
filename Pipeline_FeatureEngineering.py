@@ -157,16 +157,19 @@ class Feature_Engineer(object):
 
 		img = img_as_float(img_arr)		                   
 		segments_fz = np.ravel(felzenszwalb(img, scale=100, sigma=0.5, min_size=50))
-
+		print segments_fz.shape
+		prior_length = dom_colors.shape[0]+ local_eq_raw.shape[0]+ local_threshold_raw.shape[0] +segments_fz.shape[0]
+		print 'total length before feature detection', prior_length
 		# apply feature detection algorithms to grayscaled image
 		img_arr_grey = color.rgb2gray(img_arr)
 		feat_det_img_arr = self.feat_detect(img_arr_grey)
-		print feat_det_img_arr.shape
-
-		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz, feat_det_img_arr), axis=0)
-		pre_trans[:pre_trans_prior.shape[0]] = pre_trans_prior
+		
+		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz), axis=0)
+		print pre_trans_prior.shape
+		pre_trans[:prior_length] = pre_trans_prior
+		pre_trans[prior_length:prior_length + feat_det_img_arr.shape[0]] = feat_det_img_arr
 		print pre_trans.shape
-		return np.ravel(pre_trans)
+		return pre_trans
 
 
 	def filter_transform(self, img_arr):
