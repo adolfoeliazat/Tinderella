@@ -6,15 +6,22 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import StandardScaler
-from skimage.filter import roberts, sobel, canny, scharr
+from skimage.filter import roberts, sobel, canny, scharr, rank
 import os
 import matplotlib.pyplot as plt
 import sys
-from Pipeline_CommonFunctions import clean_file_lst
-from test_color_clustering import Color_Clustering
+from skimage.feature import CENSURE
 from skimage.feature import (match_descriptors, corner_harris,
                              corner_peaks, ORB, plot_matches)
-from skimage.feature import CENSURE
+from skimage.util.dtype import dtype_range
+from skimage.util import img_as_ubyte
+from skimage import exposure
+from skimage.filters import threshold_otsu
+
+# modules I wrote
+from Pipeline_CommonFunctions import clean_file_lst
+from test_color_clustering import Color_Clustering
+from skimage.filters import threshold_otsu
 
 IMAGE_SIZE = (28,28)
 
@@ -32,13 +39,14 @@ def filter_function(img_grey, filt = 'canny'):
 	# grayscale filters:
 	if filt ='sobel':
 		return np.ravel(sobel(img_grey))
-
 	elif filt = 'roberts'
 		return np.ravel(roberts(img_grey))
 	elif filt = 'canny'
 		return np.ravel(canny(img_grey))
 	elif filt = 'scharr'
 		return np.ravel(scharr(image_grey))
+	elif filt = ('canny', 'sobel'):
+		np.ravel(canny(sobel(img_grey)))
 	else
 		raise Exception('No Such Filter!')
 
@@ -59,15 +67,42 @@ def feature_detectors(img_grey):
 	orb_keypoints = orb_descriptor_extractor.keypoints
 	descriptors = orb_descriptor_extractor.descriptors
 	orb_vec = np.ravel(orb_keypoints)
+	feat_det_vec = np.concatenate(censure_vec, orb_vec, axis=0)
 
-	feat_det_vec = np.concatneate(censure_vec, orb_vec, axis=0)
 	return 	feat_det_vec
+
+def local_eq(img_arr):
+	"""
+	Spreads out the most frequent intensity values in an image.
+	Input: 3D image tensor or 2D grayscaled image or 
+	       filtered/transformed image array.
+	Ouput: Global equalize with same shape as img_arr
+	"""
+	return exposure.equalize_hist(img_arr)
+
+
+def local_threshold(img_arr):
+	"""
+	For each pixel, an “optimal” threshold is determined by maximizing 
+	the variance between two classes of pixels of the local neighborhood 
+	defined by a structuring element.
+	
+	Input: 	3D image tensor or 2D grayscaled image or 
+	       filtered/transformed image array.
+	Output: binary img_array where pixels are >= global threshold
+	"""
+
+	threshold_global_otsu = threshold_otsu(img)
+	global_otsu = img >= threshold_global_otsu
+
+	return global_otsu.astype(int)
 
 
 class Feature_Engineer(object):
 
 	def __init__(self, stand_img_directory, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
-		,filter_funct=filter_function, feat_detect = feature_detectors):
+		,filter_funct=filter_function, feat_detect = feature_detectors
+		, local_equalize = local_eq, local_thresh = local_threshold):
 		"""
 		inputs: 
 			 main directory containing all lable directories with standardized images
@@ -76,12 +111,13 @@ class Feature_Engineer(object):
 						   default = current shape
 		output: feature_matrix
 		"""
-		self.filter_funct = filter_funct
-		self.feat_detect = feat_detect
 		self.stand_img_directory = stand_img_directory
 		self.img_size = img_size
 		self.target_size = target_size
-
+		self.filter_funct = filter_funct
+		self.feat_detect = feat_detect
+		self.local_equalize = local_equalize
+		self.local_thresh = local_thresh
 
 	def _check_img_size(self, img_arr, img_file_path):
 		# assert size: img.arr.shape = self.shape
@@ -90,54 +126,61 @@ class Feature_Engineer(object):
 			print img_file_path
 
 	def pre_trans(self, img_arr):
-		# return pre-filter feature extraction
-		# For color extraction use color_kmeans()
-		# Segmentation algorithms: felzenszwalb, slic, quickshift
-		'''
-		pre_trans = color_kmeans(img_arr)
+		"""
+		return pre-filter feature extraction
+		For color extraction use color_kmeans()
+		Segmentation algorithms: felzenszwalb, slic, quickshift
+		"""
+		color = color_kmeans(img_arr)
+		local_eq_raw = self.local_equalize(img_arr)
+		local_threshold_raw = self.local_thresh(img_arr)
+
+		pre_trans = np.concatenate(color, local_eq_raw, local_threshold_raw)
 		return np.ravel(pre_trans)
 
-		'''
-		pass
 
 	def filter_transform(self, img_arr):
 		"""
 		applying various filters to image array
-		input: transformed image array
-		color filters: 
-		grayscale filters: sobel, roberts
+		Input: transformed image array
+		grayscale filters: sobel, roberts, scharr, canny(default)
 		feature detectors: CENSURE, ORB
 		"""
+		# transforms image to gray scale 2D array
 		img_arr_grey = color.rgb2gray(img_arr)
+		# apply filter to image
+		filt_img_arr = self.filter_funct(img_arr_grey)
+		# apply feature detection algorithms to grayscaled image
+		feat_det_img_arr = self.feat_detect(img_arr_grey)
+		# concatenate all transformations
+		trans_img_arr = np.concatenate(filt_img_arr, feat_det_img_arr, axis=0)
 
-		trans_img_arr = self.filter_funct(img_arr_grey)
-
-		trans_img_arr_feat_detect = self.feat_detect(img_arr_grey)
-
-		trans_img_arr_final = np.concatneate(trans_img_arr, trans_img_arr_feat_detect, axis=0)
-
-		return np.ravel(trans_img_arr_final)
-
+		return np.ravel(trans_img_arr)
 
 	def post_trans(self, trans_img_arr):
 		# return post-filter feature extraction
 		# dominant edges
 
 		'''
-	    Input: 2d filtered falttened image array
-		post_trans = np.concatneate(sobel_trans,......, axis=0)
+	    Input: 2d filtered/transformed flattened image array
+	    Methods: feature_detectors, local histogram equalization, 
+		Output: flattened post-transformed image array
+		'''
+		# apply feature detection to filtered grayscaled image
+		feat_detect = self.feat_detect(trans_img_arr)
+		# apply local histogram equalization to filtered grayscaled image
+		local_eq_trans= self.local_equalize(trans_imag_arr)
+		local_threshold_trans= self.local_thresh(trans_imag_arr)
+		# concatenate all feature detectors
+		post_trans = np.concatenate(feat_detect, local_eq_trans, local_threshold_trans,axis=0)
 
 		return np.ravel(post_trans)
-		'''
-		trans_img_arr_feat_detect = self.feat_detect(trans_img_arr)
-
-
 
 	def create_feature_vector(unflattened_image,pre_features,post_features) :
 		'''
 		  Unflattened image is the filtered image
 		  First ravel the unflattened filtered image 
-		  #column wise concatneate flattened filtered image to label, pre_features
+		  #column wise concatenate flattened filtered image to label, pre_features
 		  and post_features arrays.
 
 		'''
@@ -180,11 +223,14 @@ class Feature_Engineer(object):
 
 				# Extract features from raw image array
 				pre_trans_feat = self.pre_trans(img_arr)
+				print 'pre_trans_feat', pre_trans_feat.shape
 				# Apply filters to transform image array
 				trans_img_arr = self.filter_transform(img_arr)
+				print 'trans_img_arr', trans_img_arr.shape
 				# Extract features from post-transformed image array
 				post_trans_feat = self.post_trans(trans_img_arr)
-				#flattened AND concatneated feature vector
+				print 'post_trans_feat', post_trans_feat.shape
+				#flattened AND concatenated feature vector
 				# print pre_trans_feat
 				# print trans_img_arr.shape
 				# print post_trans_feat
