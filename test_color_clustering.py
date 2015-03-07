@@ -9,15 +9,15 @@ import os
 
 class Color_Clustering(object):
 	def __init__(self, img_file_path, num_clusters, img_size):
-		self.main_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project/Images_Old/barneys'
 		self.img_file_path = img_file_path
 		self.num_clusters = num_clusters
 		self.img_size = img_size
 
 	def main(self):
 		print 'reading image'
-		filename = os.path.join(self.main_path,self.img_file_path)
+		filename = self.img_file_path
 		img = Image.open(filename)
+		print img
 		img = img.resize(self.img_size, Image.ANTIALIAS) 
 		arr = scipy.misc.fromimage(img)
 		ar = arr.reshape((scipy.product(arr.shape[:2]), arr.shape[2]))
@@ -45,8 +45,8 @@ class Color_Clustering(object):
 		# print 'saved clustered image'
 
 if __name__ == '__main__':
-	img_file_path = 'evening/barneys_502192370.jpg'
-	color = Color_Clustering(img_file_path, 5, (28,28))
+# 	img_file_path = 'Image_Old/evening/barneys_502192370.jpg'
+# 	color = Color_Clustering(img_file_path, 5, (28,28))
 	color.main()
 
 # im.getcolors()

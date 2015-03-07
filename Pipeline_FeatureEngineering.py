@@ -17,6 +17,10 @@ from skimage.util.dtype import dtype_range
 from skimage.util import img_as_ubyte
 from skimage import exposure
 from skimage.filter import threshold_otsu
+from skimage.segmentation import felzenszwalb, slic, quickshift
+from skimage.segmentation import mark_boundaries
+from skimage.util import img_as_float
+
 
 # modules I wrote
 from Pipeline_CommonFunctions import clean_file_lst
@@ -63,9 +67,11 @@ def feature_detectors(img_grey):
 
 	orb_descriptor_extractor = ORB(n_keypoints=200)
 	orb_descriptor_extractor.detect_and_extract(img_grey)
-	orb_keypoints = orb_descriptor_extractor.keypoints
-	descriptors = orb_descriptor_extractor.descriptors
-	orb_vec = np.ravel(orb_keypoints)
+	orb_keypoints = np.ravel(orb_descriptor_extractor.keypoints)
+	print 'orb_keypoints', orb_keypoints.shape
+	orb_descriptors = np.ravel(orb_descriptor_extractor.descriptors)
+	print 'orb_descriptors', orb_descriptors.shape
+	orb_vec = np.concatenate((orb_keypoints, orb_descriptors), axis=0)
 	feat_det_vec = np.concatenate((censure_vec, orb_vec), axis=0)
 
 	return 	feat_det_vec
@@ -132,7 +138,10 @@ class Feature_Engineer(object):
 		local_threshold
 		Segmentation algorithms: felzenszwalb, slic, quickshift
 		"""
+		# initialize pre_trans vector
+		pre_trans = np.zeros(4*(img_arr.shape[0]*img_arr.shape[1]*img_arr.shape[2]))
 
+		print 'pre_trans', pre_trans.shape
 		# All extractions using raw colored image array:
 		color_kmeans = Color_Clustering(img_file_path, 5, img_arr.shape[:2])
 		dom_colors = np.ravel(color_kmeans.main())
@@ -144,12 +153,19 @@ class Feature_Engineer(object):
 		local_threshold_raw = self.local_thresh(img_arr)
 		print local_threshold_raw.shape
 
+		# Segmentation: felzenszwalb
+
+		img = img_as_float(img_arr)		                   
+		segments_fz = np.ravel(felzenszwalb(img, scale=100, sigma=0.5, min_size=50))
+
 		# apply feature detection algorithms to grayscaled image
 		img_arr_grey = color.rgb2gray(img_arr)
 		feat_det_img_arr = self.feat_detect(img_arr_grey)
 		print feat_det_img_arr.shape
 
-		pre_trans = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, feat_det_img_arr), axis=0)
+		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz, feat_det_img_arr), axis=0)
+		pre_trans[:pre_trans_prior.shape[0]] = pre_trans_prior
+		print pre_trans.shape
 		return np.ravel(pre_trans)
 
 
