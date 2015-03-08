@@ -14,17 +14,16 @@ class Color_Clustering(object):
 		self.img_size = img_size
 
 	def main(self):
-		print 'reading image'
+		# print 'reading image'
 		filename = self.img_file_path
 		img = Image.open(filename)
-		print img
 		img = img.resize(self.img_size, Image.ANTIALIAS) 
 		arr = scipy.misc.fromimage(img)
 		ar = arr.reshape((scipy.product(arr.shape[:2]), arr.shape[2]))
-		print 'img_reshaped to size:', ar.shape
-		print 'finding clusters'
+		# print 'img_reshaped to size:', ar.shape
+		# print 'finding clusters'
 		codes, dist = scipy.cluster.vq.kmeans(ar, self.num_clusters)
-		print 'cluster centres:\n', codes
+		# print 'cluster centres:\n', codes
 
 		vecs, dist = scipy.cluster.vq.vq(ar, codes)         # assign codes
 		counts, bins = scipy.histogram(vecs, len(codes))    # count occurrences
@@ -32,7 +31,7 @@ class Color_Clustering(object):
 		index_max = scipy.argsort(counts) [::-1]           # find most frequent in desc order
 		for i in codes[index_max]:
 			colour = ''.join(chr(c) for c in i).encode('hex')
-			print 'most frequent is %s (#%s)' % (i, colour)
+			# print 'most frequent is %s (#%s)' % (i, colour)
 
 		return codes[index_max]
 

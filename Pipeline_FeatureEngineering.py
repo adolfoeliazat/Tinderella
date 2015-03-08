@@ -37,8 +37,6 @@ def filter_function(img_grey, filt = 'canny'):
 	filters: 'sobel', 'roberts', 'scharr'
 	default filter = 'canny'
 	"""
-
-
 	# grayscale filters:
 	if filt =='sobel':
 		return sobel(img_grey)
@@ -68,13 +66,12 @@ def feature_detectors(img_grey):
 	orb_descriptor_extractor = ORB(n_keypoints=200)
 	orb_descriptor_extractor.detect_and_extract(img_grey)
 	orb_keypoints = np.ravel(orb_descriptor_extractor.keypoints)
-	print 'orb_keypoints', orb_keypoints.shape
 	orb_descriptors = np.ravel(orb_descriptor_extractor.descriptors)
-	print 'orb_descriptors', orb_descriptors.shape
 	orb_vec = np.concatenate((orb_keypoints, orb_descriptors), axis=0)
 	feat_det_vec = np.concatenate((censure_vec, orb_vec), axis=0)
 
 	return 	feat_det_vec
+
 
 def local_eq(img_arr):
 	"""
@@ -105,7 +102,7 @@ def local_threshold(img_arr):
 
 class Feature_Engineer(object):
 
-	def __init__(self, stand_img_directory, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
+	def __init__(self, stand_img_directory, cached_feature_vector_file, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
 		,filter_funct=filter_function, feat_detect = feature_detectors
 		, local_equalize = local_eq, local_thresh = local_threshold):
 		"""
@@ -117,6 +114,7 @@ class Feature_Engineer(object):
 		output: feature_matrix
 		"""
 		self.stand_img_directory = stand_img_directory
+		self.cached_feature_vector_file = cached_feature_vector_file
 		self.img_size = img_size
 		self.target_size = target_size
 		self.filter_funct = filter_funct
@@ -130,6 +128,18 @@ class Feature_Engineer(object):
 			print img_file_path
 			raise Exception('Image is not the right size!')
 
+	def stand_vector_size(self, arr):
+		"""
+		Pads/truncates the feature vector into appropriate sizes 
+		(usually average feature vector size across all instances)
+		"""
+		stand_vec_size = 5*self.target_size[0]*self.target_size[0]
+		if arr.shape[0] < stand_vec_size:
+			return np.append(arr, np.zeros(stand_vec_size - arr.shape[0]))
+		else:
+			return arr[:stand_vec_size]
+
+		
 	def pre_trans(self, img_arr, img_file_path):
 		"""
 		return pre-filter feature extraction
@@ -138,38 +148,30 @@ class Feature_Engineer(object):
 		local_threshold
 		Segmentation algorithms: felzenszwalb, slic, quickshift
 		"""
-		# initialize pre_trans vector
-		pre_trans = np.zeros(4*(img_arr.shape[0]*img_arr.shape[1]*img_arr.shape[2]))
-
-		print 'pre_trans', pre_trans.shape
+		# initialize pre_trans vector size
+		pre_trans = np.zeros(5*(img_arr.shape[0]*img_arr.shape[1]*img_arr.shape[2]))
 		# All extractions using raw colored image array:
-		color_kmeans = Color_Clustering(img_file_path, 5, img_arr.shape[:2])
+		color_kmeans = Color_Clustering(img_file_path, 10, img_arr.shape[:2])
 		dom_colors = np.ravel(color_kmeans.main())
-		print dom_colors.shape
 
 		local_eq_raw = self.local_equalize(img_arr)
-		print local_eq_raw.shape
 
 		local_threshold_raw = self.local_thresh(img_arr)
-		print local_threshold_raw.shape
 
 		# Segmentation: felzenszwalb
-
 		img = img_as_float(img_arr)		                   
 		segments_fz = np.ravel(felzenszwalb(img, scale=100, sigma=0.5, min_size=50))
-		print segments_fz.shape
 		prior_length = dom_colors.shape[0]+ local_eq_raw.shape[0]+ local_threshold_raw.shape[0] +segments_fz.shape[0]
-		print 'total length before feature detection', prior_length
+
 		# apply feature detection algorithms to grayscaled image
 		img_arr_grey = color.rgb2gray(img_arr)
 		feat_det_img_arr = self.feat_detect(img_arr_grey)
-		
+		stand_feat_det_img_arr = self.stand_vector_size(feat_det_img_arr)
 		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz), axis=0)
-		print pre_trans_prior.shape
 		pre_trans[:prior_length] = pre_trans_prior
-		pre_trans[prior_length:prior_length + feat_det_img_arr.shape[0]] = feat_det_img_arr
-		print pre_trans.shape
-		return pre_trans
+		pre_trans[prior_length:prior_length + stand_feat_det_img_arr.shape[0]] = stand_feat_det_img_arr
+		
+		return pre_trans, feat_det_img_arr.shape
 
 
 	def filter_transform(self, img_arr):
@@ -183,7 +185,7 @@ class Feature_Engineer(object):
 		img_arr_grey = color.rgb2gray(img_arr)
 		# apply filter to image
 		filt_img_arr = self.filter_funct(img_arr_grey)
-
+		
 		return filt_img_arr
 
 	def post_trans(self, trans_img_arr):
@@ -195,20 +197,19 @@ class Feature_Engineer(object):
 	    Methods: feature_detectors, local histogram equalization, 
 		Output: flattened post-transformed image array
 		'''
-		# apply feature detection to filtered grayscaled image
-		feat_detect = self.feat_detect(trans_img_arr)
-		print 'feat_detect', feat_detect.shape
+		# # initialize pre_trans vector
+		# # apply feature detection to filtered grayscaled image
+		feat_det_img_arr = self.feat_detect(trans_img_arr)
+		stand_feat_det_img_arr = self.stand_vector_size(feat_det_img_arr)
 		# apply local histogram equalization to filtered grayscaled image
 		local_eq_trans= self.local_equalize(trans_img_arr)
-		print 'local_eq_trans', local_eq_trans.shape
 		local_threshold_trans= self.local_thresh(trans_img_arr)
-		print 'local_threshold_trans', local_threshold_trans.shape
 		# concatenate all feature detectors
-		post_trans = np.concatenate((feat_detect, local_eq_trans, local_threshold_trans),axis=0)
+		post_trans = np.concatenate((stand_feat_det_img_arr, local_eq_trans, local_threshold_trans),axis=0)
 
-		return np.ravel(post_trans)
+		return np.ravel(post_trans), feat_det_img_arr.shape
 
-	def create_feature_vector(self,unflattened_image, pre_features, post_features) :
+	def create_feature_vector(self,pre_features, post_features,unflattened_image) :
 		'''
 		  Unflattened image is the filtered image
 		  First ravel the unflattened filtered image 
@@ -217,7 +218,7 @@ class Feature_Engineer(object):
 
 		'''
 		flat_vect = np.ravel(unflattened_image)
-		feat_vec = np.concatenate((flat_vect, pre_features, post_features), axis=0)
+		feat_vec = np.concatenate((pre_features, post_features, flat_vect), axis=0)
 		
 		return feat_vec
 
@@ -232,6 +233,11 @@ class Feature_Engineer(object):
 		main feature preprocessing done
 		output: feature_matrix
 		"""
+		total_feat_det= []
+		total_post_feat_detec =[]
+		total_post_local =[]
+		total_images = 0
+		num_failed = 0
 		X = []
 		y = []
 		full_matrix_label = []	
@@ -254,46 +260,60 @@ class Feature_Engineer(object):
 					img_arr = resize(img_arr, self.target_size)
 				print img_file_path
 				# Extract features from raw image array
-				pre_trans_feat = self.pre_trans(img_arr, img_file_path)
-				print 'pre_trans_feat', pre_trans_feat.shape
-				# Apply filters to transform image array
-				unflattened_trans_img_arr = self.filter_transform(img_arr)
-				print 'trans_img_arr', unflattened_trans_img_arr.shape
-				# Extract features from post-transformed image array
-				post_trans_feat = self.post_trans(unflattened_trans_img_arr)
-				print 'post_trans_feat', post_trans_feat.shape
-				#flattened AND concatenated feature vector
-				# print pre_trans_feat
-				# print trans_img_arr.shape
-				# print post_trans_feat
-				print 'unflattened',unflattened_trans_img_arr.shape
-				print 'pretrans',pre_trans_feat.shape
-				print 'post',post_trans_feat.shape
-				feat_vector= self.create_feature_vector(unflattened_trans_img_arr, pre_trans_feat, post_trans_feat)
-				print 'feature vector shape', feat_vector.shape
-				# Append feature vector and label to full image matrix
-				full_matrix_label.append((feat_vector, label))
+				try:
+					pre_trans_feat,feat_det_size = self.pre_trans(img_arr, img_file_path)
+					total_feat_det.append(feat_det_size)
+					print 'pre_feat_det', feat_det_size
+					print 'pre_trans_feat', pre_trans_feat.shape
+					# Apply filters to transform image array
+					unflattened_trans_img_arr = self.filter_transform(img_arr).astype(float)
+					print 'trans_img_arr', unflattened_trans_img_arr.shape
+					# Extract features from post-transformed image array
+					post_trans_feat, post_feat_det_size= self.post_trans(unflattened_trans_img_arr)
+					print 'post_feat_det', post_feat_det_size
+					print 'post_trans_feat', post_trans_feat.shape
+					total_post_feat_detec.append(post_feat_det_size)
+					#flattened AND concatenated feature vector
+					feat_vector= self.create_feature_vector(pre_trans_feat, post_trans_feat,unflattened_trans_img_arr)
+					
+					np.savetxt('%s/size_28.csv' %self.cached_feature_vector_file, feat_vector, fmt='%.18e', delimiter=',') 
 
+					print 'feature vector shape', feat_vector.shape
+					# Append feature vector and label to full image matrix
+					full_matrix_label.append((feat_vector, label))
+					total_images +=1
+					print total_images
+					# break
+				except IndexError:
+					num_failed +=1
+					print 'number of fails so far: ', num_failed
+			
+		print 'total_images', total_images
+		print 'num_fails', num_failed
+		print 'ratio', num_failed/float(total_images)
 
-		# # Extract feature matrix from full image matrix
-		# # Extract labels from full image_matrix
-		# for i in xrange(len(full_matrix_label)):
-		# 	X.append(full_matrix_label[i][0])
-		# 	y.append(full_matrix_label[i][1])
+		# Extract feature matrix from full image matrix
+		# Extract labels from full image_matrix
+		for i in xrange(len(full_matrix_label)):
+			X.append(full_matrix_label[i][0])
+			y.append(full_matrix_label[i][1])
 
-		# X = np.array(X)
-		# y = np.array(y)
+		X = np.array(X)
+		y = np.array(y)
 		
-		# # Apply StandardScaler to feature matrix
-		# rescaled_feat_matrix = self.rescaling(X)
+		# Apply StandardScaler to feature matrix
+		rescaled_feat_matrix = self.rescaling(X)
 
-		# print rescaled_feat_matrix 
-
+		print rescaled_feat_matrix 
+		return rescaled_feat_matrix
 
 if __name__ == '__main__':
 	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
 	full_dir_path = os.path.join(dir_path, 'Test_Output_Images')
-	fm = Feature_Engineer(full_dir_path, target_size =(100,100))
-	fm.feature_preprocessing()
+	cach_FeatVecs_path = os.path.join(dir_path, 'FeatVecs')
+	if not os.path.exists(cach_FeatVecs_path):
+		os.mkdir('FeatVecs')
+	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(100,100))
+	X,y= fm.feature_preprocessing()
 
 
