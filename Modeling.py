@@ -1,45 +1,145 @@
-from sklearn.cluster import KMeans
-import pandas as pd
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.cross_validation import train_test_split, cross_val_score
+from sklearn.grid_search import GridSearchCV
+from sklearn.ensemble.partial_dependence import plot_partial_dependence
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+import numpy as np
+from scipy.sparse import *
 
 class KMeansClustering(object):
-	def __init__(self, feat_matrix, target_arr = None, num_clusters):
+	def __init__(self, feat_matrix, num_clusters, target_arr = None):
 		self.feat_matrix = feat_matrix
 		self.num_clusters = num_clusters
 		self.target_arr = target_arr
+		self.train_x = None
+		self.train_y = None
+		self.test_x = None
+		self.test_y = None
+		self.pca_train_x = None
+		self.pca_test_x = None
 
-	def Random_Forest(self):
-		train_feat, test_feat, train_target, test_target = train_test_split(self.feat_matrix, self.target_arr, test_size=0.2)
-		rf = RandomForestClassifier()
-		rf.fit(train_feat, train_target)
-		print 'rf score: ', rf.score(test_feat, test_target)
-		return rf.score(test_feat, test_target)
 
+	def train_test_split(self):
+
+		self.train_x, self.test_x, self.train_y, self.test_y = train_test_split(self.feat_matrix, self.target_arr, test_size=.2, random_state=1)
+		print 'Train x Shape:', self.train_x.shape
+		print 'Test x Shape:', self.test_x.shape
+
+	def pca(self):
+		n_col = int(self.train_x.shape[1]*.10)
+		pca = PCA(n_components=n_col)
+		train_feat = self.train_x
+		self.pca_train_x = pca.fit_transform(self.train_x)
+		self.pca_test_x = pca.fit_transform(self.test_x)
+
+		# test_feat = self.test_x
+		# test_components = pca.fit_transform(test_feat)
+		# pca_range = np.arange(min(self.train_x.shape[0],n_col))
+		# # xbar_names = ['PCA_%s' % xtick for xtick in pca_range]
+		# plt.bar(pca_range, pca.explained_variance_ratio_, align='center')
+		# xticks = plt.xticks(np.arange(0,self.train_x.shape[0], 100), rotation=90)
+		# plt.ylabel('Variance Explained')
+		# plt.bar(np.arange(200), pca_ratio[:200], align = 'center')
+		# xticks = plt.xticks(np.arange(0,200, 10), rotation = 90)
+		# plt.show()
+
+		return pca.explained_variance_ratio_
+
+
+	def mksparse(matix):
+		Sparse = csc_matrix(matrix)
+
+		return Sparse
+
+	def cross_val(self, estimator, x, y):
+		# n_jobs=-1 uses all the cores on your machine
+		f1_score = cross_val_score(estimator, x, y,
+							   scoring='f1',
+							   cv=5, n_jobs=-1) * -1
+
+		params = estimator.get_params()
+		name = estimator.__class__.__name__
+		print f1_score
+		# print '%s Train CV | F1: %.3f' % (name, f1_score)
+		
+		return f1_score
+
+
+
+	def Random_ForestClass(self):
+		trans_start = 0
+		trans_end = 300
+		print self.pca_train_x.shape
+		rf = RandomForestClassifier(random_state = 1)
+		rf.fit(self.pca_train_x[:,trans_start:trans_end], self.train_y)
+		print self.pca_test_x[:,trans_start:trans_end].shape
+		print trans_start
+		print trans_end
+		print 'rf score: ', rf.score(self.pca_test_x[:,trans_start:trans_end], self.test_y)
+		print 'cross_val: ', self.cross_val(rf,self.pca_test_x[:,trans_start:trans_end],self.test_y )
+		print 'avg f1 cross_val: ', sum(self.cross_val(rf,self.pca_test_x[:,trans_start:trans_end],self.test_y )
+		)/5.
+		# return rf.score(self.test_x[:,trans_start:trans_end], self.test_y)
+
+
+		
 
 	def Gradient_Boosting(self):
 
 		gdbr = GradientBoostingRegressor(learning_rate=0.1, loss='ls',
-		                                 n_estimators=100, random_state=1)
-		gdbr.fit(train_x, train_y)
+										 n_estimators=10000, random_state=1)
+
+		print self.cross_val(gdbr)
+		return gdbr.fit(train_x, train_y)
 
 
-	def K_Nearest_Neighbors(self):
-		knn = KNeighborsClassifier(n_neighbors=5)
-		knn.fit(self.feat_matrix, self.target_arr) 
-		print 'knn score: ', knn.score(self.feat_matrix, self.target_arr)
-		return knn.score(self.feat_matrix, self.target_arr)
+	def grid_search(est, grid):
+		grid_cv = GridSearchCV(est, grid, n_jobs=-1, verbose=True,
+							  scoring='f1').fit(train_x, train_y)
+		return grid_cv
+
 
 	def main(self):
-		# 1. K-Means
-		kmeans = KMeans(n_clusters = self.num_clusters)
-		kmeans.fit(self.feat_matrix)
-		# 2. Print out the centroids.
-		print "cluster centers:"
-		print kmeans.cluster_centers_
-		Random_Forest()
-		K_Nearest_Neighbors()
+		train_test_split()
+
+		rf = Random_ForestRegress()
+		gbr = Gradient_Boosting()
+
+		print rf, gbr
+
+
+		# rf_grid = {'max_depth': [3, None],
+		# 		   'max_features': [1, 3, 10],
+		# 		   'min_samples_split': [1, 3, 10],
+		# 		   'min_samples_leaf': [1, 3, 10],
+		# 		   'bootstrap': [True, False],
+		# 		   'n_estimators': [30, 1000, 10000],
+		# 		   'random_state': [1]}
+
+		# gd_grid = {'learning_rate': [0.1, 0.05, 0.02, 0.01],
+		# 		   'max_depth': [4, 6],
+		# 		   'min_samples_leaf': [3, 5, 9, 17],
+		# 		   'max_features': [1.0, 0.3, 0.1],
+		# 		   'n_estimators': [10000],
+		# 		   'random_state': [1]}
+
+		# rf_grid_search = self.grid_search(RandomForestRegressor(), rf_grid)
+		# gd_grid_search = self.grid_search(GradientBoostingRegressor(), gd_grid)
+		# rf_best = rf_grid_search.best_estimator_
+		# gd_best = gd_grid_search.best_estimator_
+
+
+
+		# # 1. K-Means
+		# kmeans = KMeans(n_clusters = self.num_clusters)
+		# kmeans.fit(self.feat_matrix)
+		# # 2. Print out the centroids.
+		# print "cluster centers:"
+		# print kmeans.cluster_centers_
 
 
 
@@ -78,12 +178,14 @@ class KMeansClustering(object):
 
 if __name__ == '__main__':
 	# load feature matrix
-	feat_matrix_file = '/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/rescaled_feat_matrix.csv'
-	feature_matrix = np.loadtxt(feat_matrix_file, delimiter = ',')
-	target_arr_file = '/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/size_ten_50_100_labels.csv'
-	target_arr = np.loadtxt(target_arr_file, delimiter= ',')
-	KMeansClustering(feature_matrix, 9)
-	main()
+	# feat_matrix_file = '/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/rescaled_feat_matrix.csv'
+	# feature_matrix = np.loadtxt(feat_matrix_file, delimiter = ',')
+	# target_arr_file = '/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/size_ten_50_50_labels.csv'
+	# target_arr = np.loadtxt(target_arr_file, delimiter= ',')
+	# KMeansClustering(feature_matrix,9,target_arr)
+	cluster = KMeansClustering(X, 7, y)
+	cluster.train_test_split()
+	pca_ratio = cluster.pca()
 
 
 
