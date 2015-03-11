@@ -19,8 +19,6 @@ class KMeansClustering(object):
 		self.train_y = None
 		self.test_x = None
 		self.test_y = None
-		self.pca_train_x = None
-		self.pca_test_x = None
 
 
 	def train_test_split(self):
@@ -33,19 +31,19 @@ class KMeansClustering(object):
 		n_col = int(self.train_x.shape[1]*.10)
 		pca = PCA(n_components=n_col)
 		train_feat = self.train_x
-		self.pca_train_x = pca.fit_transform(self.train_x)
-		self.pca_test_x = pca.fit_transform(self.test_x)
+		train_components = pca.fit_transform(train_feat)
+
 
 		# test_feat = self.test_x
 		# test_components = pca.fit_transform(test_feat)
-		# pca_range = np.arange(min(self.train_x.shape[0],n_col))
-		# # xbar_names = ['PCA_%s' % xtick for xtick in pca_range]
-		# plt.bar(pca_range, pca.explained_variance_ratio_, align='center')
-		# xticks = plt.xticks(np.arange(0,self.train_x.shape[0], 100), rotation=90)
-		# plt.ylabel('Variance Explained')
-		# plt.bar(np.arange(200), pca_ratio[:200], align = 'center')
-		# xticks = plt.xticks(np.arange(0,200, 10), rotation = 90)
-		# plt.show()
+		pca_range = np.arange(min(self.train_x.shape[0],n_col)) + 1
+		# xbar_names = ['PCA_%s' % xtick for xtick in pca_range]
+		plt.bar(pca_range, pca.explained_variance_ratio_, align='center')
+		xticks = plt.xticks(np.arange(0,self.train_x.shape[0], 100), rotation=90)
+		plt.ylabel('Variance Explained')
+		plt.bar(np.arange(200), pca_ratio[:200], align = 'center')
+		xticks = plt.xticks(np.arange(0,200, 10), rotation = 90)
+		plt.show()
 
 		return pca.explained_variance_ratio_
 
@@ -54,7 +52,6 @@ class KMeansClustering(object):
 		Sparse = csc_matrix(matrix)
 
 		return Sparse
-
 	def cross_val(self, estimator, x, y):
 		# n_jobs=-1 uses all the cores on your machine
 		f1_score = cross_val_score(estimator, x, y,
@@ -72,16 +69,17 @@ class KMeansClustering(object):
 
 	def Random_ForestClass(self):
 		trans_start = 0
-		trans_end = 300
-		print self.pca_train_x.shape
+		trans_end = 15000
 		rf = RandomForestClassifier(random_state = 1)
-		rf.fit(self.pca_train_x[:,trans_start:trans_end], self.train_y)
-		print self.pca_test_x[:,trans_start:trans_end].shape
+		rf.fit(self.train_x[:,trans_start:trans_end], self.train_y)
+		# train_components = pca.fit_transform(train_x)
+		# test_components = pca.fit_transform(test_x)
+		print self.train_x[:,trans_start:trans_end].shape
 		print trans_start
 		print trans_end
-		print 'rf score: ', rf.score(self.pca_test_x[:,trans_start:trans_end], self.test_y)
-		print 'cross_val: ', self.cross_val(rf,self.pca_test_x[:,trans_start:trans_end],self.test_y )
-		print 'avg f1 cross_val: ', sum(self.cross_val(rf,self.pca_test_x[:,trans_start:trans_end],self.test_y )
+		print 'rf score: ', rf.score(self.test_x[:,trans_start:trans_end], self.test_y)
+		print 'cross_val: ', self.cross_val(rf,self.test_x[:,trans_start:trans_end],self.test_y )
+		print 'avg f1 cross_val: ', sum(self.cross_val(rf,self.test_x[:,trans_start:trans_end],self.test_y )
 		)/5.
 		# return rf.score(self.test_x[:,trans_start:trans_end], self.test_y)
 
