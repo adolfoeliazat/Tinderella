@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Photos of Shoes</title>
+</head>
+<body>
+	
+{% for img_path in img_path_lst %}
+     <img src="{{ img_path }}">
+     <form action="/image_display" method='POST' >
+     Like or Not
+     <button name="user_pref" type="submit" value="1">Like</button>
+     <button name="user_pref" type="submit" value="-1">Displike</button>
+     </form>
+{% endfor %}
+
+
+</body>
+</html>
+
+
+
