@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import numpy as np
 from scipy.sparse import *
+from sklearn.cluster import KMeans
 
 class KMeansClustering(object):
 	def __init__(self, feat_matrix, num_clusters, target_arr = None):
@@ -69,7 +70,8 @@ class KMeansClustering(object):
 
 	def Random_ForestClass(self):
 		trans_start = 0
-		trans_end = 15000
+		trans_end = self.train_x.shape[1]
+		print self.train_x[:,trans_start:trans_end].shape
 		rf = RandomForestClassifier(random_state = 1)
 		rf.fit(self.train_x[:,trans_start:trans_end], self.train_y)
 		# train_components = pca.fit_transform(train_x)
@@ -100,12 +102,18 @@ class KMeansClustering(object):
 							  scoring='f1').fit(train_x, train_y)
 		return grid_cv
 
+	def kmeans(self):
+		kmeans = KMeans(n_clusters = self.num_clusters)
+		kmeans.fit(self.feat_matrix)
+
+		return kmeans
+
+
 
 	def main(self):
 		train_test_split()
 
 		rf = Random_ForestRegress()
-		gbr = Gradient_Boosting()
 
 		print rf, gbr
 
@@ -133,8 +141,8 @@ class KMeansClustering(object):
 
 
 		# # 1. K-Means
-		# kmeans = KMeans(n_clusters = self.num_clusters)
-		# kmeans.fit(self.feat_matrix)
+		kmeans = KMeans(n_clusters = self.num_clusters)
+		kmeans.fit(self.feat_matrix)
 		# # 2. Print out the centroids.
 		# print "cluster centers:"
 		# print kmeans.cluster_centers_
@@ -182,8 +190,13 @@ if __name__ == '__main__':
 	# target_arr = np.loadtxt(target_arr_file, delimiter= ',')
 	# KMeansClustering(feature_matrix,9,target_arr)
 	cluster = KMeansClustering(X, 7, y)
+	k = KMeans(n_clusters = 6)
+	k.fit(X)
+	f = open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/kmeansModel.pkl','w')
+	pickle.dump(k, f)
+	f.close()
 	cluster.train_test_split()
-	pca_ratio = cluster.pca()
+	cluster.Random_ForestClass()
 
 
 
