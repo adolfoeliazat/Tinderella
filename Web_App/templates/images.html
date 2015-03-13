@@ -1,20 +1,59 @@
 <html>
 <head>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript">
+	console.log({{path_lst | safe}});
+	function addLikes() {
+		$.ajax({
+			'url': '/get_likes_dislikes',
+			'data': JSON.stringify([1]),
+			'type': 'POST',
+			'dataType': 'json', 
+			'success': function(data) {
+				console.log('success!');
+			}
+
+
+		});
+
+
+	}
+
+
+
+    $(document).ready(function() {
+         $('#get_likes').on('click',function(evt) {
+                evt.preventDefault();
+
+                console.log('get_likes click');
+                $('#get_form').append('<div><p> Hello!</p> </div>');
+
+         });
+          $('#dislike').on('click',function(evt) {
+                evt.preventDefault();
+
+                console.log('get_likes click');
+                $('#get_form').append('<div><p> Dislike!</p> </div>');
+
+         });
+    });
+
+
+</script>
     <title>Photos of Shoes</title>
 </head>
 <body>
-	
-{% for img_path in img_path_lst %}
+{% for img_path in path_lst %}
      <img src="{{ img_path }}">
-     <form action="/image_display" method='POST' >
-     Like or Not
-     <button name="user_pref" type="submit" value="1">Like</button>
-     <button name="user_pref" type="submit" value="-1">Displike</button>
+     <form action="/get_likes_dislikes" method="POST" id="get_form">
+     	<input  type="image" name="user_input" value="1" src="../static/heart.jpg" width="48" height="48" id="get_likes">
+     	<input  type="image" name="user_input" value="-1" src="../static/broken_heart2.jpg" width="48" height="48" id="dislike">
      </form>
 {% endfor %}
 
-
 </body>
+
 </html>
 
 

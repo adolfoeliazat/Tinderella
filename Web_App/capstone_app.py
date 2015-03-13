@@ -20,31 +20,45 @@ def welcome():
 # First Template
 #==============================================
 # create the page the form goes to
-@app.route('/image_display' ) #, methods=['POST']
+@app.route('/image_display')
 def image_display():
 	fname2rowInd = pkl.load(open('data/fname_to_rowIndex.pkl', 'rb'))
-	fname_lst = fname2rowInd.keys()
-	ind_lst = fname2rowInd.values()
+	rand_fnames = random.sample(fname2rowInd, 5)
+	# rand_fnames = ['barneys_158585078.jpg', 'barneys_158585079.jpg', 'barneys_158585085.jpg', 'saks_0469652878373.jpg', 'saks_0469653001749.jpg', 'saks_0471952635914.jpg']
+	full_rand_fnames = ['../static/display/%s' % rand_fname for rand_fname in rand_fnames]
+	ind_lst = [fname2rowInd[rand_fname] for rand_fname in rand_fnames]
 
-	img_path_lst = []
-	random_image_index = random.sample(range(3200), 5)
-	# if 
-	for index in random_image_index:
-		img_path_lst.append(fname_lst[index])
+	print ind_lst
 
-	# return render_template('images.html', data = img_path_lst)
+	return render_template('images.html', path_lst=full_rand_fnames)
 
+@app.route('/get_likes_dislikes', methods=['POST'])
+def get_likes_dislikes():
+	print request
+	print 'HERE'
+	like, dislike
+	compute mean
+
+	data = request.json
+	image url
+	print data
+	return data
 # Display Results
 # ===============================================
 # Calculates the mean and returns the nearnest neighbor of the means
 @app.route('/results', methods=['POST'])
 def results():
 
-	kmeans = pickle.load(open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/kmeansModel.pkl','r'))
-	neigh = pickle.load(open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/neighbors', 'r'))
+
+	show img_url
+
+	# kmeans = pickle.load(open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/kmeansModel.pkl','r'))
+	neigh = pkl.load(open('data/nearest_neighbor.pkl', 'r'))
 	
-	user_preference = request.form['user_pref']
-	if user_preference == 1:
+	user_like = request.form['user_like']
+	user_not = request.form['user_not']
+
+	if user_like == 1:
 		np.append(likes, img)
 	mean_img_array = np.mean(np.array([likes]))
 	return neigh.kneighbors(mean_img_array, return_distance=False)
