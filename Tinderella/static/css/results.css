@@ -1,0 +1,103 @@
+/* Header styling */
+#tinderella_logo {
+    float: left;
+    background-image: url('/static/img/tinderella_logo.png');
+    background-size: 153px 60px;
+    width: 153px;
+    height: 60px;
+    margin: 2px 12px 0px;
+}
+
+#my_icon {
+    float: right;
+    background-image: url('/static/img/my_icon.png');
+    background-size: 149px 40px;
+    width: 149px;
+    height: 40px;
+    margin: 12px 7px 0px;
+}
+
+
+/* Results section */
+p#overall_title {
+    padding-top: 80px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 28px;
+    color: #333333;
+}
+
+.image_result {
+    width: 300px;
+    margin: 20px auto;
+}
+
+.image_border {
+    width: 300px;
+    height: 300px;
+    border: 1px solid #dddddd;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    margin:0 auto;
+}
+
+.image_result img {
+    height:300px;
+    display: block;
+    margin: 0 auto;
+}
+
+.image_metadata {
+    width: 200px;
+    height: 80px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.image_title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 0px;
+}
+
+.image_description, .image_price {
+    font-weight: 300;
+    font-size: 12px;
+    color: #666666;
+    margin: 0;
+}
+
+.image_links {
+    float: right;
+    position: relative;
+    top: -80px;
+}
+
+.link_button {
+    display:inline-block;
+    background-image:url('/static/img/link.png');
+    background-size: 20px 20px;
+    width: 20px;
+    height:20px;
+}
+
+/* Start Over button */
+a {
+    text-decoration: none;
+}
+
+#start_over {
+    margin: 0px auto 50px;
+    padding-top: 6px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #ff69b4;
+    width: 120px;
+    height: 30px;
+    border-radius: 8px;
+    text-align: center;
+}
+

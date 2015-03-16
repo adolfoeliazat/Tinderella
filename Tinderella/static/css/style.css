@@ -1,0 +1,170 @@
+/* Header styling */
+#tinderella_logo {
+    float: left;
+    background-image: url('/static/img/tinderella_logo.png');
+    background-size: 153px 60px;
+    width: 153px;
+    height: 60px;
+    margin: 10px 0px 0px 20px;
+}
+
+#my_icon {
+    display: block;
+    float: right;
+    background-image: url('/static/img/my_icon.png');
+    background-size: 149px 40px;
+    width: 149px;
+    height: 40px;
+    margin: 20px 30px 0px 0px;
+}
+
+/* Loader GIF */
+#loader_section {
+    position: relative;
+    top: 240px;
+    left: 50%;
+}
+
+#loader {
+    position: relative;
+    right:30px;
+    background-image: url('/static/img/loader.gif');
+    background-size: 48px 48px;
+    width: 48px;
+    height: 48px;
+}
+
+
+/* Card styling */
+
+td-cards {
+    display: block;
+}
+
+td-card {
+    position: absolute;
+    left: 50%;
+    margin: 80px 0 40px -150px;
+    top: 20px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid #999;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    background-color: rgb(255,255,255);
+}
+
+td-card .image {
+    position: absolute;
+    top: 30px;
+    left: 25px;
+    width: 100%;
+}
+
+td-card .cropped_image {
+    width: 250px;
+    height: 250px;
+}
+
+/* Overlay styling*/
+
+.overlayBox {
+    position: absolute;
+    left: 50%;
+    height: 114%;
+    width: 100%;
+    top: -114.5px;
+    bottom: 300px;
+    opacity: 0;
+    margin: 80px 0 0 -149px;
+}
+
+.icon_image {
+    margin: 100% 80% 0% 35%;
+
+}
+
+.boxed1 {
+    height: 50px;
+    width: 100px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 30px;
+}
+
+.boxed2 {
+    height: 50px;
+    width: 150px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 30px;
+}
+
+.yes-text {
+    background-color: rgba(255,105,180,0.2);
+}
+
+.yesBox-img{
+    margin: 10% 80% 0% 37%;
+    color: rgb(255,255,255);
+}
+.yesBox-text{
+    margin: 10% 80% 0% 35%;
+    padding-left: 5%;
+    padding-top: 5%;
+    background: #ff69b4;
+    color: #ffffff;
+}
+
+.no-text {
+    background-color: rgba(178,177,177,0.2);
+}
+
+.noBox-img {
+    margin: 15% 10% 0% 37%;
+    color: rgb(255,255,255);
+    /*-webkit-transform: rotate(25deg);*/
+}
+.noBox-text {
+    margin: 10% 10% 0% 25%;
+    padding-left: 5%;
+    padding-top: 5%;
+    background: #b2b1b1;
+    color: #ffffff;
+    /*-webkit-transform: rotate(25deg);*/
+}
+
+.fade {
+    -webkit-transition: 0.2s opacity linear;
+    transition: 0.2s opacity linear;
+    opacity: 0;
+}
+
+
+/* Like and Dislike buttons */
+.like_dislike_buttons {
+    position:relative;
+    top: 400px;
+    left: 50%;
+}
+
+#dislike_button {
+    display: inline-block;
+    background-image: url('/static/img/dislike_icon.png');
+    background-size: 72px 72px;
+    width:72px;
+    height:72px;
+    position: relative;
+    right:280px;
+}
+
+#like_button {
+    display: inline-block;
+    background-image: url('/static/img/like_icon.png');
+    background-size: 72px 72px;
+    width:72px;
+    height:72px;
+    position: relative;
+    right:215px;
+}
+

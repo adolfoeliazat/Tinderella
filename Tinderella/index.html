@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Tinderella - Welcome</title>
+
+    <link href="/static/lib/ionic/css/ionic.css" rel="stylesheet"/>
+    <link href="/static/css/style.css" rel="stylesheet"/>
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- jQuery for AJAX calls -->
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <!-- ionic/angularjs js -->
+    <script src="/static/lib/ionic/js/ionic.bundle.js"></script>
+  
+    <!-- your app's js -->
+    <script src="/static/js/app.js"></script>
+    <!--<script src="lib/node-walk/walk.js"></script>-->
+    <script src="/static/lib/collide/collide.js"></script>
+    <script src="/static/lib/ionic-contrib-tinder-cards/ionic.tdcards.js"></script>
+  </head>
+  <body ng-app="starter" no-scroll>
+    <ion-pane ng-controller="CardsCtrl">
+        <div id="tinderella_logo"></div>
+        <div id="my_icon"></div>
+
+        <td-cards>
+            <td-card id="td-card" ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-swipe-left="cardSwipedLeft($index)" on-swipe-right="cardSwipedRight($index)" on-partial-swipe="cardPartialSwipe(amt)">
+              <div class="image">
+                <div class="no-text overlayBox">
+                  <div class="noBox-img icon_image">
+                    <img src="/static/img/dislike_icon.png" style = "width: 70px; height: 80px"/>
+                  </div>
+                  <div class="noBox-text boxed2">DISLIKE!
+                  </div>
+                </div>
+                <div class="cropped_image" ng-style="{'background': 'url({{card.url}}) no-repeat center center'}"></div>
+                <div class="yes-text overlayBox">
+                  <div class="yesBox-img icon_image">
+                    <img src="/static/img/like_icon.png" style = "width: 70px; height: 80px"/>
+                  </div>
+                  <div class="yesBox-text boxed1" id="centerMe">LIKE!
+                  </div>
+                </div>
+              </div>
+            </td-card>
+        </td-cards>
+
+        <div id="loader_section">
+          <div id="loader"></div>
+        </div>
+
+        <div class="like_dislike_buttons">
+          <div id="dislike_button" ng-click="cardSwipedLeft(0);cardDestroyed(0);"></div>
+          <div id="like_button" ng-click="cardSwipedRight(0);cardDestroyed(0);"></div>
+        </div>
+
+    </ion-pane>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Tinderella - Results</title>
+
+    <link href="/static/css/results.css" rel="stylesheet"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'/>
+
+    <!-- Please call pinit.js only once per page -->
+    <script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
+  </head>
+  <body>
+    <div id="tinderella_logo"></div>
+    <div id="my_icon"></div>
+    <p id="overall_title">Here are your recommended shoes!</p>
+
+    <div id="results_section">
+      {% for image in images %}
+        <div class="image_result">
+          <div class="image_border" style="background:url({{image}}) no-repeat center center;">
+          </div>
+          <div class="image_metadata">
+            <p class="image_title">Christian Louboutin</p>
+            <p class="image_description">{{image}}</p>
+            <p class="image_price">$499</p>
+          </div>
+          <div class="image_links">
+            <a href="//www.barneys.com/"><div class="link_button"></div></a>
+            <a href="//www.pinterest.com/pin/create/button" data-pin-do="buttonBookmark" data-pin-color="red" data-pin-height="20">
+              <img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" />
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <a href="/">
+      <div id="start_over">
+        Start Over
+      </div>
+
+  </body>
+</html>
+
