@@ -146,6 +146,7 @@ td-card .cropped_image {
     position:relative;
     top: 400px;
     left: 50%;
+    cursor: pointer;
 }
 
 #dislike_button {
