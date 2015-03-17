@@ -132,5 +132,5 @@ if __name__ == '__main__':
 	app.mongo_table = client[db][table_name]
 	app.mongo_db = client[db]
 
-	app.run(host='0.0.0.0', port=1111, debug=True)
+	app.run(host='0.0.0.0', port=80, debug=True)
 
