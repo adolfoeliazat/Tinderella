@@ -3,10 +3,11 @@ from sklearn.neighbors import NearestNeighbors
 from collections import defaultdict 
 import random
 from Pipeline_CommonFunctions import clean_file_lst
+import cPickle as pkl
 
 
 class Recommender(object):
-	def __init__(self, feature_matrix, item_path):
+	def __init__(self, feature_matrix, item_path= None):
 		'''
 		INPUT:
 			- feature_matrix: full feature matrix
@@ -35,16 +36,25 @@ class Recommender(object):
 		return np.mean(np.array([likes]), axis =0)
 
 
-	def find_nearest_neighbors(self, mean_img_array):
+	def find_nearest_neighbors(self):
 		'''
 		INPUT: None
 		OUTPUT:
 			- 5 nearest neighbors of the point
 		Return the 5 nearest neighbors.
 		'''
-		self.neighbor_dict = defaultdict(list)
-		neigh = NearestNeighbors(n_neighbors=6)
-		neigh.fit(self.feature_matrix)
+		# self.neighbor_dict = defaultdict(list)
+		neigh = NearestNeighbors(n_neighbors=20)
+		neigh.fit(X)
+		with open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/NN_full50_20neighbors.pkl', 'w') as f:
+			pkl.dump(neigh, f)
+
+
+		neigh2 = NearestNeighbors(n_neighbors=20)
+		neigh2.fit(X)
+
+		with open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/NN_50_20neighbors.pkl', 'w') as f2:
+			pkl.dump(neigh2, f2)
 		# for i in xrange(self.feature_matrix.shape[0]):
 		# 	indices = neigh.kneighbors(self.feature_matrix[i], return_distance=False)
 
@@ -59,12 +69,12 @@ class Recommender(object):
 
 
 if __name__ == '__main__':
-	feature_df = pd.read_pickle('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/feature_matrix_test15k.pkl')
-	rm = Recommender(X,item_name)
-	show_random_img = rm.get_random_img()
-	print show_random_img
-	avg_img_array = rm.get_likes()
-	rm.find_nearest_neighbors(avg_img_array)
+	# feature_df = pd.read_pickle('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/feature_matrix_test15k.pkl')
+	# rm = Recommender(X,item_name)
+	# show_random_img = rm.get_random_img()
+	# print show_random_img
+	# avg_img_array = rm.get_likes()
+	# rm.find_nearest_neighbors(avg_img_array)
 
 	
 	

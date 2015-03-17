@@ -242,11 +242,12 @@ class Feature_Engineer(object):
 		total_images = 0
 		num_failed = 0
 		fails =[]
-		X = []
-		y = []
+
 		full_matrix = []
 		label_vec = []
 		f= open('%s/size_new_twenty_50_50_10e_labels.csv'%FeatVecs_path, 'w')
+		t = open('%s/size_new_twenty_50_50_10e_items.csv'%FeatVecs_path, 'w')
+		non = open('%s/size_new_twenty_50_50_10e_fails.csv'%FeatVecs_path, 'w')
 		# f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/size_twenty_50_50_10e_labels.csv', 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
@@ -275,6 +276,7 @@ class Feature_Engineer(object):
 				except IndexError:
 					num_failed +=1
 					fails.append(img_file_path)
+					non.write(img_file)
 					continue
 
 				# Apply filters to transform image array
@@ -296,7 +298,8 @@ class Feature_Engineer(object):
 				feat_vector= self.create_feature_vector(pre_trans_feat, post_trans_feat,unflattened_trans_img_arr)
 				f.write(label + ',')
 				label_vec.append(label)
-				np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.10e', delimiter=',') 
+				t.write(img_file+',')
+				# np.save('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.10e', delimiter=',') 
 			
 				print 'feature vector shape', feat_vector.shape
 				# Append feature vector and label to full image matrix
@@ -313,9 +316,7 @@ class Feature_Engineer(object):
 
 		# Apply StandardScaler to feature matrix
 		rescaled_feat_matrix = self.rescaling(full_matrix)
-		np.savetxt('%s/rescaled_new_feat_matrix_50_50_10e.csv' %FeatVecs_path, rescaled_feat_matrix, fmt='%.10e', delimiter=',') 
-		m = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/feature_matrix.pkl', 'w')
-		pickle.dump(rescaled_feat_matrix, m)
+		np.save('%s/rescaled_new_feat_matrix_50_50_10e.npy' %FeatVecs_path, rescaled_feat_matrix) 
 
 		return rescaled_feat_matrix, label_vec, fails
 

@@ -92,6 +92,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
                         // Navigate to the results page once done
                         window.open('/results', '_self');
                     } else {
+                        // if user did not like any item, navigate back to homepage
                         window.open('/', '_self');
                     }
                 }

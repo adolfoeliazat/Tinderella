@@ -22,15 +22,15 @@
           <div class="image_border" style="background:url({{image}}) no-repeat center center;">
           </div>
           <div class="image_metadata">
-            <p class="image_title">Christian Louboutin</p>
-            <p class="image_description">{{image}}</p>
-            <p class="image_price">$499</p>
+            <p class="image_designer">{{metadata[loop.index -1].designer_name}}</p>
+            <p class="image_description">{{metadata[loop.index-1].description}}</p>
+            <p class="image_price">{{metadata[loop.index-1].price}}</p>
           </div>
           <div class="image_links">
-            <a href="//www.barneys.com/"><div class="link_button"></div></a>
-            <a href="//www.pinterest.com/pin/create/button" data-pin-do="buttonBookmark" data-pin-color="red" data-pin-height="20">
-              <img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" />
-            </a>
+            <a href="{{metadata[loop.index-1].product_link}}" target="_blank"><div class="link_button"></div></a>
+            <a href="//www.pinterest.com/pin/create/button/?url={{metadata[loop.index-1].product_link|urlencode}}&media={{('http://localhost:1111/' + image)|urlencode}}&description=Next%20stop%3A%20Pinterest" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" /></a>
+<!-- Please call pinit.js only once per page -->
+<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
           </div>
         </div>
       {% endfor %}

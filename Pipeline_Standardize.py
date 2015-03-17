@@ -8,6 +8,7 @@ from sklearn.cross_validation import train_test_split
 import os
 import matplotlib.pyplot as plt
 import sys
+from Pipeline_CommonFunctions import clean_file_lst
 
 # pwd = u'/Users/heymanhn/Virginia/Zipfian/Capstone_Project/Images'
 
@@ -19,7 +20,7 @@ class Standardize_Images(object):
 	Output: Standardized images in output directories
 	(same directory structure )
 	"""
-	def __init__(self, img_size, img_directory='Images_New',
+	def __init__(self, img_size, img_directory='Image_20Percent',
 				 path='/Users/heymanhn/Virginia/Zipfian/Capstone_Project/'):
 		"""
 		input: Size of the generated output image (rows, cols[, dim]). 
@@ -30,29 +31,18 @@ class Standardize_Images(object):
 		# parent_dirs_path: path to directory consists of all categories
 		self.parent_dir_path = os.path.join(path, img_directory) 
 		self.uniform_parent_dir_path = None
-		self.uniform_parent_dir = 'Output_Images'
+		self.uniform_parent_dir = 'Output_Images_new_twenty_200'
 		self.output_dir_path = None
-
-
-	def clean_file_lst(self, file_name_lst, jpg=False):
-		"""
-		input: list of file/directory file names
-		output: cleaned list consisting of only jpg files and non-hidden directories.
-		"""
-		if not jpg:
-			return [fname for fname in file_name_lst if not fname.startswith('.')]
-		elif jpg:
-			return [fname for fname in file_name_lst if '.jpg' in fname]
 
 	
 	def mk_output_directory(self):
 		self.uniform_parent_dir_path = os.path.join(self.path, self.uniform_parent_dir)
-		clean_parent_dir = self.clean_file_lst(os.listdir(self.parent_dir_path), jpg=False)
+		clean_parent_dir = clean_file_lst(os.listdir(self.parent_dir_path), jpg=False)
 
 		if not os.path.exists(self.uniform_parent_dir_path):
 			os.mkdir(self.uniform_parent_dir)
 			for subdir in clean_parent_dir:
-					self.output_dir_path = os.path.join(self.uniform_parent_dir_path, subdir + '_uniform')
+					self.output_dir_path = os.path.join(self.uniform_parent_dir_path, subdir + '_uniform_new_twenty_200')
 					if not os.path.exists(self.output_dir_path):
 						os.mkdir(self.output_dir_path)
 
@@ -63,13 +53,13 @@ class Standardize_Images(object):
 		save to output directory
 		"""
 
-		clean_parent_dir = self.clean_file_lst(os.listdir(self.parent_dir_path), jpg=False)
+		clean_parent_dir = clean_file_lst(os.listdir(self.parent_dir_path), jpg=False)
 
 		for subdir in clean_parent_dir:
 				subdir_path = os.path.join(self.parent_dir_path, subdir)
-				clean_img_list = self.clean_file_lst(os.listdir(subdir_path), jpg=True)
+				clean_img_lst = clean_file_lst(os.listdir(subdir_path), jpg=True)
 				for img_file in clean_img_lst:
-					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform')
+					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform_new_twenty_200')
 					img_file_path = os.path.join(subdir_path, img_file)
 					resized_img_arr = self.do_standardize(img_file_path)
 					uniform_img_path = os.path.join(output_dir_path_pop, img_file)
@@ -93,7 +83,7 @@ class Standardize_Images(object):
 
 
 if __name__ == '__main__':
-	s = Standardize_Images((28,28))
+	s = Standardize_Images((200,200))
 	s.mk_output_directory()
 	s. standardize()
 	

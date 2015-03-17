@@ -28,25 +28,25 @@ class KMeansClustering(object):
 		print 'Train x Shape:', self.train_x.shape
 		print 'Test x Shape:', self.test_x.shape
 
-	def pca(self):
-		n_col = int(self.train_x.shape[1]*.10)
-		pca = PCA(n_components=n_col)
-		train_feat = self.train_x
-		train_components = pca.fit_transform(train_feat)
+	# def pca(self):
+	# 	n_col = int(self.train_x.shape[1]*.10)
+	# 	pca = PCA(n_components=n_col)
+	# 	train_feat = self.train_x
+	# 	train_components = pca.fit_transform(train_feat)
 
 
-		# test_feat = self.test_x
-		# test_components = pca.fit_transform(test_feat)
-		pca_range = np.arange(min(self.train_x.shape[0],n_col)) + 1
-		# xbar_names = ['PCA_%s' % xtick for xtick in pca_range]
-		plt.bar(pca_range, pca.explained_variance_ratio_, align='center')
-		xticks = plt.xticks(np.arange(0,self.train_x.shape[0], 100), rotation=90)
-		plt.ylabel('Variance Explained')
-		plt.bar(np.arange(200), pca_ratio[:200], align = 'center')
-		xticks = plt.xticks(np.arange(0,200, 10), rotation = 90)
-		plt.show()
+	# 	# test_feat = self.test_x
+	# 	# test_components = pca.fit_transform(test_feat)
+	# 	pca_range = np.arange(min(self.train_x.shape[0],n_col)) + 1
+	# 	# xbar_names = ['PCA_%s' % xtick for xtick in pca_range]
+	# 	plt.bar(pca_range, pca.explained_variance_ratio_, align='center')
+	# 	xticks = plt.xticks(np.arange(0,self.train_x.shape[0], 100), rotation=90)
+	# 	plt.ylabel('Variance Explained')
+	# 	plt.bar(np.arange(200), pca_ratio[:200], align = 'center')
+	# 	xticks = plt.xticks(np.arange(0,200, 10), rotation = 90)
+	# 	plt.show()
 
-		return pca.explained_variance_ratio_
+	# 	return pca.explained_variance_ratio_
 
 
 	def mksparse(matix):
@@ -77,8 +77,6 @@ class KMeansClustering(object):
 		# train_components = pca.fit_transform(train_x)
 		# test_components = pca.fit_transform(test_x)
 		print self.train_x[:,trans_start:trans_end].shape
-		print trans_start
-		print trans_end
 		print 'rf score: ', rf.score(self.test_x[:,trans_start:trans_end], self.test_y)
 		print 'cross_val: ', self.cross_val(rf,self.test_x[:,trans_start:trans_end],self.test_y )
 		print 'avg f1 cross_val: ', sum(self.cross_val(rf,self.test_x[:,trans_start:trans_end],self.test_y )
@@ -189,16 +187,43 @@ if __name__ == '__main__':
 	# target_arr_file = '/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/size_ten_50_50_labels.csv'
 	# target_arr = np.loadtxt(target_arr_file, delimiter= ',')
 	# KMeansClustering(feature_matrix,9,target_arr)
-	cluster = KMeansClustering(X, 7, y)
-	k = KMeans(n_clusters = 6)
-	k.fit(X)
-	f = open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/kmeansModel.pkl','w')
-	pickle.dump(k, f)
-	f.close()
-	cluster.train_test_split()
-	cluster.Random_ForestClass()
+	# cluster = KMeansClustering(X, 7, y)
+	# k = KMeans(n_clusters = 6)
+	# k.fit(X)
+	# f = open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/kmeansModel.pkl','w')
+	# pickle.dump(k, f)
 
+	# neigh = NearestNeighbors(n_neighbors=6)
+	# neigh.fit(X)
+	# neigh.kneighbors(mean_img_array, return_distance=False)
+	# # m = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/nearest_neighbor.pkl','w')
+	# # pickle.dump(neigh, m)
+	# m.close()
+	# cluster.train_test_split()
+	# cluster.Random_ForestClass()
+	num_clusters = 6
+	feat_matrix = X
+	target_arr = y
 
+	test15k_100_100 = KMeansClustering(feat_matrix, num_clusters, target_arr)
+	test15k_100_100.train_test_split()
+	print test15k_100_100.Random_ForestClass()
+
+	import numpy as np
+	X = np.load('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/rescaled_new_feat_matrix_50_50_10e_test15k.npy')
+
+	with open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/size_new_twenty_50_50_10e_test15k_labels.csv', 'r') as f:
+		y = f.read().split(',')
+
+	y_clean = [name for name in y if name]
+
+	num_clusters = 6
+	feat_matrix = X
+	target_arr = y_clean
+
+	test15k_50_50 = KMeansClustering(feat_matrix, num_clusters, target_arr)
+	test15k_50_50.train_test_split()
+	print test15k_50_50.Random_ForestClass()
 
 
 

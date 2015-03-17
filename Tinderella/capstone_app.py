@@ -5,13 +5,16 @@ from flask import Flask, redirect, request, render_template
 from flask.json import jsonify
 import random
 import numpy as np
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 # Global variables
 app.likes = []
 app.images = []
+app.product_lst = []
 app.results_images = []
+app.results_meta = []
 
 
 # # OUR HOME PAGE
@@ -75,12 +78,26 @@ def process_results():
 		return jsonify(success=False)
 
 	app.results_images = []
+	app.results_meta = []
+
+	app.product_lst = [item.strip('.jpg').split('_',1) for item in app.images]
 	mean_img_array = np.mean(np.array(app.feature_matrix[app.likes]), axis=0)
 
 	neighbors = app.NN_model.kneighbors(mean_img_array, return_distance=False)
-	print neighbors[0]
+	print 'neighbor indices: ', neighbors[0]
 	for n in neighbors[0]:
+		print 'product_name = ', app.images[n]
 		app.results_images.append('/static/shoes/' + app.images[n])
+		count = 0
+		for collection in app.mongo_db.collection_names():
+			cursor = app.mongo_db[collection].find({'company': app.product_lst[n][0], 'product_id': app.product_lst[n][1]})
+			for info in cursor:
+				if count == 0:
+					app.results_meta.append(info)
+				count += 1
+
+
+	print 'results_meta', len(app.results_meta)
 
 	return jsonify(success=True)
 
@@ -97,7 +114,7 @@ def display_results():
 		# for each result. Add these to a separate list, ensuring they are
 		# in the same order as app.results_images. Then include that list
 		# in render_template.
-		return render_template('results.html', images=app.results_images)
+		return render_template('results.html', images=app.results_images, metadata=app.results_meta)
 
 
 if __name__ == '__main__':
@@ -108,6 +125,12 @@ if __name__ == '__main__':
 	with open('data/NN_50.pkl','r') as m:
 		app.NN_model = pkl.load(m)
 	print('NN_model loaded')
+
+	db = 'shoes'
+	table_name = 'category'
+	client = MongoClient()
+	app.mongo_table = client[db][table_name]
+	app.mongo_db = client[db]
 
 	app.run(host='0.0.0.0', port=1111, debug=True)
 

@@ -243,8 +243,6 @@ class Feature_Engineer(object):
 		total_images = 0
 		num_failed = 0
 		fails =[]
-		X = []
-		y = []
 		full_matrix = []
 		label_vec = []
 		f = open('%s/size_new_twenty_50_50_10e_test15k_labels.csv'%FeatVecs_path, 'w')
