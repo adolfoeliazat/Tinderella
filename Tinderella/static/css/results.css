@@ -61,6 +61,14 @@ p#overall_title {
     margin-bottom: 0px;
 }
 
+.image_designer a {
+    color: #000000;
+}
+
+.image_designer a:hover {
+    text-decoration: underline;
+}
+
 .image_description, .image_price {
     font-weight: 300;
     font-size: 12px;

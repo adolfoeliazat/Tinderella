@@ -31,7 +31,7 @@ class Color_Clustering(object):
 		index_max = scipy.argsort(counts) [::-1]           # find most frequent in desc order
 		for i in codes[index_max]:
 			colour = ''.join(chr(c) for c in i).encode('hex')
-			# print 'most frequent is %s (#%s)' % (i, colour)
+			print 'most frequent is %s (#%s)' % (i, colour)
 
 		return codes[index_max]
 

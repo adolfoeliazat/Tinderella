@@ -50,6 +50,7 @@ class SaksScraper(object):
 					 		'wedding':'Wedding/shop/_/N-52k0sz/Ne-6lvnb5?FOLDER<>folder_id=2534374306624275',
 					 		'oxfords_loafers_moccasins':'Oxfords-Loafers-and-Moccasins/shop/_/N-52k0si/Ne-6lvnb5?FOLDER<>folder_id=2534374306624258'}
 
+		
 		param_str = ''
 		category_url = category_dict[self.category]
 		for key, val in self.params.iteritems():

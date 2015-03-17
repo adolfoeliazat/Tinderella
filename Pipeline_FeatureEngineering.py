@@ -241,6 +241,7 @@ class Feature_Engineer(object):
 		X = []
 		y = []
 		full_matrix_label = []	
+		f= open('%s/size_28_labels.csv'%FeatVecs_path, 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -275,9 +276,9 @@ class Feature_Engineer(object):
 					total_post_feat_detec.append(post_feat_det_size)
 					#flattened AND concatenated feature vector
 					feat_vector= self.create_feature_vector(pre_trans_feat, post_trans_feat,unflattened_trans_img_arr)
-					
-					np.savetxt('%s/size_28.csv' %self.cached_feature_vector_file, feat_vector, fmt='%.18e', delimiter=',') 
-
+					f.write(label + ',')
+					np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.18e', delimiter=',') 
+				
 					print 'feature vector shape', feat_vector.shape
 					# Append feature vector and label to full image matrix
 					full_matrix_label.append((feat_vector, label))
@@ -287,7 +288,8 @@ class Feature_Engineer(object):
 				except IndexError:
 					num_failed +=1
 					print 'number of fails so far: ', num_failed
-			
+		
+		f.close()	
 		print 'total_images', total_images
 		print 'num_fails', num_failed
 		print 'ratio', num_failed/float(total_images)
@@ -305,14 +307,18 @@ class Feature_Engineer(object):
 		rescaled_feat_matrix = self.rescaling(X)
 
 		print rescaled_feat_matrix 
-		return rescaled_feat_matrix
+		return rescaled_feat_matrix, y
 
 if __name__ == '__main__':
 	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
-	full_dir_path = os.path.join(dir_path, 'Test_Output_Images')
-	cach_FeatVecs_path = os.path.join(dir_path, 'FeatVecs')
-	if not os.path.exists(cach_FeatVecs_path):
+	full_dir_path = os.path.join(dir_path, 'Output_Images')
+	FeatVecs_path = os.path.join(dir_path, 'FeatVecs')
+	if not os.path.exists(FeatVecs_path):
 		os.mkdir('FeatVecs')
+	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_28_feat/')
+	if not os.path.exists(cach_FeatVecs_path):
+		os.mkdir('FeatVecs/size_28_feat/')
+
 	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(100,100))
 	X,y= fm.feature_preprocessing()
 

@@ -1,0 +1,112 @@
+
+<!-- saved from url=(0827)http://t.tellapart.com/hif?p=NsPocrc1w1ZFLyKC7ijQOab_6gILAAEAAAAQMSjLNPBym5HrWw8VkkQK3QsAAgAAABCr3D-DXA2pcOMY0UW_zNFFCgADAAABTBFM0YIPAAQLAAAAAgAAAAMxNTMAAAADMTU2CwAFAAAADEt6alpzNnBLclVScgwABggAAgAAAAoCAAgBAgAJAAIACgACAAsBAgAMAQQADb_wWhmMLH4iBgAOAAACAA8AAgARAAIAEgEADwAHCwAAAAAIAAgAAAABDQAJCw0AAAACAAAAAzE1MwsLAAAAAQAAAAp3Y2FfcGl4ZWxzAAAAIDE1OTAxOTU1ODc4NjA2MzUsNjA0MDcxOTE2MzY2OTQ4AAAAAzE1NgsLAAAABgAAABRkeW5hbWljX3Byb2R1Y3Rfc2t1cwAAAAknMzk4MDI4MScAAAAiZHluYW1pY19wcm9kdWN0X3JlbWFya2V0aW5nX3BpeGVscwAAAA83OTE1MTUxODA4OTc1MTcAAAAhZHluYW1pY19wcm9kdWN0X3JlbWFya2V0aW5nX2V2ZW50AAAAC1ZpZXdDb250ZW50AAAAEGRwYV9jb250ZW50X3R5cGUAAAAHcHJvZHVjdAAAAA9wcm9kdWN0X2NhdGFsb2cAAAAQMTM5NDc1NDA5NzQ5ODYwNAAAABtkeW5hbWljX3Byb2R1Y3RfZXh0ZXJuYWxfaWQAAAAYUDh5N01MUGlMckU0SmRZcUI0SEZYUT09AA==&taaud=F15hn37&sku=3980281&taaud=7R4p323&tms=1426219389021 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body>
+<script async="" src="fbds.js"></script><script type="text/javascript">
+// Maximum time allowed for pixels to load.
+var MAX_PIXEL_LOAD_TIME = 3000;
+// Ensures no more pixels are loaded after MAX_PIXEL_LOAD_TIME by removing src
+// attribute.
+setTimeout(function(){
+  var images = document.getElementsByTagName("img");
+  var img;
+  for (var i = 0, il = images.length; i < il; i++) {
+    img = images[i];
+    img.onload = null;
+    img.removeAttribute("src");
+  }
+}, MAX_PIXEL_LOAD_TIME);
+
+function setCookie(k,v) {
+  var ex = new Date();
+  ex.setFullYear(ex.getFullYear() + 1);
+  document.cookie = k + "=" + v + "; expires=" + ex.toUTCString() + "; Path=/;"
+                    + " Domain=t.tellapart.com;"
+}
+function getCookie(k) {
+  var a = document.cookie.split(";");
+  for (var i = 0; i < a.length; i++) {
+    var n = a[i].indexOf("=");
+    var k1 = a[i].substr(0, n);
+    var v = a[i].substr(n + 1);
+    if (k == k1.replace(/^\s+|\s+$/g,"")){
+      return v;
+    }
+  }
+}
+function addPixel(s, p, sep) {
+  var l = [];
+  if (s) {
+    l = s.split(sep);
+  }
+  for (var i = 0; i < l.length; i++) {
+    if (l[i] == p) {
+      return s;
+    }
+  }
+  l.push(p);
+  return l.join(sep);
+}
+function pixelOnLoad(p) {
+  var pd = getCookie("__cmbPD");
+  setCookie("__cmbPD", addPixel(pd, p, "/"));
+}
+function pixelListOnLoad(p) {
+  for (i=0; i < p.length; i++) {
+    pixelOnLoad(p[i])
+  }
+}
+function dclkOnLoad(p) {
+  var iframes = document.getElementsByName("google_conversion_frame");
+  if (iframes && iframes.length == 1) {
+    var iframe = iframes[0];
+    var onload = iframe.onload;
+    iframe.onload = function() { if (onload) onload(); pixelListOnLoad(p); };
+
+    iframe.name = "google_conversion_frame_loaded";
+    return;
+  }
+  var images = document.getElementsByTagName("img");
+  var i;
+  var img;
+  for (i = 0; i < images.length; i++) {
+    img = images[i];
+    if ((img.src.indexOf("www.googleadservices.com") >= 0 ||
+        img.src.indexOf("googleads.g.doubleclick.net") >= 0) && !img.name) {
+      var onload = img.onload;
+      img.onload = function() { if (onload) onload(); pixelListOnLoad(p); };
+      img.name = "google_conversion_img_" + p;
+      return;
+    }
+  }
+}
+
+setCookie("__cmbPI", "NsPocrc1w1ZFLyKC7ijQOab_6gILAAEAAAAQMSjLNPBym5HrWw8VkkQK3QsAAgAAABCr3D-DXA2pcOMY0UW_zNFFCgADAAABTBFM0YIPAAQLAAAAAgAAAAMxNTMAAAADMTU2CwAFAAAADEt6alpzNnBLclVScgwABggAAgAAAAoCAAgBAgAJAAIACgACAAsBAgAMAQQADb_wWhmMLH4iBgAOAAACAA8AAgARAAIAEgEADwAHCwAAAAAIAAgAAAABDQAJCw0AAAACAAAAAzE1MwsLAAAAAQAAAAp3Y2FfcGl4ZWxzAAAAIDE1OTAxOTU1ODc4NjA2MzUsNjA0MDcxOTE2MzY2OTQ4AAAAAzE1NgsLAAAABgAAABRkeW5hbWljX3Byb2R1Y3Rfc2t1cwAAAAknMzk4MDI4MScAAAAiZHluYW1pY19wcm9kdWN0X3JlbWFya2V0aW5nX3BpeGVscwAAAA83OTE1MTUxODA4OTc1MTcAAAAhZHluYW1pY19wcm9kdWN0X3JlbWFya2V0aW5nX2V2ZW50AAAAC1ZpZXdDb250ZW50AAAAEGRwYV9jb250ZW50X3R5cGUAAAAHcHJvZHVjdAAAAA9wcm9kdWN0X2NhdGFsb2cAAAAQMTM5NDc1NDA5NzQ5ODYwNAAAABtkeW5hbWljX3Byb2R1Y3RfZXh0ZXJuYWxfaWQAAAAYUDh5N01MUGlMckU0SmRZcUI0SEZYUT09AA==");
+setCookie("__cmbPD", "");
+</script>
+<img onload="pixelOnLoad(&#39;153&#39;);" height="1" width="1" alt="" style="display:none"><img height="1" width="1" alt="" style="display:none">
+
+<script type="text/javascript">
+(function() {
+  var _fbq = window._fbq || (window._fbq = []);
+  if (!_fbq.loaded) {
+    var fbds = document.createElement("script");
+    fbds.async = true;
+    fbds.src = "//connect.facebook.net/en_US/fbds.js";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(fbds, s);
+    _fbq.loaded = true;
+  }
+  _fbq.push(["addPixelId", "791515180897517"]);
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(["track", "ViewContent", {
+  content_ids: ['3980281'],
+  content_type: "product",
+  external_id: "P8y7MLPiLrE4JdYqB4HFXQ==",
+  product_catalog_id: 1394754097498604
+}]);
+</script>
+  
+<script type="text/javascript">var req_time = new Date().getTime() - 1426219389021
+document.cookie = "__cmbTmf=" + req_time + "; expires=Fri, 20-Mar-2015 04:03:09 GMT; Path=/; Domain=.tellapart.com"</script>
+</body></html>

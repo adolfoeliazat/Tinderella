@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>Tinderella - Results</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico"/>
+    <link rel="apple-touch-icon" href="/static/img/small_logo.png"/>
 
     <link href="/static/css/results.css" rel="stylesheet"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'/>
@@ -22,15 +24,17 @@
           <div class="image_border" style="background:url({{image}}) no-repeat center center;">
           </div>
           <div class="image_metadata">
-            <p class="image_designer">{{metadata[loop.index -1].designer_name}}</p>
+            <p class="image_designer"><a href="{{metadata[loop.index-1].product_link}}" target="_blank">{{metadata[loop.index -1].designer_name}}</a></p>
             <p class="image_description">{{metadata[loop.index-1].description}}</p>
             <p class="image_price">{{metadata[loop.index-1].price}}</p>
           </div>
           <div class="image_links">
             <a href="{{metadata[loop.index-1].product_link}}" target="_blank"><div class="link_button"></div></a>
-            <a href="//www.pinterest.com/pin/create/button/?url={{metadata[loop.index-1].product_link|urlencode}}&media={{('http://localhost:1111/' + image)|urlencode}}&description=Next%20stop%3A%20Pinterest" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" /></a>
-<!-- Please call pinit.js only once per page -->
-<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
+
+            <a href="//www.pinterest.com/pin/create/button/?url={{metadata[loop.index-1].product_link|urlencode}}&media={{('http://localhost:1111/' + image)|urlencode}}&description=Next%20stop%3A%20Pinterest" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red"></a>
+
+            <!-- Please call pinit.js only once per page -->
+            <script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
           </div>
         </div>
       {% endfor %}

@@ -1,0 +1,25 @@
+from similarity import cosine
+import pandas as pd
+
+def _build_similarity_matrix(self):
+	'''
+	INPUT: None
+	OUTPUT:
+		- similarity_matrix: 2d numpy array of floats
+	Return the item-item similarity matrix.
+	'''
+	if self.use_svd:
+		mat = self.svd_matrix
+	else:
+		mat = self.feature_matrix
+	num_items = len(self.items)
+	sim_mat = np.zeros((num_items, num_items))
+	for i in xrange(num_items):
+		for j in xrange(i, num_items):
+			item1, item2 = mat[:, i], mat[:, j]
+			indices = np.logical_and(~np.isnan(item1), ~np.isnan(item2))
+			if np.any(indices):
+				sim_mat[i, j] = self.similarity(item1[indices],
+												item2[indices])
+				sim_mat[j, i] = sim_mat[i, j]
+	return sim_mat

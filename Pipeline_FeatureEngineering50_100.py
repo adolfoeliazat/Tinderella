@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import sys
 from skimage.feature import CENSURE
 from skimage.feature import (match_descriptors, corner_harris,
-                             corner_peaks, ORB, plot_matches)
+							 corner_peaks, ORB, plot_matches)
 from skimage.util.dtype import dtype_range
 from skimage.util import img_as_ubyte
 from skimage import exposure
@@ -20,6 +20,7 @@ from skimage.filter import threshold_otsu
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from skimage.segmentation import mark_boundaries
 from skimage.util import img_as_float
+import cPickle as pickle
 
 
 # modules I wrote
@@ -77,7 +78,7 @@ def local_eq(img_arr):
 	"""
 	Spreads out the most frequent intensity values in an image.
 	Input: 3D image tensor or 2D grayscaled image or 
-	       filtered/transformed image array.
+		   filtered/transformed image array.
 	Ouput: Global equalize with same shape as img_arr
 	"""
 	return np.ravel(exposure.equalize_hist(img_arr))
@@ -90,7 +91,7 @@ def local_threshold(img_arr):
 	defined by a structuring element.
 	
 	Input: 	3D image tensor or 2D grayscaled image or 
-	       filtered/transformed image array.
+		   filtered/transformed image array.
 	Output: binary img_array where pixels are >= global threshold
 	"""
 
@@ -150,7 +151,7 @@ class Feature_Engineer(object):
 		Segmentation algorithms: felzenszwalb, slic, quickshift
 		"""
 		# initialize pre_trans vector size
-		pre_trans = np.zeros(5*(img_arr.shape[0]*img_arr.shape[1]*img_arr.shape[2]))
+		pre_trans = np.zeros(4*(img_arr.shape[0]*img_arr.shape[1]*img_arr.shape[2]))
 		# All extractions using raw colored image array:
 		color_kmeans = Color_Clustering(img_file_path, 10, img_arr.shape[:2])
 		dom_colors = np.ravel(color_kmeans.main())
@@ -194,8 +195,8 @@ class Feature_Engineer(object):
 		# dominant edges
 
 		'''
-	    Input: 2d filtered/transformed flattened image array
-	    Methods: feature_detectors, local histogram equalization, 
+		Input: 2d filtered/transformed flattened image array
+		Methods: feature_detectors, local histogram equalization, 
 		Output: flattened post-transformed image array
 		'''
 		# # initialize pre_trans vector
@@ -244,7 +245,8 @@ class Feature_Engineer(object):
 		y = []
 		full_matrix = []
 		label_vec = []
-		f= open('%s/size_ten_50_100_labels.csv'%FeatVecs_path, 'w')
+		# f= open('%s/size_ten_50_50_labels.csv'%FeatVecs_path, 'w')
+		f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/size_ten_50_50_10e_labels.csv', 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -293,7 +295,7 @@ class Feature_Engineer(object):
 				feat_vector= self.create_feature_vector(pre_trans_feat, post_trans_feat,unflattened_trans_img_arr)
 				f.write(label + ',')
 				label_vec.append(label)
-				np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.18e', delimiter=',') 
+				np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.10e', delimiter=',') 
 			
 				print 'feature vector shape', feat_vector.shape
 				# Append feature vector and label to full image matrix
@@ -310,26 +312,28 @@ class Feature_Engineer(object):
 
 		# Apply StandardScaler to feature matrix
 		rescaled_feat_matrix = self.rescaling(full_matrix)
-		np.savetxt('%s/rescaled_feat_matrix.csv' %FeatVecs_path, rescaled_feat_matrix, fmt='%.18e', delimiter=',') 
+		np.savetxt('%s/rescaled_feat_matrix_50_50_10e.csv' %FeatVecs_path, rescaled_feat_matrix, fmt='%.10e', delimiter=',') 
+		# m = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/feature_matrix.pkl', 'w')
+		# pickle.dump(rescaled_feat_matrix, m)
 
 		return rescaled_feat_matrix, label_vec
 
 if __name__ == '__main__':
 	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
-	full_dir_path = os.path.join(dir_path, 'Ouput_Images_ten_50_100_percent')
-	FeatVecs_path = os.path.join('/Volumes/hermanng_backup/Virginia_Capstone', 'FeatVecs')
-
+	full_dir_path = os.path.join(dir_path, 'Ouput_Images_ten_50_50_percent')
+	# FeatVecs_path = os.path.join('/Volumes/hermanng_backup/Virginia_Capstone', 'FeatVecs')
+	FeatVecs_path = os.path.join(full_dir_path, 'FeatVecs')
+	
 	if not os.path.exists(FeatVecs_path):
 		print FeatVecs_path
 		os.mkdir(FeatVecs_path)
 
-	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_ten_50_100_feat/')
+	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_ten_50_50_10e_feat/')
 	if not os.path.exists(cach_FeatVecs_path):
 		os.mkdir(cach_FeatVecs_path)
 
-	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(100,100))
+	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(50,50))
 	X,y= fm.feature_preprocessing()
-	import cPickle as pickle
-	pickle.dump(X, )
-
+	# m = open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/feature_matrix.pkl', 'w')
+	# pickle.dump(X, m)
 

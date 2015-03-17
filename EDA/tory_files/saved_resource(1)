@@ -1,0 +1,1610 @@
+mmcore.SetCookie('mmid','-1745153167|vwEAAAr8iGo6fwsAAA==',365,1);mmcore.SetCookie('pd','255872167|qgIAAAoBQvyIajp/C+b69s4VAMJb89JZK9JIDnd3dy5nb29nbGUuY29tDgAAAEccDKIFBNJIAAAAAP////8AAQAAAP////8ADnd3dy5nb29nbGUuY29tBK0LAwALAAUAAwAAAAAA7hYAAO4WAADuFgAAAgCrLAAAALvh0sOcCwD/////AZwLsQv//3EBAAAAAAAB73IAAKO3AAAArCwAAAAuxyMroAsAEDgAAAWgC6cL//+gAAAAAAAACfByAABltQAAMXQAAOC2AAA2dAAA77YAADN0AADmtgAAOnQAAPe2AAA0dAAA6bYAADV0AADstgAAOXQAAPS2AAAydAAA5bYAAAHoIQAAFwAAAAAAAAFF',365);mmcore.SetCookie('srv','cg4.usw',365);(function(){mmcore.custAttrs = {GeoZipCode:'94105'};if(typeof(mmcore.GenInfo)!='object')mmcore.GenInfo={};mmcore.EH=function(e){var s=e.message+'\r\n';if(!window.mm_error)window.mm_error=s;else window.mm_error+=s;};
+mmcore.GenInfo['Sort_R7']={'element1':'a2714_sort_r7_category'};
+try{
+mmcore.nord = mmcore.nord || {};
+mmcore.nord.wcm = 0;
+if ('nord' in window && 'config' in window.nord && 'settings' in nord.config) mmcore.nord.wcm = 1;
+/*if (typeof(cmSetupOther) == 'function') { cmSetupOther({"cm_TrackImpressions":""}); }
+else var cm_TrackImpressions ="";*/
+if (typeof(Storage)!=="undefined") mmcore.nord.storage = 1;
+if (mmcore.GetCookie('pgcount') === '1') mmcore.SetCookie('pgcount', 2);
+if (mmcore.GetCookie('pgcount') === '') mmcore.SetCookie('pgcount', 1);
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.SetCookie = function (n, v, d, g, h) {	// n == name, v == value, d == days, g == global, h == decode
+    var _t = this,
+        _h = _t._Host(_t._TL(location.hostname)),
+        exp = _t._FutureDate(d);
+    _t._d.cookie = escape(eval(g) ? n : _t._PN(n)) + '=' + (h?v:escape(v)) + (_h.length ? ';domain=' + _h : '') + ';path=/' + (typeof d !== 'undefined' && d !== 0 ? (';expires=' + exp.toGMTString()) : '');
+    _t.SetParam(n, v);
+};
+
+
+}catch(err){mmcore.EH(err);}
+try{
+// utility module
+// global
+// on page load
+mmcore.nord.utils = function() {
+	/**************************************************************************/
+	// matchBrowser
+	// Matches a browsers X, X.X, and X.X.X version number
+	/**************************************************************************/
+	function matchBrowser(browsername, browserversion) {
+	    var ua= navigator.userAgent;
+	    var re = new RegExp(browsername+"\/"+browserversion+"[.]{1}", "i");
+	    var re2 = new RegExp("Version/"+browserversion+"\.+.*"+browsername+"/", "i");
+	    return !(re.exec(ua) == null && re2.exec(ua) == null);
+	}
+  
+	/**************************************************************************/
+	// detectBrowser
+	// Returns the browser name and version number
+	/**************************************************************************/
+	function detectBrowser() {
+	    var ua= navigator.userAgent, tem, 
+	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+\.\d+\.\d+)/i) || [];
+	    if(/trident/i.test(M[1])){
+	        tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+	        return 'IE '+(tem[1] || '');
+	    }
+	    if(M[1]=== 'Chrome'){
+	        tem= ua.match(/\bOPR\/(\d+)/)
+	        if(tem!= null) return 'Opera '+tem[1];
+	    }
+	    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+	    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+	    return M.join(' ');
+	}
+	/**************************************************************************/
+	// headerCSSInject
+	// Uses stragiht JS to inject CSS into the header
+	/**************************************************************************/
+	function headerCSSInject(css) {
+		var head = document.getElementsByTagName('head')[0];
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		if (style.styleSheet){
+			style.styleSheet.cssText = css;
+		} else {
+			style.appendChild(document.createTextNode(css));
+		}
+
+		head.appendChild(style);
+	}
+
+	/**************************************************************************/
+	// mmAsyncAction
+	// Fires off an asyncronous MM action
+	/**************************************************************************/
+	function mmAsyncAction(action, attribute, num, pageID) {
+		//Set default values if not present
+		num = (num) ? num : 1;
+		pageID = (pageID) ? pageID : action;		
+		mmcore._async = true;
+		if (attribute) mmcore.SetAction(action, num, attribute);
+		else mmcore.SetAction(action, num);
+		mmcore.SetPageID(pageID);
+		mmcore.CGRequest();
+	}
+
+	/**************************************************************************/
+	// mmDeferredAction
+	// Fires off an deferred MM action
+	/**************************************************************************/
+	function mmDeferredAction(action, attribute, num) {
+		//Set default values if not present
+		num = (num) ? num : 1;		
+		if (attribute) mmcore.$Action(action, num,  attribute);
+		else mmcore.$Action(action, num);
+	}
+  
+        /**************************************************************************/
+        // inArray
+        // Finds a value in an array without using Jquery
+        /**************************************************************************/
+        function inArray(elem, array, i) {
+            var len;
+            if ( array ) {
+                if ( array.indexOf ) {
+                    return array.indexOf.call( array, elem, i );
+                }
+                len = array.length;
+                i = i ? i < 0 ? Math.max( 0, len + i ) : i : 0;
+                for ( ; i < len; i++ ) {
+                    // Skip accessing in sparse arrays
+                    if ( i in array && array[ i ] === elem ) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+  
+	/**************************************************************************/
+	// getQueryParam
+	// Finds a parameter in the querystring and returns the parameter's value
+	/**************************************************************************/
+	function getQueryParam(param) {
+		var url = window.location.search;
+		if (url.indexOf(param + '=') === -1) return '';
+		var start = url.indexOf(param + '=') + param.length + 1;
+		var end = (url.indexOf('&', start) !== -1) ? url.indexOf('&', start) : url.length;
+		return url.substring(start, end);
+	}
+
+	/**************************************************************************/
+	// getQueryParamValue
+	// Finds a parameter in the querystring and returns the parameter's value
+	/**************************************************************************/
+	function getHashParam(param) {
+		var url = window.location.hash;
+		if (url.indexOf(param + '=') === -1) return false;
+		var start = url.indexOf(param + '=') + param.length + 1;
+		var end = (url.indexOf('&', start) !== -1) ? url.indexOf('&', start) : url.length;
+		return url.substring(start, end);
+	}
+
+	/**************************************************************************/
+	// removeQueryParam
+	// Removes a parameter from the querystring
+	/**************************************************************************/
+	function removeQueryParam(url, param, value) {
+		return url.replace("?"+param+"="+value+"&", "?").replace("&"+param+"="+value, "");
+	}
+
+	/**************************************************************************/
+	// mmEvent
+	// plain JS cross-browser event trigger
+	/**************************************************************************/
+	function mmEvent(name) {
+		var event;
+		if (document.createEvent) {
+			event = document.createEvent('Event');
+			event.initEvent(name, true, true);
+			document.dispatchEvent(event);
+			return false;
+		}
+		else {
+			document.documentElement[name]++;
+			return false;
+		}
+	}
+
+	/**************************************************************************/
+	// mmListen
+	// plain JS cross-browser event listener
+	/**************************************************************************/
+	function mmListen(eventName, fire) {
+		if (document.addEventListener) document.addEventListener(eventName, fire, true);
+		else if(document.attachEvent) {
+			document.documentElement[eventName] = 0;
+			document.documentElement.attachEvent("onpropertychange", function(event) {
+				if (event.propertyName == eventName) {
+					fire();
+				}
+			});
+		}
+	}
+
+	/**************************************************************************/
+	// wcmutils
+	// utilities/events for WCM only
+	/**************************************************************************/
+	(function wcmutils() {
+		if (mmcore.nord.wcm) {
+			// is jQuery loaded?
+			var jquery_loaded = function() {
+				if ('jQuery' in window) mmEvent('jquery_yes');
+				else setTimeout(jquery_loaded, 50);
+			};
+			jquery_loaded();
+
+			// is tto obj created?
+			var tto_loaded = function() {
+				if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'tto' in nord.config.settings) mmEvent('tto_yes');
+				else setTimeout(tto_loaded, 50);
+			};
+			tto_loaded();
+                  
+                  	// is analytics obj created?
+			var analytics_loaded = function() {
+				if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'analytics' in nord.config.settings) mmEvent('analytics_yes');
+				else setTimeout(analytics_loaded, 50);
+			};
+			analytics_loaded();
+                  
+			// is shopper obj created?
+			var shopper_loaded = function() {
+				if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'shopper' in nord.config.settings) mmEvent('shopper_yes');
+				else setTimeout(shopper_loaded, 50);
+			};
+			shopper_loaded();
+                  
+                        // is features obj created?
+                        var features_loaded = function() {
+                          if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'features' in nord.config.settings) mmEvent('features_yes');
+                          else setTimeout(features_loaded, 50);
+                        };
+                        features_loaded();
+                  
+                  	// is product obj created?
+                        var product_loaded = function() {
+                          if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'product' in nord.config.settings) mmEvent('product_yes');
+                          else setTimeout(product_loaded, 50);
+                        };
+                        product_loaded();
+                  
+			/*var timing_loaded = function() {
+                          if ('performance' in window && 'timing' in performance && 'loadEventEnd' in performance.timing && performance.timing.loadEventEnd > 0) mmEvent('tto_loadEventEnd');
+			  else setTimeout(timing_loaded, 100);
+			};
+                        timing_loaded();*/
+                  	
+		}
+	})();
+
+	/**************************************************************************/
+	// require
+	// injects scripts on demand using requirejs in WCM, yepnope in Legacy
+	/**************************************************************************/
+	function require(modules) {
+		var i, fileArr = [], path = mmcore.GetCookie('cfgID') === '1' ? 'http://i.dev.nordstromimage.com/images/default/shop/js/tto/dev/' : 'http://i.nordstromimage.com/images/default/shop/js/tto/';
+		if (typeof modules === 'string') {
+			fileArr.push(modules);
+		}
+		else fileArr = modules;
+		for (i=0;i<fileArr.length;i++) {
+			s = document.createElement('script');
+			s.src = path + fileArr[i] + '.js';
+			document.getElementsByTagName('head')[0].appendChild(s);
+		}
+	}
+  
+	return {
+		getQueryParam: getQueryParam,
+		getHashParam: getHashParam,
+		headerCSSInject: headerCSSInject,
+		removeQueryParam: removeQueryParam,
+		mmAsyncAction: mmAsyncAction,
+		mmDeferredAction: mmDeferredAction,
+		require: require,
+		mmEvent: mmEvent,
+		mmListen: mmListen,
+          	matchBrowser: matchBrowser,
+	        detectBrowser: detectBrowser,
+          	inArray: inArray
+	};
+}();
+}catch(err){mmcore.EH(err);}
+try{
+window.$a = function() {
+	var events = {};
+	var isevent = events.hasOwnProperty;
+
+	function sub(evt, callback) {
+		if (!isevent.call(events, evt)) events[evt] = [];
+		events[evt].push(callback);		// pushes requested callback onto stack by event name: $a.sub('atb', function() { console.log('atb'); });
+	}
+
+	function pub(evt, data) {
+		if (!isevent.call(events, evt)) return;
+		events[evt].forEach(function(ev) {
+			try {
+				ev(data != undefined ? data : {});
+			}
+			catch(e) {
+				console.error(e);
+			}
+		});
+	}
+
+	return {
+		sub: sub,
+		pub: pub
+	};
+}();
+
+$a.register = function(evt, callback) {
+	window.nord.core.dispatcher.register(function (payload) {
+		if (payload.action === window.nord.core.actions[evt]) {
+			callback();
+		}
+	});
+}
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.nord.PersData = (function() {
+  function getEncoreData() {
+    return {
+      keywords: 'plus-size|plus+size|plus|encore|sejour|city+chic|evans|pink+lotus',
+      paths: ['/c/womens-plus-size-shop', '/c/womens-plus-size'],
+      categories: ['6007059']
+    }
+  }
+
+  function getWomensData() {
+    return {
+      keywords: 'for+women',
+      paths: ['/c/accessories', '/c/womens-clothing', '/c/womens-shoes-shop', '/c/beauty-makeup-perfume'],
+      categories: ['60136226', '2376778', '6008000', '2377897']
+    }
+  }
+
+  function getMensData() {
+    return {
+      keywords: 'Topman|John+Varvatos|Tuxedo|Sportscoat|Big+and+Tall|men',
+      paths: ['/c/men', '/c/mens-clothing', '/c/mens-shoes-shop', '/c/mens-accessories-shop', '/c/mens-designer', '/c/all-mens-rail', '/c/mens-grooming-cologne'],
+      categories: ['2374609']
+    }
+  }
+
+  function getMensUTData() {
+    return {
+      keywords: '1901|2xist|34+heritage|alex+maine|allen+edmonds|american+needle|anonymous+ism|antony+morato|aquascutum|arnie|asbury+park|athletic+recon|baldwin|ballin|bally|47+brand|ben+minkoff|ben+sherman|benson|bespoken|billy+reid|black+rivet|blackstone|blue+marlin|blundstone|bobby+jones|boconi|bogosse|bolle|bonobos|boss+green|boss+orange|bpm|bread+%26+boxers|briggs+%26+riley|brooklyn+motors|brooks+brothers|bruno+magli|buffalo|bugatchi|burma+bibas|burton|calibrate|callaway|camper|canali|carrot+%26+gibbs|caterpillar|chaco|chapter|clae|creative+recreation|cushe|cutter+%26+buck|david+donahue|derek+rose|di+milano+uomo|dockers|dsquared|duchamp|duckie+brown|dunham|eastland+made+in+maine|ermenegildo+zegna|ernest+alexander|ernest+hemingway|eton|faconnable|fidelity+denim|field+scout|filson|fitflop|flynt|fred+perry|gant|gant+rugger|gents|ghurka|gitman|glant+shirt|gordon+rush|gramicci|trask|harrys+of+london|hart+schaffner+marx|hook+and+albert|hugo+bosca|hugo+boss+orange|hush+puppies|ike+behar|incotex|ivy+prepster|j+lindeberg|jack+spade|jb+britches|jd+fisk|jeremiah|john+varvatos|john+w+nordstrom|johnston+%26+murphy|joseph+abboud|jz+richards|kahala|katin|keen+footwear|kenneth+cole+collection|kent+%26+curwen|knomo|kroon|l+b+evans|linea+naturale|lorenzo+uomo|magnanni|maison+forte|martin+dingman|m-clip|mezlan|michael+toschi|moods+of+norway|nat+nast|nau+activewear|neil+m|new+era|nordstrom+1901|collar+stays|undershirts|oliver+sweeney+footwear|original+penguin|orlebar+brown|pal+zileri|pantherella|paul+and+shark|paul+smith|pazoni|pedag|pendleton|peter+millar|pf+flyers|ps+paul+smith|psycho+bunny|randolph+engineering|ravi+ratan|red+wing+shoe|relwen|remy+leather|report+collection|robert+barakett|robert+graham|robert+wayne|rock+revival|rodd+%26+gunn|rogue|gordon+rush|samuelsohn|sandro+moscoloni|santoni|sanyo|sassetti|save+khaki|seavees+footwear|sebago|shade+55|shipley+%26+halmos|simon+neckwear|spy+optic|stetson|steven+alan|sundek|superfeet+worldwide|surface+to+air|swc|tailor+vintage|tateossian|tie+bar|the+unbranded+brand+jeans|thomas+dean|thomas+pink+inc|tmca|to+boot+new+york|todd+snyder|tommy+john+second+skin|tori+richard|toscano|trafalgar|travis+mathew|tulliani|varvatos+star|venroy|vilebrequin|volley+footwear|walk-over+footwear|wallin+%26+bros|want+les+essentiels+de+la+vie|wigens|wrk|wurkin|z+zegna|zachary+prell|zagiri|zanella|zero+restriction',
+      brands: ['180s','1901','2xist','34+heritage','a+testoni','a.p.c.+','acme+general+supply','acorn','ag+jeans','ags+%26+daash','aldo','alegria','alex+%26+co','alex+maine','allegri','allen+edmonds','allrounder','altea','alternative','american+needle','andrew+marc','anonymous+ism','antony+morato','aquascutum+golf','arc%27teryx','ariat','armani+collezioni','armani+jeans','armstrong+%26+wilson','arnie','asbury+park','ashworth','ashworth+golf','asics','astronomy','athletic+recon','attilio+giusti+leombruni','ax+armani+exchange','bacco+bucci','baffin','baldwin','ballin','bally','band+of+outsiders','banner+47','bd+baggies','beats+by+dr.+dre','bed+stu','ben+minkoff','ben+sherman','bench','bensol','benson','bernardo','bespoken','billabong','bills+khakis','billy+reid','birkenstock','black+rivet','blackstone','blondo','blue+marlin','blundstone+footwear','bobby+jones','boconi','bod+%26+christensen','bodhi','bogosse','bogs','bolle','bonobos','born','bosca','bose','boss+green','boss+hugo+boss','boss+orange','bpm+fueled+by+zella','bread+%26+boxers','briggs+%26+riley','brooklyn+motors','brooks','brooks+brothers','bruno+magli','buffalo+jeans','bugatchi','bugatchi+uomo','burberry','burberry+brit','burberry+london','burberry+prorsum','burma+bibas','burton','calibrate','callaway+golf','calvin+klein','camper','canada+goose','canali','canterbury+of+new+zealand','cardigan+by+lynne+hiriak','cardinal+of+canada','carrera+eyewear','carrot+%26+gibbs','case-mate','caterpillar','chaco','chapter','charles+g+bailey','chelsey','chronicle+books','church+%26+co','citizens+of+humanity','citron','clae','clarks','cole+haan','columbia','converse','coopers+by+jockey','creative+recreation','crocs','cullen89','cushe','cutter+%26+buck','daniel+buchler','dansko','david+%26+young','david+donahue','dc+shoes','dekko+mode','derek+rose','di+milano+uomo','diesel','dl1961','dockers','dodo+case','dolce+%26+gabbana','donald+j+pliner','dopp','dr+martens','dsquared','duchamp','dunham','earnest+sewn','eastland','ecco','edun','emporio+armani','english+laundry','ermenegildo+zegna','ernest+alexander','etiqueta+negra','etnies','eton','exofficio','faconnable','fausto+reali+vannucci','fidelity+denim','field+scout','fiesole','filson','fitflop','florsheim','flynt','fossil','fownes+brothers','franco+danti','fratelli+rossetti','fred+perry','freewaters','french+connection','frye','g+brown','g+h+bass+and+co.','gant+by+michael+bastian','gant+rugger','gents','georgia+boot','geox','ghurka','gian+franco+pagini','giesswein','gimos+italiana','giorgio+armani','gitman','g-lab','gordon+rush','gramicci','grandoe+gloves','grown+%26+sewn','gruner','g-star+raw','gucci','h.s.+trask','haflinger','halsey+44','hang+ten+gold','hardy+aimes','harrys+of+london','hart+schaffner+%26+marx','havaianas','helly+hansen','helm','hemingway','herno','hex','hickey+freeman','hook+++albert','hudson+jeans','hugo+boss','hunter','hurley','hush+puppies','hyden+yoo','i+line+eyewear','ibiza','ike+behar','incase+designs','incipio+','incotex','island+snow','isound','ivy+prepster','j+brand','j+campbell','j+fold','j+lindeberg','j+p+classics','j.p.+tilford+samuelsohn','jack+o%27neill','jack+spade','jacks+%26+jokers','james+jeans','jams+world','jb+britches','jd+fisk','jean+shop','jeremiah','jhane+barnes+collection','jimmy+choo','joe%27s','joe%27s+jeans','john+varvatos','john+varvatos+collection','john+varvatos+star+usa','john+varvatos+star+usa+red+label','john+w+nordstrom','john+w+nordstrom+signature','johnny+love','johnston+%26+murphy','josef+seibel','joseph+abboud','jw+brine+','jz+richards','kahala','kangol','katin','keen','kenneth+cole+collection','kenneth+cole+new+york','kenneth+cole+reaction','kenson','kent+and+curwen','khaki+surplus','knomo','kroon','k-swiss','l+b+evans','la+marque','lacoste','lanvin','lenor+romano','levi+strauss','levi%27s','levi%27s+made+%26+crafted','linea+naturale','lora+gi','lorenzo+uomo','lubiam','lucky+brand','macalan','mackage','magnanni','maison+forte','majestic','maker+%26+company','malo','mandarina+duck','marc+by+marc+jacobs','marc+new+york','marcoliani','mark+nason','marmot','marshall','martin+dingman','martin+gordon','marware','masons','maui+jim','mavi+jeans','m-clip','m-edge','mek+denim','mephisto','merrell','mezlan','michael+kors','michael+toschi','minnetonka','mizuno','moleskine','moncler','monster+audio','montana+leather','moods+of+norway','moreschi','morgano','moshi+','mosley+tribe','mountain+hardwear','mulholland','naked','nat+nast','natural+blue','nau','neil+m','new+balance','new+era+cap','nike','nike+golf','nordstrom','north+face','nsf','orlandini','salvatore+ferragamo','the+freshly+laundered+shirt+by+robert+graham','the+north+face','trask'],
+      filters: ['180s','1901','2xist','34 heritage','a testoni','a.p.c. ','acme general supply','acorn','ag jeans','ags & daash','aldo','alegria','alex & co','alex maine','allegri','allen edmonds','allrounder','altea','alternative','american needle','andrew marc','anonymous ism','antony morato','aquascutum golf','arc%27teryx','ariat','armani collezioni','armani jeans','armstrong & wilson','arnie','asbury park','ashworth','ashworth golf','asics','astronomy','athletic recon','attilio giusti leombruni','ax armani exchange','bacco bucci','baffin','baldwin','ballin','bally','band of outsiders','banner 47','bd baggies','beats by dr. dre','bed stu','ben minkoff','ben sherman','bench','bensol','benson','bernardo','bespoken','billabong','bills khakis','billy reid','birkenstock','black rivet','blackstone','blondo','blue marlin','blundstone footwear','bobby jones','boconi','bod & christensen','bodhi','bogosse','bogs','bolle','bonobos','born','bosca','bose','boss green','boss hugo boss','boss orange','bpm fueled by zella','bread & boxers','briggs & riley','brooklyn motors','brooks','brooks brothers','bruno magli','buffalo jeans','bugatchi','bugatchi uomo','burberry','burberry brit','burberry london','burberry prorsum','burma bibas','burton','calibrate','callaway golf','calvin klein','camper','canada goose','canali','canterbury of new zealand','cardigan by lynne hiriak','cardinal of canada','carrera eyewear','carrot & gibbs','case-mate','caterpillar','chaco','chapter','charles g bailey','chelsey','chronicle books','church & co','citizens of humanity','citron','clae','clarks','cole haan','columbia','converse','coopers by jockey','creative recreation','crocs','cullen89','cushe','cutter & buck','daniel buchler','dansko','david & young','david donahue','dc shoes','dekko mode','derek rose','di milano uomo','diesel','dl1961','dockers','dodo case','dolce & gabbana','donald j pliner','dopp','dr martens','dsquared','duchamp','dunham','earnest sewn','eastland','ecco','edun','emporio armani','english laundry','ermenegildo zegna','ernest alexander','etiqueta negra','etnies','eton','exofficio','faconnable','fausto reali vannucci','fidelity denim','field scout','fiesole','filson','fitflop','florsheim','flynt','fossil','fownes brothers','franco danti','fratelli rossetti','fred perry','freewaters','french connection','frye','g brown','g h bass and co.','gant by michael bastian','gant rugger','gents','georgia boot','geox','ghurka','gian franco pagini','giesswein','gimos italiana','giorgio armani','gitman','g-lab','gordon rush','gramicci','grandoe gloves','grown & sewn','gruner','g-star raw','gucci','h.s. trask','haflinger','halsey 44','hang ten gold','hardy aimes','harrys of london','hart schaffner & marx','havaianas','helly hansen','helm','hemingway','herno','hex','hickey freeman','hook + albert','hudson jeans','hugo boss','hunter','hurley','hush puppies','hyden yoo','i line eyewear','ibiza','ike behar','incase designs','incipio ','incotex','island snow','isound','ivy prepster','j brand','j campbell','j fold','j lindeberg','j p classics','j.p. tilford samuelsohn','jack o%27neill','jack spade','jacks & jokers','james jeans','jams world','jb britches','jd fisk','jean shop','jeremiah','jhane barnes collection','jimmy choo','joe%27s','joe%27s jeans','john varvatos','john varvatos collection','john varvatos star usa','john varvatos star usa red label','john w nordstrom','john w nordstrom signature','johnny love','johnston & murphy','josef seibel','joseph abboud','jw brine ','jz richards','kahala','kangol','katin','keen','kenneth cole collection','kenneth cole new york','kenneth cole reaction','kenson','kent and curwen','khaki surplus','knomo','kroon','k-swiss','l b evans','la marque','lacoste','lanvin','lenor romano','levi strauss','levi%27s','levi%27s made & crafted','linea naturale','lora gi','lorenzo uomo','lubiam','lucky brand','macalan','mackage','magnanni','maison forte','majestic','maker & company','malo','mandarina duck','marc by marc jacobs','marc new york','marcoliani','mark nason','marmot','marshall','martin dingman','martin gordon','marware','masons','maui jim','mavi jeans','m-clip','m-edge','mek denim','mephisto','merrell','mezlan','michael kors','michael toschi','minnetonka','mizuno','moleskine','moncler','monster audio','montana leather','moods of norway','moreschi','morgano','moshi ','mosley tribe','mountain hardwear','mulholland','naked','nat nast','natural blue','nau','neil m','new balance','new era cap','nike','nike golf','nordstrom','north face','nsf','orlandini','salvatore ferragamo','the freshly laundered shirt by robert graham','the north face','trask'],
+      paths: ['/c/men', '/c/mens-clothing', '/c/mens-shoes-shop', '/c/mens-accessories-shop', '/c/mens-grooming-cologne'],
+      genders: ['male'],
+      ages: ['adult'],
+      categories: ['2374609']
+    }
+  }
+
+  function getYCMData() {
+    return {
+      keywords: 'Topman|Rail',
+      categories: ['60150629', '60160268'],
+      brands: ['55dsl','1901','55dsl','7 diamonds','alexander wang','alife','alpha industries','alpinestars','alternative','altru apparel','american needle','ames bros','banner 47','barbour','bed stu','ben sherman','bench','bensol','big star','billabong','black rivet','bogosse','bonobos','boss hugo boss','bowery supply','brixton','brooks brothers','bugatchi uomo','burberry brit','casual industrees','chaser','civic duty','coal','common projects','cult of individuality','current/elliott','danner','del toro','descendant of thieves','deus ex machina','diesel','dockers','dolce &amp; gabbana','dsquared2','eastland','envoy australia','etro','ezekiel','faherty','filson','fjall raven','free authority','g&amp;l','gant','gant rugger','gitman','globe','gloverall','golden bear','grayers','g-star','haspel','headline shirts','herschel supply co','howe','hurley apparel','imaginary foundation','imperial motion','insight','ipanema','iron &amp; resin','j press','j shoes','jeremiah','jil sander','jkt','john varvatos star usa','junkfood','kane &amp; unke','katin','keds','kenzo','kickers','kid dangerous','kill city','k-way','lacoste','lacoste l!ve','le chameau','levi strauss','life after denim','lucchese','lucky brand','m.nii','marni','marshall artist','mcq by alexander mcqueen','michael bastian','missoni','moncler','moods of norway','naked &amp; famous denim','native shoes','nudie','obey clothing','o\'neill','original paperbacks','original penguin','original retro brand','our caste','palmercash','paul smith','pendleton','penfield','polo ralph lauren','profound aesthetic','prps','psycho bunny','public opinion','puma','quiksilver','quiksilver originals','relwen','reyn spooner','rivieras','robert graham','rodd &amp; gunn','rogue','rvca','scotch &amp; soda','scott free','scott james','shipley &amp; halmos','silver jeans','slvdr','social studies','sol angeles','sovereign code','spiewak','stitch\'s jeans','stone rose','superdry','surfside supply','swag like us','tailor vintage','tankfarm','ted baker london','the poster list','the rail','thom browne','thomas dean','threads for thought','timberland','todd snyder','toddland','topless','topman','topo ranch','topshop','true religion','union','upper playground','urban camo brigade','valentino','versace','victorinox','vineyard vines','vintage red','volcom','wallin &amp; bros','wesc','woolrich john rich','wright &amp; ditson','zachary prell','zagiri','zanerobe'],
+      filters: []
+    }
+  }
+
+  function getYCWData() {
+    return {
+      categories: ['60184553'],
+      brands: ['1 state','1822 denim','47 brand','a v denim','a. drea','a. peach','ace','aj morgan','all things fabulous','amb','americana','amici accessories','anama womens apparel','angie','anm womenswear','another line','articles of society','ash','astr womens apparel','baggu','bailey blue dresses','ban.do accessories','band of gypsies','band of gypsies','basil & lola','batiste dry shampoo','baublebar','bc footwear','bcbgeneration','bcnu junior apparel','be bop','bench','bernardo','berry jewelry','betsey johnson','betsey johnson','billabong','birkenstock','blanc noir','blanknyc','blee inara','blu pepper','bmla womens apparel','bonnie j','boy meets girl apparel','bp','bp undercover','bucketfeet','by design','c. luce','california creative republic','calvin klein','capelli of new york','carole','catseye london','cea + jae womens apparel','celebrity pink','celebrity pink outerwear','cesca','charmsies','chaser','chelsea 28','chinese laundry','chronicle books','circus by sam edelman','coffee shop','collection b new york outerwr','commando','converse','cotton emporium','cotton express','cozy zoe','cp-smoothies','cream and sugar apparel','creative commune','current/elliott','david & young','decor craft','dee elle','derek heart','designhype','deux lux','devlin womens apparel','dirty ballerina 2','dirty ballerina womens apparel','dittos','dkny','dolce vita','dollhouse outerwear','dr. martens','dreamers by debut','dv by dolce vita','dv8 by dolce vita','ebb & flow apparel','eberjey','edyson','electric circus','element junior apparel','elodie','emperia handbags','en creme','eva-nyc hair care','evelyn k','everly clothing','fantas eyes','fergie','filtre','fire','flash tattoos','flight 001','foxiedox womens apparel','foxy jeans','free generation apparel','free people','freebird by steve madden','french connection?','frenchi','frye','gamago housewares','girly accessories','glamorous womens apparel','glint','gola','guess','h by hudson','h.dew','h.i.p.','hailey logan dresses','halogen','hanky panky','happiness','hart denim','haute society apparel','havaianas','herschel','hinge','hommage apparel','honeydew','honeydew intimates','horses cut shop tees','hunter','hurley','i madeline womens apparel','i.c. london lingerie','icon eyewear','icordination','idlewild','in love with strangers','instant vintage denim','ipanema','isabella rose taylor apparel','j.o.a. womens apparel','jane & bleecker','jc fits womens apparel','jeffrey campbell','jessica simpson','jj basics','joa womens apparel','joe’s','jolt','jou jou','joules','joypeace womens clothing','jump apparel','june & hudson sportswear','junkfood','just for wraps','katie k','keds','kelsi dagger brooklyn','kendall and kylie','kendall and kylie handbag','kensie','kg kurt geiger','kiind of womens apparel','kirious womens apparel','knot sisters womens apparel','kristen cavallari','krush outerwear','l is for lover','la list apparel','lark womens apparel','lasting smiles lip care','leith','leola','levi strauss','liberty love','like mynded womens apparel','lily white','living doll','lorna jane','love haus','love, nickie lew dresses','lucca couture womenswear','lucy paris','lulu','lush clothing','maaji ','mac duggal evening wear','madden girl apparel','madewell','madison & berkeley apparel','maisie womens apparel','maison scotch','make+model','malibu native','marais','me to we gifts','mia','miamax from london with love','miamica accessories','mighty fine','miista','mimi chica','mink pink','minnetonka','mizuno','mmk','modiste dresses','moon collection artee couture','morgan and co','mtng originals','muk luks','mural','my michelle','natasha','naughty monkey','nb handbags','new balance sneakers','nike','nu-g handbags','nyx cosmetics','odyn','oh my love womens wear','one clothing womens apparel','one rad girl womens app','onitsuka tiger','only hearts','onzie','original retro brand','orion','painted threads womens apparel','paper crane womenswear','patty park agency+','penny loves kenny','phase 3 (npg)','piece goods apparel','pinch provisions','poppy lux','pretty ships','project social t','puma','r jeans from rubbish','r. minkoff','raga womens apparel','rainbow','raisins','rbl womens apparel','re:named','recycled karma','reef','re-named','rifle paper co.','rip curl','robert rose','robin k','royal rabbit apparel','rubbish','rules of etiquette','rvca','sally miller','sam e','sbicca','scb distributors','secret charm','seltzer goods','sequin hearts dresses','seychelles','shellys london','shinhwa accessories','shiraleah','signorelli','sister jane womens apparel','sixtyseven','smai nyc womens apparel','smoothies swimwear','socialite womens apparel','sole society','sophie rue womens clothing','soprano','sorel','sorpresa handbags','south sun products','sp black denimwear','speechless','sperry top-sider','spiritual gangster','spitfire girl','splendid','standards & practices','starling','statements by dck','stem','stephan & co','steppin out','steve by steve madden','steve madden','stila cosmetics','stony','stoosh','street level','street level handbags','sub urban riot mens tees &tops','sub_urban riot','sugarhill boutique','sun & shadow','suzette collection','swat fame','t.u.k','teeki','ten-sixty sherman','the giving keys jewelry','the north face','this city','thread & supply','threads for thought','tildon','tinsel womens apparel','titanium','tkees','tomas','top choice','tops malibu party gift','topshop','tory burch','treasure and bond','tricoastal design','triple accessories inc','trixxi','trouve','tulle','twisted tomboy bath & body','ugg','ugly christmas sweater kit','underella by ella moss','union bay','vans','very volatile','vineyard vines','volcom','wanderlust gifts','want & need apparel','wayf womenswear','way-in','whitney eve','wildfox','wishbone apparel','worldwide co','woven heart sweaters','wright & ditson','wyldehart apparel','young, fabulous and broke','zigi girl','zunie'],
+      paths: ['/c/60184553', '/c/1state', '/c/all-1state', '/c/womens-chelsea28', '/c/free-people', '/c/free-people-women', '/c/free-people-clothing', '/c/free-people-womens-dresses', '/c/free-people-womens-pants-shorts', '/c/free-people-womens-skirts', '/c/free-people-womens-tops', '/c/hinge', '/c/womens-hinge', '/c/hinge-womens-clothing', '/c/topshop', '/c/all-topshop', '/c/topshop-videos', '/c/topshop-new-arrivals', '/c/womens-topshop-sale', '/c/topshop-all-clothing', '/c/topshop-dresses', '/c/topshop-tops', '/c/topshop-sweaters', '/c/topshop-jeans', '/c/topshop-coats', '/c/topshop-jackets', '/c/topshop-pants-shorts', '/c/topshop-skirts', '/c/topshop-swimsuits-cover-ups'],
+      referrers: ['asos.com', 'nastygal.com', 'zara.com', 'topshop.com', 'freepeople.com', 'forever21.com', 'urbanoutfitters.com'],
+      ages: ['teen', 'youth'],
+      genders: ['female', 'unisex'],
+      keywords: 'savvy|topshop|1+state|ace+delivery|chelsea+28|free+people|Hinge|treasure+&+bond|trouve|wildfox'
+    }
+  }
+
+  function getDesignerData() {
+    return {
+      keywords: 'burberry|chanel|valentino|chloe|gucci|fendi|prada|red+valentino|christian+louboutin|alexander+wang|helmut+lang|designer|akris+punto|armani|alexander+mcqueen|alice+olivia|armani|dolce+gabbana|dolce-gabbana|donna+karan|herve+leger|jay+godfrey|jimmy+choo|manolo+blahnik|michael+kors|oscar+de+la+renta|pedro+garcia|phillip+lim|roberto+cavalli|saint+laurent|stella+mccartney|tracy+reese|akris|mcq|belstaff|proenza+schouler|mcqueen|balenciaga|escada|jason+wu|emilio+pucci|etro|iro|lanvin|maxmara|marc+jacobs|ferragamo|versace|alice-olivia|miumiu|tods|haute+hippie|lagence|rag+bone|rag-bone|current+elliott|elizabeth+james|elizabeth-james|the+kooples|m+missoni|alc|frame+denim|robert+rodriguez|mcginn|rachel+zoe|veda|just+cavalli|carven|apc|blk+denim|smythe|habitual|faith+connexion|opening+ceremony|theyskens+theory|zadig+voltaire|zadig-voltaire',
+      categories: ['6006559']
+    }
+  }
+
+  function getKidsData() {
+    return {
+      keywords: 'adidas+for+kids|baby|baby+bag|baby+boden|baby+clothes|baby+shoes|boots+for+kids|boys+shoes|burberry+for+kids|burberry+kids|converse+for+kids|diaper+bag|diaper+bags|dresses+for+girls|flower+girl+dresses|girls+boots|girls+dresses|girls+shoes|hunter+for+kids|juicy+couture+for+kids|kids|kids+apparel|kids+shoes|kids+toms|kids+uggs|mini+boden|mini+boden+|mini+boden+girls|minnetonka+for+kids|new+balance+for+kids|nike+for+kids|north+face+for+kids|peek|petunia+pickle+bottom|polo+ralph+lauren++for+kids|quicksilver+for+kids|rain+boots+for+kids|ralph+lauren+for+kids|shoes+for+kids|sorel+for+kids|sperry+top-sider+for+kids|strollers|tea+collection|the+north+face+for+kids|toms+for+kids|true+religion+brand+jeans+for+kids|tucker+++tate|tucker+and+tate|ugg+australia+for+kids|ugg+kids|under+armour+for+kids|uppababy|vans+for+kids|volcom+for+kids|zella+for+kids',
+      categories: ['2379293'],
+      paths: ['/c/baby-kids']
+    }
+  }
+
+  function getKidsBTSData() {
+    return {
+      brands: ['stride rite', 'igor', 'jumping jacks', 'see kai run', '3c4g gifts', '4 love', 'abela designs 4 keeps', 'accessory collective', 'adidas logo os', 'adidas os', 'aegean apparel', 'alex toys', 'alpine sleds', 'andrea\'s beau', 'andy&amp;evan for little gentlemen', 'anthem of the ants', 'appaman', 'bd &amp; a', 'biscotti', 'bling2o goggle', 'blume', 'blush by us angels', 'boden', 'bo-po toys', 'boxos papercraft sets', 'breaking waves', 'butter supersoft', 'cejon accessories', 'chaser', 'collapse a pail', 'cuddle barn plush toys', 'design history', 'diggin active toys', 'dirtee hollywood', 'dkny mens &amp; boys dresswear', 'dorissa', 'downeast girl', 'element boys &amp; menswear', 'elisa b', 'endless games', 'esme', 'estes zip disc set', 'etch a sketch', 'fantasia accessories', 'fashion angels', 'fine print', 'fiveloaves twofish', 'flow society', 'flowers by zoe', 'fun loom', 'galt toys', 'genuine monkeez &amp; friends', 'geospace international toys', 'gerson &amp; gerson', 'gibbs smith', 'glitzy bella', 'go! games', 'goldieblox toys', 'gossip girl', 'guillow\'s toys', 'gund', 'gypsy daisy', 'hachette books', 'halabaloo', 'hanna andersson', 'high intencity', 'hog wild toys', 'hula star', 'ic sleepwear', 'imaginista toy', 'improv electronics', 'intelliglobe', 'international arrivals', 'iscream gifts', 'isobella &amp; chloe', 'jem sportswear', 'jenna &amp; jessie', 'joan calabrese for mon cheri', 'john varvatos star usa boys', 'joseph abboud belts &amp; slg', 'juicy couture accessories', 'kate mack', 'kate quinn organics', 'kid o toys', 'kiddo by katie', 'kidoozie toys', 'kimmi fragrance', 'kitsch', 'klutz books', 'laser pegs toys', 'laura ashley girls dresses', 'lauren marie', 'lego lights &amp; accessories', 'lemon fizz', 'levi\'s childrens', 'libertalia', 'little experience', 'loopdedoo toy', 'lotta luv beauty', 'loungefly', 'lul love you lots', 'luli and me', 'madame alexander dolls', 'madpax', 'master toys', 'mattel toys', 'me.n.u', 'mele &amp; co.', 'mignone', 'miken clothing', 'mindware', 'morfs apparel', 'neff headwear', 'nfl logo os', 'nitro watches', 'ogo sport', 'ooh la la couture', 'outset media games', 'peek aren\'t you curious', 'penguin books', 'perplexus toys', 'pinc premium', 'pink vanilla', 'pippa &amp; julie', 'plasmart toys', 'play visions toys', 'pocket disc', 'poof-slinky', 'popatu', 'pressman toy', 'prime time toys', 'pumpkin patch', 'pumponator toys', 'rad clothing', 'raisins', 'ralph lauren childrenswear', 'ray ban junior', 'recent toys puzzles', 'rockin robin', 'rolf bleu accessories', 'ruby rox', 'sally miller', 'schylling', 'singing machine karaoke system', 'smartlab/artlab toys', 'snowtime anytime gifts', 'sports images toys', 'squishable gifts', 'star wars toys', 'sugar lulu toys', 't2 love', 'tangle toys', 'tea collection', 'thames &amp; kosmos science kits', 'thinkfun games', 'tin-tastic', 'tractr jeans', 'truly me', 'turbo twister toys', 'twirls and twigs', 'ty', 'un deux trois', 'uncle milton', 'usangels', 'vintage havana apparel', 'weatherproof garment childrens', 'weavers', 'westminster toys', 'widgeon outerwear', 'world tech toys', 'yo gabba gabba character toys', 'zara terez', 'zoe'],
+      categories: ['60136122', '60136141', '60139433', '60134138', '60161619', '60168550', '60139435', '60134142', '60161626', '60140702', '60166413', '60140706', '60166414'],
+      filters: ['little girl', 'little boy', 'toddler', 'big girl', 'big boy', 'little kid', 'big kid'],
+      paths: ['/c/baby-kids'],
+      ages: ['toddler', 'youth'],
+      genders: ['male', 'female', 'unisex'],
+      keywords: 'kids|boys|girls|children'
+    }
+  }
+
+  function getPetitesData() {
+    return {
+      keywords: 'petite+dresses|eileen+fisher+petite|nydj+petite|petite+coats|petite+jeans|halogen+petite|petite+sale|petite+tops|nic+and+zoe+petite|caslon+petite|adrianna+papell+petite|lafayette+148+new+york+petite|petite+pants|petite|petite+dress|petite+leather+jacket|vince+camuto+petite|eileen+fisher+petites|petite+coat|petite+leggings',
+      categories: ['6002273']
+    }
+  }
+
+  function getBabyData() {
+    return {
+      brands: ['stride rite', 'igor', 'jumping jacks', 'see kai run', '3 sprouts', '7 a.m. enfant', 'a d sutton &amp; sons', 'aden + anais', 'andy&amp;evan for little gentlemen', 'aurora world toys', 'baghera toys', 'bamboobies', 'bebe au lait', 'beco bay gear', 'beginagain toys', 'bella tunno', 'belly bandit', 'bestever', 'biscotti', 'blueberry hill hats', 'blume', 'bob strollers', 'boden', 'boon', 'boppy infant products', 'bugaboo', 'buggyguard', 'bump nest', 'butterscotch blankees', 'charles castro', 'charm', 'chewbeads', 'chicco juvenile gear', 'clek', 'cloud b', 'compendium', 'crane air quality products', 'crocodile creek', 'danzo diaper bags', 'diaper dude', 'educo', 'electrik kidz', 'elf on the shelf', 'fatboy furniture', 'flensted mobiles', 'gerson &amp; gerson', 'gift giant', 'green toys', 'guavamitts', 'gund', 'hachette books', 'hanna andersson', 'i can do that! games', 'i see me', 'ic sleepwear', 'incharacter costumes', 'isobella &amp; chloe', 'itzy ritzy', 'ivi playcarpets', 'jellycat london', 'jj cole collections', 'ju-ju-be', 'kahn lucas lancaster', 'kate mack', 'kate quinn organics', 'kevel mommy accessory', 'kid o toys', 'kissy kissy', 'laura ashley girls dresses', 'levi\'s childrens', 'little giraffe', 'little me', 'little things mean a lot', 'loose leaf eyewear', 'lul love you lots', 'luli and me', 'mamaroo - 4moms', 'manhattan toy', 'marathon', 'marie-chantal', 'mary meyer', 'mattel toys', 'maxi-cosi', 'mele &amp; co', 'melissa &amp; doug', 'meri meri at home &amp; acc', 'messy marvin', 'mini maniacs', 'modern moose', 'money scholar', 'mud pie', 'mustela', 'my brest friend', 'nat &amp; jules plush toys', 'natursutten pacifiers', 'nolan glove', 'noodle &amp; boo', 'offspring', 'oliver b', 'organized from the start', 'oxo tot juvenile gear', 'paul smith children\'s wear', 'peanut shell by studio arts', 'pearls &amp; popcorn ltd', 'peek aren\'t you curious', 'pello childrens accessories', 'perine lowe', 'perry mackin diaper bags', 'petit collage decor', 'petunia pickle bottom', 'pippa &amp; julie', 'p\'kolino', 'plan toys', 'plh bows &amp; laces', 'poof-slinky', 'popatu', 'pressman toy', 'pumpkin patch', 'quinny', 'ralph lauren childrenswear', 'regal lager', 'ruffle butts', 'salisbury pewter', 'schylling', 'skip hop', 'soapsox bath aids', 'sock it to me', 'someday', 'sophie la girafe', 'spacecraft', 'stella kim diaper bags', 'storksak', 'super sprowtz', 'swaddledesigns', 'tea collection', 'teethease jewelry', 'the ellie rose', 'tiggly', 'timi &amp; leslie diaper bags', 'tobbles toy', 'toofeze', 'tree by kerri lee', 'trumpette', 'twig creative toys', 'twirls and twigs', 'usangels', 'wubbanub', 'zebi', 'zoli'],
+      categories: ['60133688', '60159172', '60159173', '60139477', '60137831', '60134250', '60150561', '60167219', '60167227', '60166416', '60167351'],
+      filters: ['newborn', '0-3m', '3-6m', '6-9m', '9-12m', '12-18m', '18-24m', 'baby', 'walker'],
+      paths: ['/c/baby-girl', '/c/baby-boy', '/c/baby-walker-shoes', '/c/baby-gear', '/c/baby-gifts', '/c/maternity', '/c/all-baby-girl-sale', '/c/all-baby-boy-sale', '/c/baby-shoes-sale', '/c/sale-baby-gear'],
+      ages: ['infant', 'baby'],
+      genders: ['male', 'female', 'unisex'],
+      keywords: 'baby|baby+boy|baby+girl'
+    }
+  }
+
+  function getJuniorsData() {
+    return {
+      brands: ['bp', 'frenchi', 'lush', 'rubbish', 'fire', 'jolt', 'mimi chica', 'painted threads', 'see thru soul', 'soprano', 'hailey logan', 'vigoss', 'way-in', 'articles of society', 'dee elle', 'lily white'],
+      categories: ['60135751', '6007579'],
+      filters: ['bp', 'frenchi', 'lush', 'rubbish', 'fire', 'jolt', 'mimi chica', 'painted threads', 'see thru soul', 'soprano', 'hailey logan', 'vigoss', 'way-in', 'articles of society', 'dee elle', 'lily white'],
+      paths: ['/c/juniors-shop', '/c/juniors-shop', '/c/sale-juniors-clothing', '/c/bp', '/c/bp-accessories', '/c/bp-clothing', '/c/bp-shoes', '/c/frenchi', '/c/lush', '/c/rubbish-clothing', '/c/fire', '/c/jolt', '/c/mimi-chica', '/c/painted-threads', '/c/see-thru-soul', '/c/soprano-clothing', '/c/vigoss-jeans', '/c/articles-of-society', '/c/dee-elle', '/c/lily-white-clothing'],
+      ages: ['teen'],
+      genders: ['female'],
+      keywords: 'for+juniors'
+    }
+  }
+
+  function getBridgeWAPData() {
+    return {
+      brands: ['3.1 phillip lim', 'alc', 'alexander wang', 'alice &amp; olivia', 'apc', 'ashley b', 'band of outsiders', 'barbour', 'blk dnm', 'boss hugo boss', 'burberry brit', 'canada goose', 'carven', 'classiques entier', 'clover canyon', 'cole haan', 'current/elliott', 'dawn levy', 'dooney &amp; bourke', 'dvf', 'diane von furstenberg', 'eileen fisher', 'elie tahari', 'elizabeth &amp; james', 'equipment', 'frame denim', 'habitual', 'halston heritage', 'haute hippie', 'helmut lang', 'hunter', 'ivanka trump', 'joie', 'just cavalli', 'kate spade new york', 'l\'agence', 'lamarque', 'layfayette 148 new york', 'longchamp', 'm missoni', 'maje', 'marc by marc jacobs', 'mcginn', 'milly', 'moncler', 'nordstrom collection', 'parker', 'pink tartan', 'rachel roy', 'rachel zoe', 'rag &amp; bone', 'rebecca minkoff', 'rebecca taylor', 'robert rodriguez', 'sandro', 'smythe', 'tadashi shoji', 'ted baker london', 'the kooples', 'theory', 'theyskens theory', 'tibi', 'tory burch', 'trina turk', 'truth &amp; pride', 'veda', 'vince', 'weekend max mara', 'white + warren', 'zadig &amp; voltaire'],
+      filters: [],
+      paths: ['/c/3-1-phillip-lim', '/c/3-1-phillip-lim-womens-clothing', '/c/3-1-phillip-lim-handbags', '/c/60175807', '/c/a-l-c', '/c/alexander-wang', '/c/alexander-wang-womens-clothing', '/c/alexander-wang-womens-handbags', '/c/alexander-wang-womens-shoes', '/c/alice-olivia', '/c/alice-olivia-womens-clothing', '/c/alice-and-olivia-shoes', '/c/alice-olivia-womens-hosiery', '/c/a-p-c-', '/c/womens-a-p-c', '/c/ashley-b', '/c/band-of-outsiders', '/c/womens-band-of-outsiders', '/c/barbour', '/c/womens-barbour', '/c/blk-dnm', '/c/blk-dnm-womens-clothing', '/c/boss-black-women', '/c/hugo-boss-women', '/c/burberry-brit', '/c/womens-burberry-brit', '/c/burberry-brit-womens-clothing', '/c/burberry-brit-womens-perfume', '/c/canada-goose', '/c/carven', '/c/carven-clothing', '/c/classiques-entier', '/c/clover-canyon', '/c/cole-haan', '/c/all-cole-haan', '/c/womens-cole-haan', '/c/cole-haan-womens-clothing', '/c/cole-haan-womens-shoes', '/c/current-elliott', '/c/dooney-bourke', '/c/diane-von-furstenberg', '/c/diane-von-furstenberg-clothing', '/c/diane-von-furstenberg-wrap-dresses', '/c/diane-von-furstenberg-shoes', '/c/diane-von-furstenberg-accessories', '/c/eileen-fisher', '/c/womens-eileen-fisher', '/c/eileen-fisher-womens-clothing', '/c/eileen-fisher-womens-dresses', '/c/60179410', '/c/eileen-fisher-womens-top', '/c/eileen-fisher-womens-shoes', '/c/eileen-fisher-womens-accessories', '/c/eileen-fisher-bestsellers', '/c/eileen-fisher-outfits', '/c/womens-eileen-fisher-sale', '/c/elie-tahari', '/c/elie-tahari-clothing', '/c/elizabeth-and-james', '/c/elizabeth-and-james-womens-clothing', '/c/elizabeth-and-james-womens-handbags', '/c/equipment', '/c/equipment-womens-sweaters', '/c/equipment-womens-shirts-blouses', '/c/frame-denim', '/c/habitual-jeans', '/c/halston-heritage', '/c/haute-hippie', '/c/haute-hippie-clothing', '/c/helmut-lang', '/c/helmut-lang-clothing-for-women', '/c/hunter', '/c/womens-hunter', '/c/hunter-boots-women', '/c/hunter-womens-socks', '/c/hunter-womens-coats-jackets', '/c/joie', '/c/joie-clothing', '/c/joie-shoes', '/c/just-cavalli', '/c/just-cavalli-women', '/c/kate-spade-new-york', '/c/all-kate-spade-new-york', '/c/womens-kate-spade-new-york', '/c/kate-spade-new-york-womens-clothing', '/c/kate-spade-new-york-womens-shoes', '/c/l-agence', '/c/lamarque', '/c/lafayette-148-new-york', '/c/womens-lafayette-148-new-york', '/c/lafayette-148-new-york-pants', '/c/lafayette-148-new-york-tops', '/c/lafayette-148-new-york-casual-basics', '/c/lafayette-148-new-york-womens-accessories', '/c/lafayette-148-new-york-womens-sale', '/c/longchamp', '/c/m-missoni', '/c/maje', '/c/marc-by-marc-jacobs', '/c/marc-by-marc-jacobs-view-all', '/c/womens-marc-by-marc-jacobs', '/c/marc-by-marc-jacobs-womens-clothing', '/c/marc-by-marc-jacobs-womens-shoes', '/c/mcginn', '/c/milly', '/c/womens-milly', '/c/moncler', '/c/womens-nordstrom-collection', '/c/nordstrom-collection-womens-apparel', '/c/parker', '/c/pink-tartan', '/c/rachel-roy', '/c/rachel-zoe', '/c/rachel-zoe-womens-clothing', '/c/rag-bone', '/c/womens-rag-bone', '/c/rag-and-bone-womens', '/c/rag-bone-jean', '/c/rebecca-minkoff', '/c/rebecca-minkoff-womens-clothing', '/c/rebecca-taylor', '/c/robert-rodriguez-clothing', '/c/womens-sandro', '/c/sandro', '/c/smythe', '/c/tadashi-shoji', '/c/womens-ted-baker-london', '/c/ted-baker-london', '/c/all-ted-baker-london', '/c/ted-baker-london-womens-clothing', '/c/ted-baker-london-womens-shoes', '/c/ted-baker-london-womens-accessories', '/c/the-kooples', '/c/the-kooples-women', '/c/womens-theory', '/c/theory', '/c/theyskens-theory', '/c/tibi', '/c/all-tory-burch', '/c/trina-turk', '/c/truth-and-pride', '/c/veda', '/c/vince', '/c/vince-for-women', '/c/vince-clothing-for-women', '/c/vince-shoes-for-women', '/c/vince-complete-looks', '/c/vince-womens-essentials', '/c/weekend-max-mara', '/c/zadig-and-voltaire', '/c/womens-zadig-voltaire', '/c/zadig-voltaire-womens-clothing'],
+      keywords: ""
+    }
+  }
+
+  function getContempWAPData() {
+    return {
+      brands: ['10 crosby','3.1 philip lim ','classiques entier','lafayette 148','360 sweater','6397 clothing','a.l.c.','a.p.c. ','acne','alberto fermani','alexander wang','alice + olivia apparel','alice + olivia footwear','aquatalia','autumn cashmere','ayr womens apparel','bailey 44','blk denim rtw','burberry ','burberrys','camilla','carven','cecilia bringheli','celine ','chanel ','christian louboutin','cinzia araia','clover canyon','current/elliott','derek lam','dvf','each other','eddie borgo','elizabeth & james ','ella moss ','enza costa ','equipment','etoile','faith connexion ','frame denim','golden goose','grace mmxiii womenswear','gucci ','habitual','halston heritage','haute hippie','helene berman','helmut lang ','hunter bell ','iro','james perse','jay godfrey','jbrand','jill stuart ','jimmy choo','joie','joie denim','jonathan simkhai','just cavalli','kate spade','kempner','kenzo','kenzo ready to wear','korovilas ','kurt geiger','l.a.m.b. ','l\'agence','lela rose','loeffler randall','loma','longchamp','m missoni','majestic designer','marc by marc jacobs','marc jacobs ','mcginn','mcguire ','mcq alexander mcqueen','michael kors','milly','mm6 maison martin margiela','moschino','msgm','no21','opening ceremony','opening ceremony','pam & geela','parker','pedro garcia','prada','public school','rachel zoe ','rag & bone','ramy brook','rebecca minkoff','rebecca taylor','red valentino','risto ','rta denim','saint laurent','see by chloe','sjp by sarah jessica parker','sloosh','smythe','soft joie','sophia webster','stella mccartney denim','stuart weitzman','t by alexander wang','tamara mellon','tanya taylor','ted baker ','the great','the kooples','theory','tibi','tom binns','tory burch','tracy reese','trina turk','truth & pride','united nude','valentino','valentino ','veda','veronica beard','victoria, victoria beckham','vince','vince denim','vivetta','zac zac posen','zadig & voltaire'],
+      filters: ['10 crosby','3.1 philip lim ','classiques entier','lafayette 148','360 sweater','6397 clothing','a.l.c.','a.p.c. ','acne','alberto fermani','alexander wang','alice + olivia apparel','alice + olivia footwear','aquatalia','autumn cashmere','ayr womens apparel','bailey 44','blk denim rtw','burberry ','burberrys','camilla','carven','cecilia bringheli','celine ','chanel ','christian louboutin','cinzia araia','clover canyon','current/elliott','derek lam','dvf','each other','eddie borgo','elizabeth & james ','ella moss ','enza costa ','equipment','etoile','faith connexion ','frame denim','golden goose','grace mmxiii womenswear','gucci ','habitual','halston heritage','haute hippie','helene berman','helmut lang ','hunter bell ','iro','james perse','jay godfrey','jbrand','jill stuart ','jimmy choo','joie','joie denim','jonathan simkhai','just cavalli','kate spade','kempner','kenzo','kenzo ready to wear','korovilas ','kurt geiger','l.a.m.b. ','l\'agence','lela rose','loeffler randall','loma','longchamp','m missoni','majestic designer','marc by marc jacobs','marc jacobs ','mcginn','mcguire ','mcq alexander mcqueen','michael kors','milly','mm6 maison martin margiela','moschino','msgm','no21','opening ceremony','opening ceremony','pam & geela','parker','pedro garcia','prada','public school','rachel zoe ','rag & bone','ramy brook','rebecca minkoff','rebecca taylor','red valentino','risto ','rta denim','saint laurent','see by chloe','sjp by sarah jessica parker','sloosh','smythe','soft joie','sophia webster','stella mccartney denim','stuart weitzman','t by alexander wang','tamara mellon','tanya taylor','ted baker ','the great','the kooples','theory','tibi','tom binns','tory burch','tracy reese','trina turk','truth & pride','united nude','valentino','valentino ','veda','veronica beard','victoria, victoria beckham','vince','vince denim','vivetta','zac zac posen','zadig & voltaire'],
+      paths: ['/c/3-1-phillip-lim','/c/3-1-phillip-lim-womens-clothing','/c/3-1-phillip-lim-handbags','/c/60175807','/c/classiques-entier','/c/lafayette-148-new-york','/c/womens-lafayette-148-new-york','/c/lafayette-148-new-york-pants','/c/lafayette-148-new-york-tops','/c/lafayette-148-new-york-casual-basics','/c/lafayette-148-new-york-womens-accessories','/c/lafayette-148-new-york-womens-sale','/c/a-l-c','/c/alexander-wang','/c/alexander-wang-womens-clothing','/c/alexander-wang-womens-handbags','/c/alexander-wang-womens-shoes','/c/alice-olivia','/c/alice-olivia-womens-clothing','/c/alice-and-olivia-shoes','/c/alice-olivia-womens-hosiery','/c/a-p-c-','/c/womens-a-p-c','/c/blk-dnm','/c/blk-dnm-womens-clothing','/c/burberry-brit','/c/womens-burberry-brit','/c/burberry-brit-womens-clothing','/c/burberry-brit-womens-perfume','/c/carven','/c/carven-clothing','/c/clover-canyon','/c/current-elliott','/c/diane-von-furstenberg','/c/diane-von-furstenberg-clothing','/c/diane-von-furstenberg-wrap-dresses','/c/diane-von-furstenberg-shoes','/c/diane-von-furstenberg-accessories','/c/elizabeth-and-james','/c/elizabeth-and-james-womens-clothing','/c/elizabeth-and-james-womens-handbags','/c/equipment','/c/equipment-womens-sweaters','/c/equipment-womens-shirts-blouses','/c/frame-denim','/c/habitual-jeans','/c/halston-heritage','/c/haute-hippie','/c/haute-hippie-clothing','/c/helmut-lang','/c/helmut-lang-clothing-for-women','/c/joie','/c/joie-clothing','/c/joie-shoes','/c/just-cavalli','/c/just-cavalli-women','/c/kate-spade-new-york','/c/all-kate-spade-new-york','/c/womens-kate-spade-new-york','/c/kate-spade-new-york-womens-clothing','/c/kate-spade-new-york-womens-shoes','/c/l-agence','/c/longchamp','/c/m-missoni','/c/marc-by-marc-jacobs','/c/marc-by-marc-jacobs-view-all','/c/womens-marc-by-marc-jacobs','/c/marc-by-marc-jacobs-womens-clothing','/c/marc-by-marc-jacobs-womens-shoes','/c/mcginn','/c/milly','/c/womens-milly','/c/parker','/c/rachel-zoe','/c/rachel-zoe-womens-clothing','/C/rag-bone','/c/womens-rag-bone','/c/rag-and-bone-womens','/c/rag-bone-jean','/c/rebecca-minkoff','/c/rebecca-minkoff-womens-clothing','/c/rebecca-taylor','/c/smythe','/c/womens-ted-baker-london','/c/ted-baker-london','/c/all-ted-baker-london','/c/ted-baker-london-womens-clothing','/c/ted-baker-london-womens-shoes','/c/ted-baker-london-womens-accessories','/c/the-kooples','/c/the-kooples-women','/c/womens-theory','/c/theory','/c/tibi','/c/all-tory-burch','/c/trina-turk','/c/truth-and-pride','/c/veda','/c/vince','/c/vince-for-women','/c/vince-clothing-for-women','/c/vince-shoes-for-women','/c/vince-complete-looks','/c/vince-womens-essentials','/c/zadig-and-voltaire','/c/womens-zadig-voltaire','/c/zadig-voltaire-womens-clothing'],
+      keywords: ""
+    }
+  }
+
+  function getUTBridgeWAPData() {
+    return {
+      brands: ['ashley b','barbour','boss hugo boss','canada goose','charles gray london','cole haan','dawn levy','dooney & bourke','eileen fisher','everyday chic','griffen womens apparel','hunter','ivanka trump','kinross','komarov','lamarque','max mara usa','moncler','nordstrom collection','pink tartan','pure amici','quinn','santorelli','sofia cashmere','tadashi shoji','tahari','weekend max mara','white & warren'],
+      filters: ['ashley b','barbour','boss hugo boss','canada goose','charles gray london','cole haan','dawn levy','dooney & bourke','eileen fisher','everyday chic','griffen womens apparel','hunter','ivanka trump','kinross','komarov','lamarque','max mara usa','moncler','nordstrom collection','pink tartan','pure amici','quinn','santorelli','sofia cashmere','tadashi shoji','tahari','weekend max mara','white & warren'],
+      paths: ['/c/ashley-b','/c/barbour','/c/womens-barbour','/c/boss-black-women','/c/hugo-boss-women','/c/canada-goose','/c/cole-haan','/c/all-cole-haan','/c/womens-cole-haan','/c/cole-haan-womens-clothing','/c/cole-haan-womens-shoes','/c/dooney-bourke','/c/eileen-fisher','/c/womens-eileen-fisher','/c/eileen-fisher-womens-clothing','/c/eileen-fisher-womens-dresses','/c/60179410','/c/eileen-fisher-womens-top','/c/eileen-fisher-womens-shoes','/c/eileen-fisher-womens-accessories','/c/eileen-fisher-bestsellers','/c/eileen-fisher-outfits','/c/womens-eileen-fisher-sale','/c/hunter','/c/womens-hunter','/c/hunter-boots-women','/c/hunter-womens-socks','/c/hunter-womens-coats-jackets','/c/lamarque','/c/moncler','/c/womens-nordstrom-collection','/c/nordstrom-collection-womens-apparel','/c/pink-tartan','/c/rachel-roy','/c/tadashi-shoji','/c/weekend-max-mara'],
+      keywords: ""
+    }
+  }
+
+  return {
+    getEncoreData: getEncoreData,
+    getWomensData: getWomensData,
+    getMensData: getMensData,
+    getMensUTData: getMensUTData,
+    getYCMData: getYCMData,
+    getYCWData: getYCWData,
+    getDesignerData: getDesignerData,
+    getKidsData: getKidsData,
+    getKidsBTSData: getKidsBTSData,
+    getPetitesData: getPetitesData,
+    getBabyData: getBabyData,
+    getJuniorsData: getJuniorsData,
+    getBridgeWAPData: getBridgeWAPData,
+    getContempWAPData: getContempWAPData,
+    getUTBridgeWAPData: getUTBridgeWAPData
+  };
+})();
+}catch(err){mmcore.EH(err);}
+try{
+// Sort_R7 :: Cookies
+
+(function() {
+  var a = function(e){return Math.floor(Math.random()*e);}; // configurable split; 2 = 50-50, 3 = 33-33-33
+  var csort_vars = ['sort=Default', 'sort=CRBS'];
+  if (/contactcenter=catsort7&test=default/.test(window.location.search)) mmcore.SetCookie('PersonalizedSortTnT', 'sort=Default&rd=f', 365, true, true);
+  if (/contactcenter=catsort7&test=crbs/.test(window.location.search)) mmcore.SetCookie('PersonalizedSortTnT', 'sort=CRBS&rd=f', 365, true, true);
+  if (mmcore.GetCookie('PersonalizedSortTnT', true) === '' || !(/&rd=f/.test(mmcore.GetCookie('PersonalizedSortTnT', true)))) mmcore.SetCookie('PersonalizedSortTnT', csort_vars[a(2)] + '&rd=f', 365, true, true);
+})();
+
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.nord.SetAction=function(a,b,c,d){mmcore._async=!0,mmcore.SetAction(a,b?b:1,c?c:null),mmcore.SetPageID(d?d:a),mmcore.CGRequest()};
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.AddDocLoadHandler(function() {
+	if ('custAttrs' in mmcore && 'GeoZipCode' in mmcore.custAttrs) {
+		if ('PageParameters' in window) {
+			$.cookie('GeoLocationZipCode', mmcore.custAttrs.GeoZipCode, { "domain": location.host.indexOf(".dev.") !== -1 ? ".dev.nordstrom.com" : ".nordstrom.com", "path": "/" });
+			if (!('shopper' in PageParameters)) {
+				PageParameters.shopper = {};
+			}
+			PageParameters.shopper.geoLocation = { zip: mmcore.custAttrs.GeoZipCode };
+		}
+		else if ('nord' in window && 'config' in window.nord && 'require' in window) {
+			setTimeout(function() {
+				if (require.defined('nord/feature/util/cookie')) {
+					require('nord/feature/util/cookie').save('GeoLocationZipCode', mmcore.custAttrs.GeoZipCode, { "domain": location.host.indexOf(".dev.") !== -1 ? ".dev.nordstrom.com" : ".nordstrom.com", "path": "/" });
+					if ('settings' in nord.config && 'shopper' in nord.config.settings) {
+						nord.config.settings.shopper.geoLocation = { zip: mmcore.custAttrs.GeoZipCode };
+					}
+				}
+			}, 2000);
+		}
+	}
+});
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.nord.sandbox = (function() {
+	var url = window.location.search,
+		mmc = mmcore.GetCookie('cfgid');
+
+	if(mmc !== '1' && /sandbox=true/.test(url)) {
+		mmcore.SetCookie('cfgid', '1', 0);
+		location.reload();
+	}
+	else if (mmc === '1' && /sandbox=false/.test(url)) {
+		mmcore.SetCookie('cfgid', '', 0);
+		location.reload();
+	}
+})();
+mmcore.AddDocLoadHandler(function(){
+	if(typeof mmcore._vars.cfgid != 'undefined' && mmcore._vars.cfgid == 1){
+		var div = document.createElement('div'), html = '<style>#MMSB{border:2px solid gray;top:20px;left:20px;padding:10px;font-size:12px;font-weight:bold;background-color:white;position:fixed;z-index:10000;opacity:0.5;width:100px}#MMSB span{font-size:9px;padding-top:}</style><div id="MMSB">You are in Maxymiser Sandbox mode<br><span>(clear cookies to return to Production mode)</span><br><br>INTERNAL ONLY</div>';
+		div.innerHTML = html;
+		document.body.appendChild(div);
+	}
+});
+}catch(err){mmcore.EH(err);}
+try{
+/******************************************************************************/
+// serializes and writes JSON array to mmcore.PC cookie to track user behavior
+// campaigns read cookie and set persistent Personalization Criteria as needed
+// public method to read cookie: mmcore.nord.PC.read([key])
+// on page load
+// global
+/******************************************************************************/
+
+mmcore.nord.PC = (function() {
+  var _debug = false;
+  var PCcookie = mmcore.GetCookie('PC'), PCarray = (PCcookie !== '') ? JSON.parse(PCcookie) : {};
+  mmcore.PCs = mmcore.PCs || {};
+
+  /**************************************************************************/
+  // init
+  // initialize the object
+  /**************************************************************************/
+  function init() {
+    getLogin();
+    getFR();
+    getEncore();
+    getWomens();
+    getMens();
+    getMensUT();
+    getYCM();
+    getYCW();
+    getDesigner();
+    getKids();
+    getKidsBTS();
+    getPetites();
+    getBaby();
+    getJuniors();
+    getBridgeWAP();
+    getContempWAP();
+    getUTBridgeWAP();
+    setArrayCookie();
+  }
+
+  /**************************************************************************/
+  // init
+  // initialize the object after DOM loads
+  /**************************************************************************/
+  function initAfterLoad() {
+    getEncoreAfterLoad();
+    getYCWAfterLoad();
+    getPetitesAfterLoad();
+    filterEvents();
+  }
+
+  /**************************************************************************/
+  // setSegmentScore
+  // sets segment score for a given cookie
+  /**************************************************************************/
+  function setSegmentScore(segment, score) {
+    mmcore.PCs[segment] = score;  // ATB
+    setArrayCookie();
+  }
+
+  /**************************************************************************/
+  // setArrayCookie
+  // sets the PC array values in persistent storage in the cookies
+  /**************************************************************************/
+  function setArrayCookie() {//console.log('PCcookie');
+    for (var i in mmcore.PCs) {
+      PCarray[i] = mmcore.PCs[i];
+      //console.log(PCarray[i]);
+      mmcore.SetCookie('PC', JSON.stringify(PCarray), 45, false, true);
+      //console.log(mmcore.GetCookie('PC'));
+    }
+  }
+
+  /**************************************************************************/
+  // readArrayCookie
+  // Reads the PC array values from persistent storage in the cookies
+  /**************************************************************************/
+  function readArrayCookie(key) {
+    return ((key in PCarray) ? PCarray[key] : 0);
+  }
+
+  /**************************************************************************/
+  // getSegment
+  // shopperRegion/shopperStyle, AllShop
+  /**************************************************************************/
+  function getSegment() {
+    if (('nord' in window && 'config' in window.nord) && 
+      'shopperSegment' in nord.config.settings.tto && nord.config.settings.tto.shopperSegment !== null) {
+      var bar = PageParameters.shopperSegment.indexOf('|');
+      mmcore.PCs.region = nord.config.settings.tto.shopperSegment.charAt(bar+1);
+      mmcore.PCs.style = nord.config.settings.tto.shopperSegment.charAt(bar+2);
+    }
+  }
+
+  /**************************************************************************/
+  // getATB
+  // handles add to bag actions for all segments
+  /**************************************************************************/
+  function getATB(pc) {
+    $(document).bind('mmatb', function() {  // custom event fired on ATB in ATB.js site script
+      increaseSegmentValue(pc, 3);
+    });
+  }
+
+  /**************************************************************************/
+  // getPurchase
+  // registers a purchase for a given segment
+  /**************************************************************************/
+  function getPurchase(categoryArray, pc) {
+    if ('PageParameters' in window && 'orderInfo' in PageParameters && 'items' in PageParameters.orderInfo) {
+      var i, j=0, oii = PageParameters.orderInfo.items;
+      for (i in oii) {
+        for (; j<categoryArray.length; j++) {
+          if (oii[i].productCategory.indexOf(categoryArray[j]) !== -1) {
+            increaseSegmentValue(pc, 5);            
+          }
+        }
+      }
+    }
+  }
+
+  /**************************************************************************/
+  // getLogin
+  // gets the login status of the current user
+  /**************************************************************************/
+  function getLogin() {
+    var nc, ac;
+    if (window.location.hostname.indexOf('.dev') !== -1) {
+      nc = 'nordstromdev';
+      ac = 'authstatusdev';
+    }
+    else {
+      nc = 'nordstrom';
+      ac = 'authstatus';
+    }
+    if (mmcore.GetCookie(nc, true).indexOf('firstname') === -1) { // anon
+      mmcore.PCs.auth = 'AN';
+    }
+    else if (mmcore.GetCookie(ac, true) === '') { // recognized
+      mmcore.PCs.auth = 'RC';
+    }
+    else {  // logged in
+      mmcore.PCs.auth = 'LI';
+    }
+    mmcore.nord.utils.mmEvent('PCs.auth');
+  }
+  
+  /**************************************************************************/
+  // getFR
+  // gets fashion rewards status
+  /**************************************************************************/
+  function getFR() {
+    var ps;
+    if ('PageParameters' in window && 'shopper' in PageParameters) {
+      mmcore.PCs.rewards =  (PageParameters.shopperAttrEa || (parseInt(PageParameters.shopper.maxRewardsLevel) > 0));
+    }
+    else if ('nord' in window && 'config' in window.nord && 'settings' in nord.config && 'shopper' in nord.config.settings) {
+      mmcore.PCs.rewards = (nord.config.settings.shopper.isEarlyAccessEligible || (nord.config.settings.shopper.maxRewardsLevel > 0));
+    }
+    
+    setArrayCookie();      
+  }
+  
+  /**************************************************************************/
+  // isProductPage
+  // Is this a product page?
+  /**************************************************************************/
+  function isProductPage() {
+    if ('nord' in window && 'config' in window.nord && 'settings' in window.nord.config && 'page' in window.nord.config.settings) {
+      return (nord.config.settings.page.pageType === "ProductPage");
+    }
+    else return false;
+  }
+
+  /**************************************************************************/
+  // checkKeywords
+  // Checks for specific keywords for a segment
+  /**************************************************************************/
+  function checkKeywords(a) {
+    var re1 = new RegExp(a.replace(/\+/g, "\\+"), "ig");
+    var re2 = new RegExp(a.replace(/\+/g, "\\-"), "ig");
+
+    if(mmcore.nord.utils.getQueryParam('keyword').toLowerCase().match(re1) !== null || mmcore.nord.utils.getQueryParam('keyword').toLowerCase().match(re2) !== null) return true;
+    else return false;
+  }
+
+  /**************************************************************************/
+  // checkURLPath
+  // Checks for specific URL segments
+  /**************************************************************************/
+  function checkURLPath(pathArray) {
+    if ($.inArray(window.location.pathname, pathArray) > -1) return true;
+    else return false;
+  }
+
+  /**************************************************************************/
+  // checkCategories
+  // Checks for specific categories
+  /**************************************************************************/
+  function checkCategories(categoryArray) {
+    for (var i=0; i< categoryArray.length; i++) {
+      if ('PageParameters' in window && 'categoryString' in PageParameters && PageParameters.categoryString !== null ) {
+        if(PageParameters.categoryString.match(categoryArray[i])) return true;
+      }
+
+      if ('PageParameters' in window && 'productCategoryId' in PageParameters && PageParameters.productCategoryId !== null ) {
+        if(PageParameters.productCategoryId.match(categoryArray[i])) return true;
+      }
+    }
+    
+    return false;
+  }
+
+  /**************************************************************************/
+  // checkBrands
+  // Checks for specific brand names
+  /**************************************************************************/
+  function checkBrands(brandArray) {
+    if ('nord' in window && 'config' in window.nord && 'settings' in window.nord.config && 'product' in window.nord.config.settings) {
+      if ($.inArray(nord.config.settings.product.brandName.toLowerCase(), brandArray) > -1) return true;
+    }
+
+    return false;
+  }
+
+  /**************************************************************************/
+  // checkBrands
+  // Checks for specific brand names
+  /**************************************************************************/
+  function checkGender(genderArray) {
+    if ('nord' in window && 'config' in window.nord && 'settings' in window.nord.config && 'product' in window.nord.config.settings) {
+      if ($.inArray(nord.config.settings.product.gender.toLowerCase(), genderArray) > -1) return true;
+    }
+
+    return false;
+  }
+
+  /**************************************************************************/
+  // checkBrands
+  // Checks for specific brand names
+  /**************************************************************************/
+  function checkAge(ageArray) {
+    if ('nord' in window && 'config' in window.nord && 'settings' in window.nord.config && 'product' in window.nord.config.settings) {
+      if ($.inArray(nord.config.settings.product.ageGroup.toLowerCase(), ageArray) > -1) return true;
+    }
+
+    return false;
+  }
+
+  /**************************************************************************/
+  // checkBrands
+  // Checks for specific brand names
+  /**************************************************************************/
+  function checkReferrer(referrerArray) {
+    for (var i in referrerArray) {
+      if (document.referrer.toLowerCase().indexOf(referrerArray[i])!=-1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**************************************************************************/
+  // filterEvents
+  // Fire events for the filters
+  /**************************************************************************/
+  function filterEvents() {
+    if($("#dynamicFilter").length <= 0) return;
+
+    $(".filter ul > li").on("mouseup", function() {
+      var e = jQuery.Event( "ATO_SEGMENTS_FILTERS", { text: $(this).text() } );
+      $(document).trigger(e);
+    })
+  }
+
+  /**************************************************************************/
+  // filterListen
+  // Listen for the filter events
+  /**************************************************************************/
+  function getFilters(filterArray, segment) {
+    $(document).on("ATO_SEGMENTS_FILTERS", function(e) {
+      for (var i in filterArray) {
+        if (e.text.toLowerCase().indexOf(filterArray[i])!=-1) {
+          increaseSegmentValue(segment, 1)
+        }
+      }
+    })
+  }
+
+  /**************************************************************************/
+  // leftNavEvents
+  // Fire events for the left nav
+  /**************************************************************************/
+  function leftNavEvents() {
+    if($('#category-nav a, .side-navigation a, .left-nav-category-tree a').length <= 0) return;
+
+    $('#category-nav a, .side-navigation a, .left-nav-category-tree a').on('mouseup', function() {
+      var e = jQuery.Event( "ATO_SEGMENTS_LEFTNAV", { text: $(this).text() } );
+      $(document).trigger(e);
+    })
+  }
+
+  /**************************************************************************/
+  // getLeftNav
+  // Listen for the left nav events
+  /**************************************************************************/
+  function getLeftNav(brandArray, segment) {
+    $(document).on("ATO_SEGMENTS_LEFTNAV", function(e) {
+      for (var i in filterArray) {
+        if (e.text.toLowerCase().indexOf(brandArray[i])!=-1) {
+          increaseSegmentValue(segment, 1)
+        }
+      }
+    })
+  }
+
+  /**************************************************************************/
+  // increaseSegmentValue
+  // Centralizes the addition
+  /**************************************************************************/
+  function increaseSegmentValue(segment, amt) {
+    if (_debug) console.log("INCREASE SEGMENT: " + segment + " +" + amt);
+    mmcore.PCs[segment] += amt;
+    window.postMessage({ type: "SEGMENT_MONITOR", segment: segment, amt: amt }, "*");
+    setArrayCookie();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  //  THE SEGMENTS
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**************************************************************************/
+  // getWomens
+  // WAP Segment
+  /**************************************************************************/
+  function getWomens() {
+    var data = mmcore.nord.PersData.getWomensData();
+    mmcore.PCs.womens = readArrayCookie('womens');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords)) { 
+      increaseSegmentValue('womens', 1);
+    }
+
+    getPurchase(data.categories, 'womens');
+
+    if (!isProductPage()) return;
+    
+    if (nord.config.settings.product.ageGroup === "Adult" && nord.config.settings.product.gender === 'Female' && !nord.config.settings.product.isDesigner) {
+      increaseSegmentValue('womens', 1);
+      getATB('womens');
+    }
+  }
+
+  /**************************************************************************/
+  // getMens
+  // Mens Segment
+  /**************************************************************************/
+  function getMens() {
+    var data = mmcore.nord.PersData.getMensData();
+
+    mmcore.PCs.mens = readArrayCookie('mens');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords)) { 
+      increaseSegmentValue('mens', 1);
+    }
+
+    getPurchase(data.categories, 'mens');
+
+    if (!isProductPage()) return;
+    
+    if (nord.config.settings.product.ageGroup === "Adult" && nord.config.settings.product.gender === 'Male') {
+      increaseSegmentValue('mens', 1);
+      getATB('mens');
+    }
+  }
+
+  /**************************************************************************/
+  // getMensUT
+  // Mens Segment
+  /**************************************************************************/
+  function getMensUT() {
+    var data = mmcore.nord.PersData.getMensUTData();
+	
+    mmcore.PCs.mensUT = readArrayCookie('mensUT');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords) || ( checkBrands(data.brands) && checkAge(data.ages) && checkGender(data.genders) ) ) { 
+      increaseSegmentValue('mensUT', 1);
+    }
+
+    getPurchase(data.categories, 'mensUT');
+    getFilters(data.filters, 'mensUT');
+
+    if (!isProductPage()) return;
+
+    if ( checkBrands(data.brands) && checkAge(data.ages) && checkGender(data.genders) ) {
+      getATB('mensUT');
+    }
+  }
+
+  /**************************************************************************/
+  // getYCM
+  // YCM Segment
+  /**************************************************************************/
+  function getYCM() {
+    var data = mmcore.nord.PersData.getYCMData();
+    
+    mmcore.PCs.YCM = readArrayCookie('YCM');
+
+    if (checkCategories(data.categories) || checkKeywords(data.keywords)) { 
+      increaseSegmentValue('YCM', 1);
+      getATB('YCM');
+    }
+
+    getPurchase(data.categories, 'YCM');
+  }
+
+  /**************************************************************************/
+  // getYCW
+  // YCW Segment
+  /**************************************************************************/
+  function getYCW() {
+    var data = mmcore.nord.PersData.getYCWData();
+
+    mmcore.PCs.YCW = readArrayCookie('YCW');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || checkBrands(data.brands) || checkReferrer(data.referrers) ) { 
+      increaseSegmentValue('YCW', 1);
+      getATB('YCW');
+    }
+
+    getPurchase(data.categories, 'YCW');
+    getFilters(data.brands, 'YCW');
+  }
+
+  /**************************************************************************/
+  // getYCWAfterLoad
+  // YCW Segment post DOM actions
+  /**************************************************************************/
+  function getYCWAfterLoad() {
+    if (!isProductPage()) return;
+
+    if ($("li:contains('Savvy')", "ul.style-features").length > 0) {
+      increaseSegmentValue('YCW', 1);
+      getATB('YCW');
+    }
+  }
+
+  /**************************************************************************/
+  // getDesigner
+  // Designer Segment
+  /**************************************************************************/
+  function getDesigner() {
+    var data = mmcore.nord.PersData.getDesignerData();
+
+    mmcore.PCs.designer = readArrayCookie('designer');
+    
+    if (checkCategories(data.categories) || checkKeywords(data.keywords) ) { 
+      increaseSegmentValue('designer', 1);
+      getATB('designer');
+    }
+
+    getPurchase(data.categories, 'designer');
+
+    if (!isProductPage()) return;
+
+    if (nord.config.settings.product.isDesigner) {
+      increaseSegmentValue('designer', 1);
+      getATB('designer');
+    }
+  }
+
+  /**************************************************************************/
+  // getKids
+  // Kids Segment
+  /**************************************************************************/
+  function getKids() {
+    var data = mmcore.nord.PersData.getKidsData();
+
+    mmcore.PCs.kids = readArrayCookie('kids');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords) ) { 
+      increaseSegmentValue('kids', 1);
+      getATB('kids');
+    }
+
+    getPurchase(data.categories, 'kids');
+  }
+
+  /**************************************************************************/
+  // getKids
+  // Kids Segment
+  /**************************************************************************/
+  function getKidsBTS() {
+    var data = mmcore.nord.PersData.getKidsBTSData();
+
+    mmcore.PCs.kidsBTS = readArrayCookie('kidsBTS');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || (checkBrands(data.brands) && checkAge(data.ages)) ) { 
+      increaseSegmentValue('kidsBTS', 1);
+      getATB('kidsBTS');
+    }
+
+    getPurchase(data.categories, 'kidsBTS');
+    getFilters(data.filters.concat(data.brands), 'kidsBTS');
+    getLeftNav(data.brands, 'kidsBTS');
+  }
+
+  /**************************************************************************/
+  // getBaby
+  // Baby Segment
+  /**************************************************************************/
+  function getBaby() {
+    var data = mmcore.nord.PersData.getBabyData();
+
+    mmcore.PCs.baby = readArrayCookie('baby');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || (checkBrands(data.brands) && checkAge(data.ages)) ) { 
+      increaseSegmentValue('baby', 1);
+      getATB('baby');
+    }
+
+    getPurchase(data.categories, 'baby');
+    getFilters(data.filters.concat(data.brands), 'baby');
+    getLeftNav(data.brands, 'baby');
+  }
+
+  /**************************************************************************/
+  // getJuniors
+  // Juniors Segment
+  /**************************************************************************/
+  function getJuniors() {
+    var data = mmcore.nord.PersData.getJuniorsData();
+
+    mmcore.PCs.juniors = readArrayCookie('juniors');
+
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || checkBrands(data.brands) || (checkAge(data.ages) && checkGender(data.genders)) ) { 
+      increaseSegmentValue('juniors', 1);
+      getATB('juniors');
+    }
+
+    getPurchase(data.categories, 'juniors');
+    getFilters(data.filters.concat(data.brands), 'juniors');
+    getLeftNav(data.brands, 'juniors');
+  }
+  
+  /**************************************************************************/
+  // getEncore
+  // Encore / Plus Segment
+  /**************************************************************************/
+  function getEncore() {
+    var data = mmcore.nord.PersData.getEncoreData();
+
+    mmcore.PCs.encore = readArrayCookie('encore');
+    
+    if (checkCategories(data.categories) || checkURLPath(data.paths) || checkKeywords(data.keywords) ) { 
+      increaseSegmentValue('encore', 1);
+    }
+
+    getPurchase(data.categories, 'encore');
+  }
+
+  /**************************************************************************/
+  // getEncoreAfterLoad
+  // Encore / Plus Segment post DOM actions
+  /**************************************************************************/
+  function getEncoreAfterLoad() {
+    $(document).on('click.tto', '#dynamicFilter ul#filter_Size li[data-defaultsize3="plus"]', function(){
+      increaseSegmentValue('encore', 1);
+    });
+
+    if (isProductPage()) {
+      if(nord.config.settings.page.pageType == "ProductPage") {
+        $('input[type=radio][value=Plus]').one('mouseup', function() {
+          increaseSegmentValue('encore', 1);
+        });
+
+        if ($('input[type=radio][value=Plus]:checked').length > 0 ||
+          $("li:contains('Encore')", "ul.style-features").length > 0) {
+          increaseSegmentValue('encore', 1);
+          getATB('encore');
+        }
+      }
+    }
+  }
+
+  /**************************************************************************/
+  // getPetites
+  // Petites Segment
+  /**************************************************************************/
+  function getPetites() {
+    var data = mmcore.nord.PersData.getPetitesData();
+
+    mmcore.PCs.petites = readArrayCookie('petites');
+          
+    if (checkCategories(data.categories) || checkKeywords(data.keywords) || (window.location.pathname.match('/c/') !== null && window.location.pathname.match('petite') !== null)) { 
+      increaseSegmentValue('petites', 1);
+      getATB('petites');
+    }
+    
+    if (!isProductPage()) return;
+
+    $(document).bind('mmatb', function() {
+      if($("ul > li.selected", "#skuSelector_size1Value").length > 0 && 
+         $("ul > li.selected", "#skuSelector_size1Value").children("a").children("label").html().slice(-1).toLowerCase() == "p") {
+        increaseSegmentValue('petites', 3);
+      }
+    });
+  }
+
+  /**************************************************************************/
+  // getPetitesAfterLoad
+  // Petites Segment post DOM actions
+  /**************************************************************************/
+  function getPetitesAfterLoad() {
+    $(document).on('click.tto', '#dynamicFilter ul#filter_Size li:contains("Petite")', function(){
+      increaseSegmentValue('petites', 1);
+    });
+
+    if (!isProductPage()) return;
+
+    $('input[type=radio][value=Petite]').one('mouseup', function() {
+      increaseSegmentValue('petites', 1);
+    });
+
+    if ($("li:contains('Petite Focus.')", "ul.style-features").length > 0 || 
+      $('input[type=radio][value=Petite]:checked').length > 0) {
+      increaseSegmentValue('petites', 1);
+      getATB('petites');
+    }
+  }
+
+  /**************************************************************************/
+  // getBridgeWAP
+  // Womens Bridge Pricing Segment
+  /**************************************************************************/
+  function getBridgeWAP() {
+    var data = mmcore.nord.PersData.getBridgeWAPData();
+
+    mmcore.PCs.bridgeWAP = readArrayCookie('bridgeWAP');
+
+    if (checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || checkBrands(data.brands)) { 
+      increaseSegmentValue('bridgeWAP', 1);
+      getATB('bridgeWAP');
+    }
+
+    //getPurchase(categories, 'bridgeWAP');
+    getFilters(data.filters.concat(data.brands), 'bridgeWAP');
+    getLeftNav(data.brands, 'bridgeWAP');
+  }
+
+  /**************************************************************************/
+  // getContempWAP
+  // Womens Contemporary Segment
+  /**************************************************************************/
+  function getContempWAP() {
+    var data = mmcore.nord.PersData.getContempWAPData();
+
+    mmcore.PCs.contempWAP = readArrayCookie('contempWAP');
+
+    if (checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || checkBrands(data.brands)) { 
+      increaseSegmentValue('contempWAP', 1);
+      getATB('contempWAP');
+    }
+
+    //getPurchase(categories, 'bridgeWAP');
+    getFilters(data.filters.concat(data.brands), 'contempWAP');
+    getLeftNav(data.brands, 'contempWAP');
+  }
+
+  /**************************************************************************/
+  // getContempWAP
+  // Womens Contemporary Segment
+  /**************************************************************************/
+  function getUTBridgeWAP() {
+    var data = mmcore.nord.PersData.getUTBridgeWAPData();
+
+    mmcore.PCs.UTBridgeWAP = readArrayCookie('UTBridgeWAP');
+
+    if (checkURLPath(data.paths) || checkKeywords(data.keywords + data.brands.join("|").replace(/ /g, '+')) || checkBrands(data.brands)) { 
+      increaseSegmentValue('UTBridgeWAP', 1);
+      getATB('UTBridgeWAP');
+    }
+
+    //getPurchase(categories, 'bridgeWAP');
+    getFilters(data.filters.concat(data.brands), 'UTBridgeWAP');
+    getLeftNav(data.brands, 'UTBridgeWAP');
+  }
+
+  // Call the init function after waiting for WCM
+  setTimeout(init, 3000);
+
+  // Call the init function after waiting for the DOM
+  mmcore.AddDocLoadHandler(function() {
+    setTimeout(initAfterLoad, 3500);
+  });
+  
+
+  return {
+    read: readArrayCookie,
+    set: setArrayCookie,
+    setSegmentScore: setSegmentScore
+  };
+})();
+}catch(err){mmcore.EH(err);}
+try{
+// A2621_ShoeAltsV2 :: SetPageID
+
+
+var product_loaded2 = function() {
+    if ('nord' in window && 'config' in nord && 'settings' in nord.config && 'product' in nord.config.settings && 'gender' in nord.config.settings.product && 'brandName' in nord.config.settings.product && 'productType1' in nord.config.settings.product) {
+
+        getShoe();
+    } else {
+        setTimeout(product_loaded2, 50);
+    }
+};
+product_loaded2();
+
+function getShoe() {
+    var typeArray = ["Shoes"];
+    if (nord.config.settings.product.gender === "Female" && $.inArray(nord.config.settings.product.productType1, typeArray) > -1) {
+
+        var styleArray = [
+            '1037352', '1037355', '1037356', '1037358', '886346', '1037353', '1037350', '1036009', '1037362', '1037359', '1037688', '1037718', '1035896', '1037658', '1037653', '1037646', '886430', '1037664', '1037651', '1037645', '1037635', '481186', '1037666', '1037670', '710854', '940984', '749764', '1030263', '1024084', '1028889', '1030359', '1030401', '1030411', '1030435', '1028867', '664438', '253658', '664433', '1004627', '887637', '1028048', '1024087', '926153', '38321', '844155', '860015', '37565', '814317', '860006', '878748', '843598', '860009', '878764', '877625', '894771', '345640', '752942', '880208', '879331', '878830', '878845', '878842', '880027', '840519', '878902', '886721', '886551', '886807', '886313', '886310', '886604', '886545', '886275', '886274', '886222', '886400', '886421', '886576', '886358', '886311', '886489', '886528', '886280', '886237', '808171', '1020950', '1043360', '1013885', '1013974', '1039734', '1021408', '1014117', '1014258', '762855', '466098', '879004', '881074', '815019', '1007944', '1009385', '202887', '823027', '822857', '930103', '822876', '930105', '1038092', '491973', '338360', '1039941', '344099', '620379', '811813', '852992', '887521', '974464', '887632', '885583', '1038906', '1038848', '1038911', '1038900', '1038867', '1038878', '1002842', '1001225', '1001218', '1003032', '1021853', '862376', '1002943', '1002816', '1002820', '1017641', '1037913', '1037914', '793893', '1016040', '1037668', '1037971', '1037966', '1037959', '1037977', '871474', '871518', '834409', '467438_5', '220795', '466129_5', '614054', '836319', '834773', '162505', '993302', '993302', '335522', '803235', '881165', '880386', '881232', '1000916', '1038282', '1038282', '1038287', '1038287', '1009884', '1001736', '1010136', '1010371', '1010314', '959113', '1010269', '1010249', '1010316', '1009942', '894634', '949050', '664260', '858165', '664102', '662429', '860794', '814560', '284553', '815994', '650004', '977369', '813121', '977761', '977683', '868460', '888355', '812954', '812909', '938053', '816026', '800099', '660085', '664116', '664049', '891970', '591074', '590572', '664431', '668106', '871284', '938486', '977704', '872927', '873197', '873095', '1052313', '1052290', '1052475', '1052499', '1048511', '1048523', '1052279', '406671', '1052181', '1052263', '1052340_1', '1052340', '1052346', '1052346', '1022458', '1048792', '626973', '655052', '892925', '372142', '892945', '263818_56', '263818', '893453', '893453', '892959', '891810', '660798', '660798_8', '836230', '893127', '893448', '1002001', '1002001', '987386', '1062809', '1012517', '842029', '1062761', '903650', '77926', '1049947', '811774', '1049967', '1056412', '1017940', '1056536', '1050435', '1056444', '1056444', '895305', '348334', '1044646', '1050485', '1050485', '1050363', '1050024', '1001797', '840454', '1005032', '841612', '841463', '793579', '1060340', '624648', '501486', '1060335', '1060355', '1002232', '841541', '841548', '876087', '842161', '540107', '1011173', '540100', '1011168', '853180', '866495', '867510', '866856', '866158', '822696', '882284', '867243', '866455', '867215', '826695', '842110', '867080', '882264', '867221', '866813', '866938', '866378', '882260', '1030737', '866969', '867746', '867365', '867055', '866505', '867465', '867142', '330780', '885417', '876044', '885569', '937922', '212977', '898663', '877871', '885527', '714059', '714076', '331270', '242546', '832747', '832899', '833348', '832587', '833186', '833552', '832845', '832850', '832802', '832603', '832616', '832640', '826367', '1020703', '1020763', '896984', '487780', '897407', '151896', '498974', '842917', '897883', '499835', '897325', '897349', '896991', '842916', '897384', '897197', '843125', '897369', '897365', '897264', '1010632', '941959', '1010595', '887230', '1010505', '887250', '1010456', '1010758', '1032601', '1032642', '1032903', '1032886', '1032849', '71377', '136499', '554477', '593803', '661127', '697335', '793317_1', '851572'
+        ];
+        var s = nord.config.settings.product.styleNumber;
+        if (s.indexOf('_') > -1) {
+            s = s.substring(0, s.indexOf('_'))
+        }
+
+        if ($.inArray(s, styleArray) > -1) {
+            mmcore._async = true;
+            mmcore.SetPageID("ShoeAlts");
+            mmcore.CGRequest(function() {
+              var head = document.getElementsByTagName('head')[0];
+var style = document.createElement('style');
+style.type = 'text/css';
+var css = '#image-zoom > ul > li.image-thumb {display:none}';
+
+if (style.styleSheet) { 
+    style.styleSheet.cssText = css;
+} else { 
+    style.appendChild(document.createTextNode(css));
+}
+head.appendChild(style);
+                mmcore.ForeSee('A2621_ShoeAltsV2');
+            });
+        }
+    } else {
+        $('#image-zoom > ul > li.image-thumb').css('display', 'block');
+    }
+}
+}catch(err){mmcore.EH(err);}
+try{
+// passes campaign name into ForeSee obj for campaign tracking in ForeSee
+// function declared on page load
+// called from campaign on campaign load: mmcore.ForeSee('A62ColdWthrBoot1021');
+// global
+mmcore.VOC = mmcore.voc = mmcore.foresee = mmcore.ForeSee = function(campaignName) {
+  var GI = mmcore.GenInfo[campaignName], 
+    output=[];
+
+  if (!GI) {
+    return mmcore.EH({ message:'mmcore.ForeSee No GenInfo found for campaign: ' + campaignName });
+  }
+
+  for (var key in GI) {
+    output.push(key+':' +GI[key]);
+  }
+  var campaignInfo = output.join('|').toLowerCase();
+
+  function sendForeSee() {
+    FSR.CPPS.set(campaignName, campaignName + '=' + campaignInfo);
+  }
+
+  if ('FSR' in window && 'CPPS' in FSR && typeof FSR.CPPS.set == 'function') {
+    sendForeSee();
+  } 
+  else {
+    var waitForFS = setInterval(function() {
+      if (typeof FSR !== 'object' || typeof FSR.CPPS !== 'object' || typeof FSR.CPPS.set !== 'function') {
+        return;
+      }
+      clearInterval(waitForFS);
+      sendForeSee();
+    }, 50);
+
+    setTimeout(function() {
+      clearInterval(waitForFS);
+      mmcore.EH({ message:'mmcore.ForeSee: no foresee function found' });
+    }, 5000);
+  }
+
+  // Set to Page Level Data
+  if ('PageParameters' in window && 'tto' in PageParameters) {
+      PageParameters.tto.VOC = campaignName + '=' + campaignInfo;
+  }
+  else if ('nord' in window && 'config' in window.nord && 'settings' in nord.config && 'tto' in nord.config.settings) {
+      nord.config.settings.tto.VOC = campaignName + '=' + campaignInfo;
+  }
+  
+  $(document).trigger("VOCMxyCampaign", {campaign_name: campaignName + '=' + campaignInfo });
+};
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.nord.getProductData = (function() {
+	var mmAttribs = [], p;
+	this.getWCMproduct = function() {
+		p = nord.config.settings.product || '';
+		if (p === '') return false;
+		if (typeof p.gender != 'undefined' && typeof p.ageGroup != 'undefined') {
+			if (p.gender == "Unisex") {
+				mmAttribs.push("Unisex");
+			}
+			else if (p.ageGroup == "Adult") {
+				mmAttribs.push((p.gender == "Female") ? "Women": "Men");
+			}
+			else if (p.ageGroup == "Youth") {
+				mmAttribs.push((p.gender == "Female") ? "Girls": "Boys");
+			}
+			else {
+				mmAttribs.push((p.gender == "Female") ? p.ageGroup + " Girls": p.ageGroup + " Boys");
+			}
+		}
+		if (typeof p.productType1 != 'undefined') mmAttribs.push((p.isDesigner) ? "Designer " + p.productType1 : p.productType1);
+		if (typeof p.productType2 != 'undefined') mmAttribs.push(p.productType2);
+		mmcore.nord.productType = mmAttribs.join('/').replace('-', ' ');
+		return mmcore.nord.productType;
+	}
+	mmcore.nord.utils.mmListen('tto_yes', this.getWCMproduct);
+})();
+if (typeof cmCreatePageElementTag == 'undefined') cmCreatePageElementTag = function() { return false; };
+}catch(err){mmcore.EH(err);}
+try{
+// A2714_Sort_R7_Category :: PDP_Actions
+
+mmcore.nord.utils.mmListen('tto_yes', function() {
+  var sortcats = [['60130351', 'MensSale'], ['60130347', 'WomensSale'], ['60135789', 'MensShoes'], ['2376778', 'WomensShoes'], ['6008000', 'Accessories'], 
+                  ['2377897', 'Beauty'],  ['2374609', 'Mens'], ['60136226', 'WAP'], ['2379293', 'Kids']], actioncat;
+
+  var excludecats = ['6017645','60126674','60129322','6022339','60148575','60177354','60148578','60133689','60137831','60151680','60184306','60150628','60169313',
+                    '60184655','60160208','60139445','60185106','2379759','60145328','60133028','60184517','60154658','60185030','60164746','6006559','2374331',
+                    '60135751','60184553','600757','6014565'];
+
+  loop1:
+  for (i=0; i<sortcats.length;i++) {
+    if (require('nord/config').getValue('analytics.categoryId').indexOf(sortcats[i][0]) !== -1) { // if product category is a sort category
+
+      //In an excluded category
+      for (z=0; z<excludecats.length; z++) {
+        if (require('nord/config').getValue('analytics.categoryId').indexOf(excludecats[z]) !== -1) {
+          break loop1;
+        }
+      }
+
+      actioncat = sortcats[i][1];
+      mmcore._async = true;
+      mmcore.SetAction('Product_Views2', 1, actioncat);
+      mmcore.SetPageID('Product_Views2');
+      mmcore.CGRequest();
+      $(document).on('update.miniBag', function() {
+        mmcore.SetAction('Add_to_Bag2', 1, actioncat);
+        mmcore.SetPageID('Add_to_Bag2');
+        mmcore.CGRequest();
+      });
+      break;
+    }
+  }
+});
+}catch(err){mmcore.EH(err);}
+try{
+/******************************************************************************/
+// Manages Data for Personalizaion Criteria and MM PC's
+// on page load
+// global
+/******************************************************************************/
+
+mmcore.nord.PCData = (function() {
+  var $PC = "PersCriteria";
+
+  var $segments = [
+    { name: "bridgeWAP",   qualify: 50, cookie: "bridgeWAP",   pc: 1,    page: "bridgePC",   active: true },
+    { name: "encore",      qualify: 30, cookie: "encore",      pc: 2,    page: "encorePC",   active: true },
+    { name: "petites",     qualify: 30, cookie: "petites",     pc: 3,    page: "petitesPC",  active: true },
+    { name: "designer",    qualify: 30, cookie: "designer",    pc: 4,    page: "designerPC", active: true },
+    { name: "mens",        qualify: 50, cookie: "mens",        pc: 5,    page: "mensPC",     active: false },
+    { name: "mensUT",      qualify: 30, cookie: "mensUT",      pc: 6,    page: "mensUTPC",   active: true },
+    { name: "kidsBTS",     qualify: 30, cookie: "kidsBTS",     pc: 7,    page: "kidsBTSPC",  active: true },
+    { name: "baby",        qualify: 30, cookie: "baby",        pc: 8,    page: "babyPC",     active: true },
+    { name: "YCW",         qualify: 30, cookie: "YCW",         pc: 9,    page: "ycwPC",      active: true },
+    { name: "YCM",         qualify: 30, cookie: "YCM",         pc: 10,   page: "YCMPC",      active: true },
+    { name: "juniors",     qualify: 30, cookie: "juniors",     pc: 11,   page: "juniorsPC",  active: true },
+    { name: "kids",        qualify: 30, cookie: "kids",        pc: 12,   page: "kidsPC",     active: false }
+  ];
+
+
+  /**************************************************************************/
+  // determineSegment
+  // calculate the winning segment
+  /**************************************************************************/
+  function determineSegment(filters) {
+    var orderArray = [{segment: "none", score: 0}];
+
+    for (j in filters) {
+      for (x in $segments) {
+        if (filters[j].name === $segments[x].name) {
+          if (filters[j].hasOwnProperty("page")) $segments[x].page = filters[j].page;
+          if(mmcore.nord.PC.read($segments[x].cookie) >= $segments[x].qualify) {
+            orderArray.push({segment: $segments[x], score: mmcore.nord.PC.read($segments[x].cookie)});
+          }
+        }
+      }
+    }
+
+    var winner = orderArray[0];
+    var maximum = orderArray[0].score;
+    for (i=1;i<orderArray.length;i++) {
+      if (orderArray[i].score > maximum) {
+        maximum = orderArray[i].score;
+        winner = orderArray[i];
+      }
+    }
+
+    return winner.segment;
+  }
+
+  function setPC(filters) {
+    var winner = determineSegment(filters);
+    mmcore._async = true;
+    mmcore.SetPersCriterion($PC, winner.name);
+    mmcore.SetPageID(winner.page);
+    mmcore.CGRequest();
+  }
+
+  /**************************************************************************/
+  // getSegments
+  // get the segment array
+  /**************************************************************************/
+  function getSegments(num) {
+    return $segments;
+  }
+
+  /**************************************************************************/
+  // getSegmentByID
+  // get the segment  by ID
+  /**************************************************************************/
+  function getSegmentByID(num) {
+    return $segments[num-1];
+  }
+
+  return {
+    getSegmentByID: getSegmentByID,
+    determineSegment: determineSegment,
+    setPC: setPC
+  };
+})();
+
+}catch(err){mmcore.EH(err);}
+try{
+mmcore.nord.PATB = (function() {
+  mmcore.AddDocLoadHandler(function() {
+          $(document).on('update.miniBag', function() {
+                  mmcore.nord.utils.mmEvent('mmatb');
+                  mmcore._async = true;
+                  mmcore.SetAction('Add_to_Bag', 1, mmcore.nord.productType || '');
+                  mmcore.SetPageID('PATB');
+                  mmcore.CGRequest();
+          });
+  });
+})();
+}catch(err){mmcore.EH(err);}
+try{
+var timing_loaded = function() {
+	if ('performance' in window && 'timing' in performance && 'loadEventEnd' in performance.timing && performance.timing.loadEventEnd > 0) tto_getTiming();
+	else setTimeout(timing_loaded, 100);
+};
+timing_loaded();
+
+function tto_getTiming() {
+	if('PageParameters' in window && 'tto' in PageParameters) {
+		PageParameters.tto.performance = {
+			timing: {
+				navStartToLoadEventEnd: (performance.timing.loadEventEnd - performance.timing.navigationStart),
+				respStartToRespEnd: (performance.timing.responseEnd - performance.timing.responseStart),
+				respStartToLoadEventEnd: (performance.timing.loadEventEnd - performance.timing.responseStart),
+				respStartToDomLoading: (performance.timing.domLoading - performance.timing.responseStart),
+				respStartToDomComplete: (performance.timing.domComplete - performance.timing.responseStart)
+			}
+		};
+		//console.log(PageParameters.tto.performance.timing.respStartToLoadEventEnd);
+		mmcore.nord.utils.mmEvent('tto_timing');
+	}
+	else if('nord' in window && 'config' in window.nord && 'settings' in nord.config && 'tto' in nord.config.settings) {
+		nord.config.settings.tto.performance = {
+			timing: {
+				navStartToLoadEventEnd: (performance.timing.loadEventEnd - performance.timing.navigationStart),
+				respStartToRespEnd: (performance.timing.responseEnd - performance.timing.responseStart),
+				respStartToLoadEventEnd: (performance.timing.loadEventEnd - performance.timing.responseStart),
+				respStartToDomLoading: (performance.timing.domLoading - performance.timing.responseStart),
+				respStartToDomComplete: (performance.timing.domComplete - performance.timing.responseStart)
+			}
+		};
+		//console.log(nord.config.settings.tto.performance.timing.respStartToLoadEventEnd);
+		mmcore.nord.utils.mmEvent('tto_timing');
+	}
+}
+}catch(err){mmcore.EH(err);}
+try{
+// capture global actions
+// on page load
+mmcore.nord.SiteActions = (function() {
+  function fire() {
+		mmcore._async = true;
+		mmcore.SetPageID('SiteActions');
+		mmcore.CGRequest();
+	}
+	if ('PageParameters' in window) {
+		if ('templateName' in PageParameters && /ProductPage/.test(PageParameters.templateName)) {
+			mmcore.SetAction('Product_Views', 1, mmcore.nord.productType);
+		}
+		fire();
+	}
+	else if (mmcore.nord.wcm) {
+		setTimeout(function() {
+			if ('analytics' in nord.config.settings && nord.config.settings.analytics.pageType === 'Product Page') {
+				mmcore.SetAction('Product_Views', 1, mmcore.nord.productType);
+			}
+			fire();
+		}, 2000);
+	}
+})();
+}catch(err){mmcore.EH(err);}
+try{
+setTimeout(function(){
+  if(typeof mm_error != 'undefined' && mmcore.GetCookie('cfgID') == 1 && 'console' in window && !mm_error.match(/^[\r\n]+$/)){
+  	console.log('MM: ' + mm_error);
+  }
+}, 2000);
+}catch(err){mmcore.EH(err);}
+try{
+// internal utility to display active campaigns/content on any page
+// global
+// function declared on page load
+// called by bookmarklet or keyboard shortcut
+mmcore.nord.GenInfo = function() {
+	mmcore.AddDocLoadHandler(function() {
+		var parentProp,
+			prop,
+			div = document.createElement('div'),
+			html = '<style>#nord_geninfo{position:fixed;top:180px;left:20px;width:175px;z-index:10000;border:2px solid black;background-color:white;padding:20px;font-size:12px;}#nord_geninfo h4{margin:0}#nord_geninfo p{margin:10px 0}#nord_geninfo_close{font-size:9px;cursor:pointer;float:right;margin-top:10px;}<\/style><h4>Maxymiser campaign content in this page:<br/><br/><\/h4>';
+		for (parentProp in mmcore.GenInfo) {
+			html += '<strong>' + parentProp + ':</strong><br/>';
+			for (prop in mmcore.GenInfo[parentProp]) {
+        forsee = "";
+        if('FSR' in window && 'CPPS' in FSR && FSR.CPPS.get(parentProp) != undefined) forsee = " <span style='color: red;'>*</span> "
+				html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + prop + ': ' + mmcore.GenInfo[parentProp][prop] + forsee + '<br/>';
+			}
+			html += '<br/>';
+		}
+    html += "<span style='color: red;'>*</span> = Foresee Integration<br/>"
+		html += '<div id="nord_geninfo_close"><a onclick="(function(){ document.getElementsByTagName(\'body\')[0].removeChild(document.getElementById(\'nord_geninfo\')); return false; })()">close</a></div>';
+		div.innerHTML = html;
+		div.id = 'nord_geninfo';
+		document.body.appendChild(div);
+	});
+};
+}catch(err){mmcore.EH(err);}
+if(typeof mmcore._callback=='object'&&typeof mmcore._callback[1]=='function'){try{mmcore._callback[1]();}catch(err){mmcore.EH(err);}
+finally{mmcore._callback[1]=null;}}
+})();

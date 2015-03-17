@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>Tinderella - Welcome</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico"/>
+    <link rel="apple-touch-icon" href="/static/img/small_logo.png"/>
 
     <link href="/static/lib/ionic/css/ionic.css" rel="stylesheet"/>
     <link href="/static/css/style.css" rel="stylesheet"/>
@@ -56,8 +58,8 @@
         </div>
 
         <div class="like_dislike_buttons">
-          <div id="dislike_button" ng-click="cardSwipedLeft(0);cardDestroyed(0);"></div>
-          <div id="like_button" ng-click="cardSwipedRight(0);cardDestroyed(0);"></div>
+          <div id="dislike_button" ng-click="cardPartialSwipe(-30);cardSwipedLeft(0);cardDestroyed(0);"></div>
+          <div id="like_button" ng-click="cardPartialSwipe(30);cardSwipedRight(0);cardDestroyed(0);"></div>
         </div>
 
     </ion-pane>
