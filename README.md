@@ -22,8 +22,8 @@ The end-product is an image-based shoe recommender app called the [Tinderella](h
 * To "Dislike" a shoe: Swipt left or Click on ![X](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_dislike_icon.png) button.
 
 * Result: all images that user "Liked" will appear along with new recommendations!  
-..* User can click on the "link" button and the original product page is opened in a new tab.  
-..* User can also click on the "pinit" button to pin image to Pinterest. 
+    * User can click on the "link" button and the original product page is opened in a new tab.  
+    * User can also click on the "pinit" button to pin image to Pinterest. 
 * After results are loaded, if the user wishes to start over, scroll to bottom to click on "Start Over".
 
 
@@ -39,7 +39,7 @@ Tinderella utilizes techniques used in the field of computer vision and machine 
 #### Web Scraping and data storage:
 
 * 16,000 images were scraped from 3 datasources (listed below) and stored in their respective subdirectories.  
-..* 6 subdirectories created: boots, flats, pumps and slingbacks, sandals, sneakers, wedges
+    * 6 subdirectories created: boots, flats, pumps and slingbacks, sandals, sneakers, wedges
 
 * metadata storage in mongoDB - company(datasource), designer brand, product description, price, product link etc
 
