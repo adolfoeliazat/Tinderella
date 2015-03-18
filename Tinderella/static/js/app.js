@@ -21,6 +21,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
     // var walk = require('walk');
     $scope.cards = [];
     $scope.cardsArchive = [];
+    $scope.cardsLiked = [];
 
     $.ajax({
         url: '/images',
@@ -64,14 +65,12 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
     $scope.cardSwipedRight = function(index) {
         var cardLiked = $scope.cards[index];
-        console.log('Card liked is ' + cardLiked.id);
 
-        // Send the like back to the backend
-        $.ajax({
-            url: '/cards/' + cardLiked.id + '/like',
-            type: 'POST',
-            dataType: 'json'
-        });
+        if ($scope.cardsLiked.indexOf(cardLiked.id) === -1) {
+            $scope.cardsLiked.push(cardLiked.id);
+        }
+
+        console.log('Card liked is ' + cardLiked.id);
     };
 
     $scope.cardDestroyed = function(index) {
@@ -79,24 +78,27 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
         // After the user goes through all the images, display the results from the backend
         if ($scope.cards.length === 0) {
-            $('#loader_section').show();
-            $('.like_dislike_buttons').css('display', 'none');
+            if ($scope.cardsLiked.length === 0) {
+                window.open('/', '_self');
+            }
+            else {                
+                $('#loader_section').show();
+                $('.like_dislike_buttons').css('display', 'none');
 
-            console.log('Processing results...');
-            $.ajax({
-                url: '/process_results',
-                type: 'POST',
-                dataType: 'json',
-                success: function(return_code) {
-                    if (return_code.success) {
+                console.log('Processing results...');
+                $.ajax({
+                    url: '/results',
+                    type: 'POST',
+                    dataType: 'html',
+                    data: { cards_liked: JSON.stringify($scope.cardsLiked) },
+                    success: function(html) {
                         // Navigate to the results page once done
-                        window.open('/results', '_self');
-                    } else {
-                        // if user did not like any item, navigate back to homepage
-                        window.open('/', '_self');
+                        var newDoc = document.open('text/html', 'replace');
+                        newDoc.write(html);
+                        newDoc.close();
                     }
-                }
-            });
+                });
+            }
         }
     };
 });
