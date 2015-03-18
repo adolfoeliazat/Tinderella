@@ -1,4 +1,5 @@
 ## Tinderella - An Image-Based Shoe Recommender Project
+====================================================================
 ![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_logo.png) [www.tinderellashoes.com](http://www.tinderellashoes.com)
 
 ### Summary
@@ -20,10 +21,10 @@ The end-product is an image-based shoe recommender app called the [Tinderella](h
 
 * To "Dislike" a shoe: Swipt left or Click on ![X](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_dislike_icon.png) button.
 
-* Result: all images that user "Liked" will appear along with new recommendations!
-..* User can click on the "link" button and the original product page is opened in a new tab.
-..* User can also click on the "pinit" button to pin image to Pinterest.
-* After results are loaded, if user wishes to start over, scroll to bottom to click on "Start Over".
+* Result: all images that user "Liked" will appear along with new recommendations!  
+..* User can click on the "link" button and the original product page is opened in a new tab.  
+..* User can also click on the "pinit" button to pin image to Pinterest. 
+* After results are loaded, if the user wishes to start over, scroll to bottom to click on "Start Over".
 
 
 ### Motivation
@@ -37,7 +38,7 @@ Tinderella utilizes techniques used in the field of computer vision and machine 
 
 #### Web Scraping and data storage:
 
-* 16,000 images were scraped from 3 datasources (listed below) and stored in their respective subdirectories
+* 16,000 images were scraped from 3 datasources (listed below) and stored in their respective subdirectories.  
 ..* 6 subdirectories created: boots, flats, pumps and slingbacks, sandals, sneakers, wedges
 
 * metadata storage in mongoDB - company(datasource), designer brand, product description, price, product link etc
@@ -54,31 +55,34 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 #### Second Pipeline - Feature Engineering
 
 ##### Pre-Transformation Feature Engineering(feature engineering on 3D structure tensor)
-..1. Color Extraction with K Means Clustering
-..2. Local Histogram Equalizer
-..3. Local Otsu Threshold
-..4. Image Segmentation Algorithms:
-....+ felzenszwalb
-....+ slic
-....+ quickshift
+  
+..1. Color Extraction with K Means Clustering  
+..2. Local Histogram Equalizer  
+..3. Local Otsu Threshold  
+..4. Image Segmentation Algorithms:  
+    * felzenszwalb  
+    * slic  
+    * quickshift  
+
 ..5. Feature Detection Algorithms:
-....* CENSURE
-....* ORB
+    * CENSURE
+    * ORB 
+
 ..6. Image Segmentation Algorithms:
-....* felzenszwalb
-....* slic
-....* quickshift
+    * felzenszwalb
+    * slic
+    * quickshift  
 
 ..7. Edge Detection Algorithms(Transformed Image):
-....* Canny
-....* Roberts
-....* Sobel
-....* Scharr
+    * Canny
+    * Roberts
+    * Sobel
+    * Scharr
 
-##### Pre-Transformation Feature Engineering(feature engineering on transformed image)
-..8. Feature Detection Algorithms:
-....* CENSURE
-....* ORB
+##### Pre-Transformation Feature Engineering(feature engineering on transformed image)  
+..8. Feature Detection Algorithms:   
+    * CENSURE  
+    * ORB
 
 
 
