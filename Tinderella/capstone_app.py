@@ -92,7 +92,7 @@ if __name__ == '__main__':
 	app.feature_matrix = np.load('data/rescaled_new_feat_matrix_50_50_10e_test15k.npy')
 	print('Feature matrix loaded')
 
-	with open('data/NN_50.pkl','r') as m:
+	with open('data/NN_50_20neighbors.pkl','r') as m:
 		app.NN_model = pkl.load(m)
 	print('NN_model loaded')
 
@@ -102,5 +102,5 @@ if __name__ == '__main__':
 	app.mongo_table = client[db][table_name]
 	app.mongo_db = client[db]
 
-	app.run(host='0.0.0.0', port=1111, debug=True)
+	app.run(host='0.0.0.0', port=1111, debug=True, use_reloader=False)
 
