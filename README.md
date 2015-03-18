@@ -1,5 +1,5 @@
 ## Tinderella - An Image-Based Shoe Recommender Project
-web app: [www.tinderellashoes.com](http://www.tinderellashoes.com)
+![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Tinderella/static/img/small_logo.png) [www.tinderellashoes.com](http://www.tinderellashoes.com)
 
 ### Summary
 
