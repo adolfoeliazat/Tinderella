@@ -14,11 +14,11 @@ The end-product is an image-based shoe recommender app called the [Tinderella](h
 
 #### How To Use Tinderella?
 
-* To "Like" a shoe: Swipt right or Click on ![heart](https://github.com/virginiayung/Tinderella_Capstone_Project/tree/master/Tinderella/static/img/like_icon.png "Logo Title Text 1")
+* To "Like" a shoe: Swipt right or Click on ![heart](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/small_like_icon.png "Logo Title Text 1")
  button.
 
 
-* To "Dislike" a shoe: Swipt left or Click on ![X](https://github.com/virginiayung/Tinderella_Capstone_Project/tree/master/Tinderella/static/img/dislike_icon.png) button.
+* To "Dislike" a shoe: Swipt left or Click on ![X](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/small_dislike_icon.png) button.
 * Result: all images that user "Liked" will appear along with new recommendations!
 ..* User can click on the "link" button and the original product page is opened in a new tab.
 ..* User can also click on the "pinit" button to pin image to Pinterest.
