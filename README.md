@@ -55,35 +55,28 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 #### Second Pipeline - Feature Engineering
 
 ##### Pre-Transformation Feature Engineering(feature engineering on 3D structure tensor)
-  
-..1. Color Extraction with K Means Clustering  
-..2. Local Histogram Equalizer  
-..3. Local Otsu Threshold  
-..4. Image Segmentation Algorithms:  
-    * felzenszwalb  
-    * slic  
-    * quickshift  
 
-..5. Feature Detection Algorithms:
-    * CENSURE
-    * ORB 
 
-..6. Image Segmentation Algorithms:
-    * felzenszwalb
-    * slic
-    * quickshift  
+* 1\. Color Extraction with K Means Clustering   
+* 2\. Local Histogram Equalizer   
+* 3\. Local Otsu Threshold 
+* 4\. Image Segmentation Algorithms: 
+    * 4.1\. felzenszwalb 
+    * 4.2\. slic 
+    * 4.2\. quickshift 
+* 5\. Feature Detection Algorithms: 
+    * 5.1\. CENSURE
+    * 5.2\. ORB
+* 6\. Edge Detection Algorithms(Transformed Image):   
+    * 7.1\. Canny
+    * 7.2\. Roberts
+    * 7.3\. Sobel
+    * 7.4\. Scharr
 
-..7. Edge Detection Algorithms(Transformed Image):
-    * Canny
-    * Roberts
-    * Sobel
-    * Scharr
-
-##### Pre-Transformation Feature Engineering(feature engineering on transformed image)  
-..8. Feature Detection Algorithms:   
-    * CENSURE  
-    * ORB
-
+##### Post-Transformation Feature Engineering(feature engineering on transformed image)
+* 7\. Feature Detection Algorithms:
+    * 8.1\. CENSURE 
+    * 8.2\. ORB
 
 
 
@@ -93,29 +86,22 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 1. Random Forest with 5-fold Cross Validation: 
 
 Best Results Achieved: 
-..* 50-by-50 px
-..* 100-by-100 px: 
-..* 200-by-2oo px: 87%
+* 50-by-50 px: 82% accuracy, 0.70 average F1
+* 100-by-100 px: 84% accuracy, 0.71 average F1
+* 200-by-2oo px: 87% accuracy, 0.72 average F1
 
 2. Gradient Descent with 5-fold Cross Validation:
-* 50-by-50 px
-* 100-by-100 px
-* 200-by-200 px
+* 50-by-50 px: 66% accuracy
+* 100-by-100 px: 67% accuracy
+* 200-by-200 px: 70% accuracy
 
-KNearest Neighbors (Visually inspect results)
-
+K-Nearest Neighbors (Visually inspect results)
 
 
 ##### Modeling:
 
-* Kmeans Clustering
-* Nearest Neighbors
-
-* 1\. item 
-    * 1.1\. item
-    * 1.2\. item
-* 2\. item 
-
+* K-Means Clustering
+* Nearest Neighbors (20 neighbors)
 
 
 ### Technology
