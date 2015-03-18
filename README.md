@@ -2,6 +2,8 @@
 ====================================================================
 [www.tinderellashoes.com](http://www.tinderellashoes.com)![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_logo.png)
 
+<a href="http://www.tinderellashoes.com" target="_blank">www.tinderellashoes.com</a>
+
 ### Summary
 
 The Tinderella capstone project is a full stack computer vision project that includes the following three major components: 
