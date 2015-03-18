@@ -6,9 +6,9 @@
 
 The Tinderella capstone project is a full stack computer vision project that includes the following three major components: 
 
-* data engieering(comprised of two image pre-processing pipelines)
-* data science(feature engieering, testing and modeling building)
-* front end developement
+* Data Engieering (two image pre-processing pipelines)
+* Data Science (feature engieering, testing and modeling building)
+* Front End Development
 
 The end-product is an image-based shoe recommender app called the [Tinderella](http://www.tinderellashoes.com) app. The app is both fun and efficient(generates recommendations within seconds). 
 
