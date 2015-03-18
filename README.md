@@ -1,8 +1,7 @@
 ## Tinderella - An Image-Based Shoe Recommender
 ====================================================================
-[www.tinderellashoes.com](http://www.tinderellashoes.com)![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_logo.png)
+<a href="http://www.tinderellashoes.com" target="_blank">www.tinderellashoes.com</a> ![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Others/tiny_logo.png)
 
-<a href="http://www.tinderellashoes.com" target="_blank">www.tinderellashoes.com</a>
 
 ### Summary
 
