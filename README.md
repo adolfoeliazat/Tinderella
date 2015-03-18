@@ -89,7 +89,7 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 
 #### Testing and Modeling - 
 
-#####Testing Methods:
+#####Testing Methods(Use supervised learning and labels to test feature engineering results):
 1. Random Forest with 5-fold Cross Validation: 
 
 Best Results Achieved: 
@@ -108,10 +108,13 @@ KNearest Neighbors (Visually inspect results)
 
 ##### Modeling:
 
+* Kmeans Clustering
+* Nearest Neighbors
 
-
-
-
+* 1\. item 
+    * 1.1\. item
+    * 1.2\. item
+* 2\. item 
 
 
 
