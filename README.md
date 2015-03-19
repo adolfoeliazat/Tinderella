@@ -12,7 +12,7 @@ The Tinderella capstone project is a full stack computer vision project that inc
 * Front End Development
 
 The end-product is an image-based shoe recommender app called the [Tinderella](http://www.tinderellashoes.com) app. The app is both fun and efficient(generates recommendations within seconds). 
-*Please see the last section for user experience feedback from 30 users.*
+**Please see the last section for user experience feedback from 30 users.**
 
 
 #### How To Use Tinderella?
