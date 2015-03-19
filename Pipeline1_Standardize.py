@@ -1,16 +1,15 @@
+import os
+import sys
 import scipy
+import numpy as np
 from scipy import ndimage
 from skimage import data, io, filter, color
 from skimage.transform import resize
-import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
-import os
-import matplotlib.pyplot as plt
-import sys
 from Pipeline_CommonFunctions import clean_file_lst
+import matplotlib.pyplot as plt
 
-# pwd = u'/Users/heymanhn/Virginia/Zipfian/Capstone_Project/Images'
 
 class Standardize_Images(object):
 	"""
@@ -21,7 +20,7 @@ class Standardize_Images(object):
 	(same directory structure )
 	"""
 	def __init__(self, img_size, img_directory='Image_20Percent',
-				 path='/Users/heymanhn/Virginia/Zipfian/Capstone_Project/'):
+				 path='/Zipfian/Tinderella_Capstone_Project/'):
 		"""
 		input: Size of the generated output image (rows, cols[, dim]). 
 		If dim is not provided, the number of channels is preserved.

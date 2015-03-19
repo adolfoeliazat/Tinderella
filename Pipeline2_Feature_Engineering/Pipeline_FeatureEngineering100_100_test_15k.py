@@ -26,8 +26,7 @@ import matplotlib.pyplot as plt
 from Pipeline_CommonFunctions import clean_file_lst
 from test_color_clustering import Color_Clustering
 
-
-IMAGE_SIZE = (50,50)
+IMAGE_SIZE = (100,100)
 
 def filter_function(img_grey, filt = 'canny'):
 	"""
@@ -151,7 +150,7 @@ class Feature_Engineer(object):
 		Segmentation algorithms: felzenszwalb, slic, quickshift
 		"""
 		# initialize pre_trans vector size
-		pre_trans = np.zeros(18000)
+		pre_trans = np.zeros(72000)
 		# All extractions using raw colored image array:
 		color_kmeans = Color_Clustering(img_file_path, 10, img_arr.shape[:2])
 		dom_colors = np.ravel(color_kmeans.main())
@@ -167,44 +166,9 @@ class Feature_Engineer(object):
 
 		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz), axis=0)
 		pre_trans[:prior_length] = pre_trans_prior
-	
+		
 		return pre_trans
 
-
-	def filter_transform(self, img_arr):
-		"""
-		applying various filters to image array
-		Input: transformed image array
-		grayscale filters: sobel, roberts, scharr, canny(default)
-		feature detectors: CENSURE, ORB
-		"""
-		# transforms image to gray scale 2D array
-		img_arr_grey = color.rgb2gray(img_arr)
-		# apply filter to image
-		filt_img_arr = self.filter_funct(img_arr_grey)
-		
-		return filt_img_arr
-
-	def post_trans(self, trans_img_arr):
-		# return post-filter feature extraction
-		# dominant edges
-
-		'''
-		Input: 2d filtered/transformed flattened image array
-		Methods: feature_detectors, local histogram equalization, 
-		Output: flattened post-transformed image array
-		'''
-		# # initialize pre_trans vector
-		# # apply feature detection to filtered grayscaled image
-		feat_det_img_arr = self.feat_detect(trans_img_arr)
-		stand_feat_det_img_arr = self.stand_vector_size(feat_det_img_arr)
-		# apply local histogram equalization to filtered grayscaled image
-		local_eq_trans= self.local_equalize(trans_img_arr)
-		local_threshold_trans= self.local_thresh(trans_img_arr)
-		# concatenate all feature detectors
-		post_trans = np.concatenate((stand_feat_det_img_arr, local_eq_trans, local_threshold_trans),axis=0)
-
-		return np.ravel(post_trans), feat_det_img_arr.shape
 
 
 	def rescaling(self, flat_img_arr):
@@ -219,17 +183,17 @@ class Feature_Engineer(object):
 		output: feature_matrix
 		"""
 		total_feat_det= []
-		total_post_feat_detec = []
-		total_post_local = []
 		item_name = []
 		total_images = 0
 		num_failed = 0
 		fails =[]
+		X = []
+		y = []
 		full_matrix = []
 		label_vec = []
-		f = open('%s/size_new_twenty_50_50_10e_test15k_labels.csv'%FeatVecs_path, 'w')
-		t = open('%s/size_new_twenty_50_50_10e_test15k_items.csv'%FeatVecs_path, 'w')
-		# f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/size_twenty_50_50_10e_labels.csv', 'w')
+		f = open('%s/size_new_twenty_100_100_10e_test15k_labels.csv'%FeatVecs_path, 'w')
+		t = open('%s/size_new_twenty_100_100_10e_test15k_items.csv'%FeatVecs_path, 'w')
+		# f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/size_twenty_100_100_10e_labels.csv', 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -281,26 +245,25 @@ class Feature_Engineer(object):
 
 		# Apply StandardScaler to feature matrix
 		rescaled_feat_matrix = self.rescaling(full_matrix)
-		np.save('%s/rescaled_new_feat_matrix_50_50_10e_test15k.npy' %FeatVecs_path, rescaled_feat_matrix) 
+		np.save('%s/rescaled_new_feat_matrix_100_100_10e_test15k.npy' %FeatVecs_path, rescaled_feat_matrix) 
 		m = open('%s/feature_matrix_test15k.pkl' %FeatVecs_path, 'w')
 		pickle.dump(rescaled_feat_matrix, m)
 
 		return rescaled_feat_matrix, label_vec,item_name
 
 if __name__ == '__main__':
-	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
-	full_dir_path = os.path.join(dir_path, 'Output_Images_new_twenty_50')
+	dir_path = '/Zipfian/Capstone_Project'
+	full_dir_path = os.path.join(dir_path, 'Output_Images_new_twenty_100')
 	FeatVecs_path = os.path.join('/Volumes/hermanng_backup/Virginia_Capstone', 'FeatVecs')
 	
 	if not os.path.exists(FeatVecs_path):
 		print FeatVecs_path
 		os.mkdir(FeatVecs_path)
 
-	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_new_twenty_50_50_10e_test15kfeat/')
+	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_new_twenty_100_100_10e_test15kfeat/')
 	if not os.path.exists(cach_FeatVecs_path):
 		os.mkdir(cach_FeatVecs_path)
 
-	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(50,50))
+	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(100,100))
 	X,y,item_name= fm.feature_preprocessing()
-
 
