@@ -88,12 +88,14 @@ class SaksScraper(object):
 		for i, tag in enumerate(img_tags):
 			img_link = tag['src']
 			img = requests.get(img_link).content
-			product_id = re.search(r"(?P<product_id>\d+)\_(\d+)",img_link).group("product_id")
+			product_id = re.search(r"(?P<product_id>\d+)\_(\d+)"
+				                      ,img_link).group("product_id")
 			img_lst.append(img)
 			path = 'Images/%s/%s' % (self.company, category)
 			if not os.path.exists(path):
 				os.makedirs(path)
-			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company, product_id), 'w')
+			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company
+				                                 , product_id), 'w')
 			f.write(img)
 			f.close()
 
@@ -125,13 +127,15 @@ class SaksScraper(object):
 
 		# css selector for product id and product link
 		for img_item in front_img_tags:
-			product_id.append(re.search(r"(?P<product_id>\d+)\_(\d+)",img_item['src']).group("product_id"))
+			product_id.append(re.search(r"(?P<product_id>\d+)\_(\d+)"
+				                         ,img_item['src']).group("product_id"))
 
 		for link_item in product_link_tags:
 			product_link.append(link_item['href'])
 
 		# Check if the list of tags are all of the same length
-		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
+		self._check_data_len([product_id, designer_name_tags, description_tags
+			                  , price_tags, product_link])
 
 		# Scrape all the info from the page
 		designer_name = self._get_text(designer_name_tags)
@@ -140,7 +144,8 @@ class SaksScraper(object):
 		self._get_img(front_img_tags, self.category, orientation='front')
 		category = [self.category for i in xrange(len(product_id))]
 		company = [self.company for i in xrange(len(product_id))]
-		return izip(category, company, product_id, designer_name, description, price, product_link)
+		return izip(category, company, product_id, designer_name,
+		             description, price, product_link)
 
 	def _print_result(self, json):
 		print json
@@ -161,7 +166,8 @@ class SaksScraper(object):
 			# For each page, each product gets assigned a tuple containing 
 			# prpduct_id,description, designer_name, price
 			data_tuples = self._get_page_content(link)
-			fields = ['category','company','product_id', 'designer_name', 'description', 'price', 'product_link']
+			fields = ['category','company','product_id', 'designer_name'
+			          , 'description', 'price', 'product_link']
 			for i, tup in enumerate(data_tuples):
 				count += 1
 				if len(fields) != len(tup):

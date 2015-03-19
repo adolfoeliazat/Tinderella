@@ -102,7 +102,8 @@ def local_threshold(img_arr):
 
 class Feature_Engineer(object):
 
-	def __init__(self, stand_img_directory, cached_feature_vector_file, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
+	def __init__(self, stand_img_directory, cached_feature_vector_file
+		, img_size=IMAGE_SIZE, target_size= IMAGE_SIZE
 		,filter_funct=filter_function, feat_detect = feature_detectors
 		, local_equalize = local_eq, local_thresh = local_threshold):
 		"""
@@ -162,9 +163,11 @@ class Feature_Engineer(object):
 		# Segmentation: felzenszwalb
 		img = img_as_float(img_arr)		                   
 		segments_fz = np.ravel(felzenszwalb(img, scale=100, sigma=0.5, min_size=50))
-		prior_length = dom_colors.shape[0]+ local_eq_raw.shape[0]+ local_threshold_raw.shape[0] +segments_fz.shape[0]
+		prior_length = dom_colors.shape[0] + local_eq_raw.shape[0] +\
+		               local_threshold_raw.shape[0] + segments_fz.shape[0]
 
-		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw, local_threshold_raw, segments_fz), axis=0)
+		pre_trans_prior = np.concatenate((dom_colors, local_eq_raw
+			                             , local_threshold_raw, segments_fz), axis=0)
 		pre_trans[:prior_length] = pre_trans_prior
 		
 		return pre_trans
@@ -193,7 +196,6 @@ class Feature_Engineer(object):
 		label_vec = []
 		f = open('%s/size_new_twenty_100_100_10e_test15k_labels.csv'%FeatVecs_path, 'w')
 		t = open('%s/size_new_twenty_100_100_10e_test15k_items.csv'%FeatVecs_path, 'w')
-		# f = open('/Users/heymanhn/Virginia/Zipfian/Capstone_Project/size_twenty_100_100_10e_labels.csv', 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -209,7 +211,7 @@ class Feature_Engineer(object):
 				self._check_img_size(img_arr, img_file_path)
 				# If self.img_size != self.target_size, reshape to self.target_size
 				
-				if self.img_size != self.target_size:                        # before or after transformation
+				if self.img_size != self.target_size:                       
 					img_arr = resize(img_arr, self.target_size)
 				print img_file_path
 				# Extract features from raw image array
@@ -227,7 +229,8 @@ class Feature_Engineer(object):
 
 				label_vec.append(label)
 				item_name.append(img_file_path)
-				# np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file), feat_vector, fmt='%.10e', delimiter=',') 
+				# np.savetxt('%s%s.csv' %(self.cached_feature_vector_file,img_file)
+					# , feat_vector, fmt='%.10e', delimiter=',') 
 			
 				print 'feature vector shape', feat_vector.shape
 				# Append feature vector and label to full image matrix
@@ -245,7 +248,8 @@ class Feature_Engineer(object):
 
 		# Apply StandardScaler to feature matrix
 		rescaled_feat_matrix = self.rescaling(full_matrix)
-		np.save('%s/rescaled_new_feat_matrix_100_100_10e_test15k.npy' %FeatVecs_path, rescaled_feat_matrix) 
+		np.save('%s/rescaled_new_feat_matrix_100_100_10e_test15k.npy' 
+			                     %FeatVecs_path, rescaled_feat_matrix) 
 		m = open('%s/feature_matrix_test15k.pkl' %FeatVecs_path, 'w')
 		pickle.dump(rescaled_feat_matrix, m)
 

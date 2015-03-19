@@ -41,7 +41,8 @@ class Standardize_Images(object):
 		if not os.path.exists(self.uniform_parent_dir_path):
 			os.mkdir(self.uniform_parent_dir)
 			for subdir in clean_parent_dir:
-					self.output_dir_path = os.path.join(self.uniform_parent_dir_path, subdir + '_uniform_new_twenty_200')
+					self.output_dir_path = os.path.join(self.uniform_parent_dir_path, subdir +\
+					                                '_uniform_new_twenty_200')
 					if not os.path.exists(self.output_dir_path):
 						os.mkdir(self.output_dir_path)
 
@@ -58,7 +59,8 @@ class Standardize_Images(object):
 				subdir_path = os.path.join(self.parent_dir_path, subdir)
 				clean_img_lst = clean_file_lst(os.listdir(subdir_path), jpg=True)
 				for img_file in clean_img_lst:
-					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir+ '_uniform_new_twenty_200')
+					output_dir_path_pop = os.path.join(self.uniform_parent_dir_path, subdir +\
+					                                   '_uniform_new_twenty_200')
 					img_file_path = os.path.join(subdir_path, img_file)
 					resized_img_arr = self.do_standardize(img_file_path)
 					uniform_img_path = os.path.join(output_dir_path_pop, img_file)

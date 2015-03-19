@@ -130,7 +130,8 @@ class BarneysScraper(object):
 
 
 		# Check if the list of tags are all of the same length
-		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
+		self._check_data_len([product_id, designer_name_tags, description_tags, 
+			                  price_tags, product_link])
 
 		# Scrape all the info from the page
 		designer_name = self._get_text(designer_name_tags)
@@ -160,7 +161,8 @@ class BarneysScraper(object):
 			# For each page, each product gets assigned a tuple containing 
 			# prpduct_id,description, designer_name, price
 			data_tuples = self._get_page_content(link)
-			fields = ['category','company','product_id', 'designer_name', 'description', 'price', 'product_link']
+			fields = ['category','company','product_id', 'designer_name', 'description', 
+			        'price', 'product_link']
 			for i, tup in enumerate(data_tuples):
 				count += 1
 				if len(fields) != len(tup):

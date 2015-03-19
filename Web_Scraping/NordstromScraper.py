@@ -100,7 +100,8 @@ class NordstromScraper(object):
 			path = 'Images/%s/%s' % (self.company, category)
 			if not os.path.exists(path):
 				os.makedirs(path)
-			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company, product_id[i]), 'w')
+			f = open('Images/%s/%s/%s_%s.jpg' % (self.company, category, self.company
+				                                , product_id[i]), 'w')
 			f.write(img)
 			f.close()
 
@@ -133,7 +134,8 @@ class NordstromScraper(object):
 
 		# Use CSS selectors to get the tags containing the info we want
 		title_tags = soup.select('a.title')
-		price_tags = [i.text for i in soup.findAll("span", {"class":'price'}) if 'Was' not in i.text and 'OFF' not in i.text]
+		price_tags = [i.text for i in soup.findAll("span"
+			                     , {"class":'price'}) if 'Was' not in i.text and 'OFF' not in i.text]
 		front_img_tags = soup.select('div.fashion-photo')
 		product_id_tags = soup.select('div.fashion-item')
 		product_link_tags = soup.select('a.fashion-href')
@@ -152,7 +154,8 @@ class NordstromScraper(object):
 			product_link.append(link_tag['href'])
 
 		# Check if the list of tags are all of the same length
-		self._check_data_len([product_id, designer_name_tags, description_tags, price_tags, product_link])
+		self._check_data_len([product_id, designer_name_tags
+			                  , description_tags, price_tags, product_link])
 
 		# Scrape all the info from the page
 		designer_name = designer_name_tags
@@ -161,7 +164,8 @@ class NordstromScraper(object):
 		self._get_img(front_img_tags, product_id_tags, self.category, orientation='front')
 		category = [self.category for i in xrange(len(product_id))]
 		company = [self.company for i in xrange(len(product_id))]
-		return izip(category, company, product_id, designer_name, description, price, product_link)
+		return izip(category, company, product_id, designer_name
+			                   , description, price, product_link)
 
 	def _print_result(self, json):
 		print json
@@ -182,7 +186,8 @@ class NordstromScraper(object):
 			# For each page, each product gets assigned a tuple containing 
 			# prpduct_id,description, designer_name, price
 			data_tuples = self._get_page_content(link)
-			fields = ['category','company','product_id', 'designer_name', 'description', 'price', 'product_link']
+			fields = ['category','company','product_id', 'designer_name'
+			           , 'description', 'price', 'product_link']
 			for i, tup in enumerate(data_tuples):
 				count += 1
 				if len(fields) != len(tup):
