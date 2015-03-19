@@ -241,7 +241,7 @@ class Feature_Engineer(object):
 		X = []
 		y = []
 		full_matrix_label = []	
-		f= open('%s/size_28_labels.csv'%FeatVecs_path, 'w')
+		f= open('%s/size_28_100_labels.csv'%FeatVecs_path, 'w')
 		clean_stand_img_directory_lst = clean_file_lst(os.listdir(self.stand_img_directory), jpg=False)
 		for i, subdir in enumerate(clean_stand_img_directory_lst):
 			subdir_path = os.path.join(self.stand_img_directory, subdir)
@@ -312,12 +312,15 @@ class Feature_Engineer(object):
 if __name__ == '__main__':
 	dir_path = '/Users/heymanhn/Virginia/Zipfian/Capstone_Project'
 	full_dir_path = os.path.join(dir_path, 'Output_Images')
-	FeatVecs_path = os.path.join(dir_path, 'FeatVecs')
+	FeatVecs_path = os.path.join('/Volumes/hermanng_backup/Virginia_Capstone', 'FeatVecs')
+
 	if not os.path.exists(FeatVecs_path):
-		os.mkdir('FeatVecs')
-	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_28_feat/')
+		print FeatVecs_path
+		os.mkdir(FeatVecs_path)
+
+	cach_FeatVecs_path = os.path.join(FeatVecs_path, 'size_28_100_feat/')
 	if not os.path.exists(cach_FeatVecs_path):
-		os.mkdir('FeatVecs/size_28_feat/')
+		os.mkdir(cach_FeatVecs_path)
 
 	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(100,100))
 	X,y= fm.feature_preprocessing()

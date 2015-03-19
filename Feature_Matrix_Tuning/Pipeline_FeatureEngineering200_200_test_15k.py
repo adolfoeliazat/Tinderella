@@ -170,22 +170,6 @@ class Feature_Engineer(object):
 		return pre_trans
 
 
-	def filter_transform(self, img_arr):
-		"""
-		applying various filters to image array
-		Input: transformed image array
-		grayscale filters: sobel, roberts, scharr, canny(default)
-		feature detectors: CENSURE, ORB
-		"""
-		# transforms image to gray scale 2D array
-		img_arr_grey = color.rgb2gray(img_arr)
-		# apply filter to image
-		filt_img_arr = self.filter_funct(img_arr_grey)
-		
-		return filt_img_arr
-
-
-
 	def rescaling(self, flat_img_arr):
 		scaler = StandardScaler()
 		rescaled_img_arr = scaler.fit_transform(flat_img_arr)

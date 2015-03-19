@@ -1,4 +1,7 @@
+import os
+import sys
 import scipy
+import cPickle as pickle
 from scipy.sparse import *
 from scipy import ndimage
 from skimage import data, io, filter, color
@@ -8,9 +11,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import StandardScaler
 from skimage.filter import roberts, sobel, canny, scharr, rank
-import os
-import matplotlib.pyplot as plt
-import sys
 from skimage.feature import CENSURE
 from skimage.feature import (match_descriptors, corner_harris,
 							 corner_peaks, ORB, plot_matches)
@@ -21,9 +21,8 @@ from skimage.filter import threshold_otsu
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from skimage.segmentation import mark_boundaries
 from skimage.util import img_as_float
-import cPickle as pickle
-
-# modules I wrote
+import matplotlib.pyplot as plt
+# import modules I wrote
 from Pipeline_CommonFunctions import clean_file_lst
 from test_color_clustering import Color_Clustering
 
@@ -169,21 +168,6 @@ class Feature_Engineer(object):
 		pre_trans[:prior_length] = pre_trans_prior
 		
 		return pre_trans
-
-
-	def filter_transform(self, img_arr):
-		"""
-		applying various filters to image array
-		Input: transformed image array
-		grayscale filters: sobel, roberts, scharr, canny(default)
-		feature detectors: CENSURE, ORB
-		"""
-		# transforms image to gray scale 2D array
-		img_arr_grey = color.rgb2gray(img_arr)
-		# apply filter to image
-		filt_img_arr = self.filter_funct(img_arr_grey)
-		
-		return filt_img_arr
 
 
 
