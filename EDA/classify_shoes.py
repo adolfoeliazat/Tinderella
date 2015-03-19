@@ -9,7 +9,7 @@ from skimage.filter.rank import entropy
 from skimage.morphology import disk
 from skimage import data, io, color
 from skimage.transform import resize, downscale_local_mean
-from skimage.filter import roberts, sobel,canny
+from skimage.filter import roberts, sobel, canny
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
@@ -29,8 +29,8 @@ feature_arr = None
 
 for store in company:
     for i, category in enumerate(departments):
-        if os.path.exists('%s/%s' %(store, category)):
-            file_names = os.listdir('%s/%s' %(store, category))
+        if os.path.exists('%s/%s' % (store, category)):
+            file_names = os.listdir('%s/%s' % (store, category))
 
             for file_name in file_names:
                 label = i
@@ -41,7 +41,12 @@ for store in company:
 
 file_name = 'barneys_158585078.jpg'
 category = 'boots'
-image = data.imread('%s/%s/%s' % (store, category,file_name), as_grey=True).astype('int32')
+image = data.imread(
+    '%s/%s/%s' %
+    (store,
+     category,
+     file_name),
+    as_grey=True).astype('int32')
 # img= scipy.misc.imread('%s/%s/%s' % (store, category,file_name)).astype('int32')
 print file_name
 resized_image = resize(image, (250, 250))
@@ -55,7 +60,7 @@ edge_roberts_re = roberts(resized_image)
 edge_sobel = sobel(image)
 
 
-fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=(12,7))
+fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=(12, 7))
 
 ax0.imshow(edge_roberts, cmap=plt.cm.gray)
 ax0.set_title('Roberts Edge Detection')
@@ -71,9 +76,15 @@ plt.show()
 
 # In[151]:
 
-image = data.imread('%s/%s/%s' % (store, category,file_name), as_grey=False).astype('int32')
+image = data.imread(
+    '%s/%s/%s' %
+    (store,
+     category,
+     file_name),
+    as_grey=False).astype('int32')
 
-fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(3,2, figsize=(12, 12))
+fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(
+    3, 2, figsize=(12, 12))
 
 img0 = ax0.imshow(image, cmap=plt.cm.gray)
 ax0.set_title('Original Image')
@@ -98,7 +109,11 @@ ax3.set_title('Sobel on Grey')
 ax3.axis('off')
 # fig.colorbar(img1, ax=ax1)
 
-img4 = ax4.imshow(canny(image_grey,sigma=0.0005, low_threshold=1.0*(10^-11), high_threshold=0.9), cmap=plt.cm.jet)
+img4 = ax4.imshow(canny(image_grey,
+                        sigma=0.0005,
+                        low_threshold=1.0 * (10 ^ -11),
+                        high_threshold=0.9),
+                  cmap=plt.cm.jet)
 ax4.set_title('canny on Grey')
 ax4.axis('off')
 # fig.colorbar(img1, ax=ax1)
@@ -116,10 +131,10 @@ from skimage.feature import CENSURE
 tform = tf.AffineTransform(scale=(1.5, 1.5), rotation=0.5,
                            translation=(150, -200))
 
-img1 = rgb2gray(resize(image, (250,250)))
+img1 = rgb2gray(resize(image, (250, 250)))
 img2 = tf.warp(img1, tform)
 
-detector = CENSURE(mode ='Octagon')
+detector = CENSURE(mode='Octagon')
 
 fig, ax = plt.subplots(nrows=1, ncols=2)
 
@@ -147,7 +162,7 @@ detector.keypoints[:, 1]
 
 # In[162]:
 
-canny(resize(rgb2gray(data.lena()), (512, 512)), sigma = 3, )
+canny(resize(rgb2gray(data.lena()), (512, 512)), sigma=3, )
 
 
 # In[129]:
@@ -160,8 +175,13 @@ from skimage.feature import (match_descriptors, corner_harris,
 from skimage.color import rgb2gray
 import matplotlib.pyplot as plt
 
-original = data.imread('%s/%s/%s' % (store, category,file_name), as_grey=False).astype('int32')
-original_resized = rgb2gray(resize(original, (250,250)))
+original = data.imread(
+    '%s/%s/%s' %
+    (store,
+     category,
+     file_name),
+    as_grey=False).astype('int32')
+original_resized = rgb2gray(resize(original, (250, 250)))
 img1 = original_resized
 img2 = tf.rotate(img1, 180)
 plt.imshow(img1)
@@ -241,7 +261,7 @@ descriptors3 = extractor.descriptors
 matches12 = match_descriptors(descriptors1, descriptors2, cross_check=True)
 matches13 = match_descriptors(descriptors1, descriptors3, cross_check=True)
 
-fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(12,12))
+fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(12, 12))
 
 plt.gray()
 
@@ -274,8 +294,6 @@ plt.show()
 # In[ ]:
 
 
-
-
 # In[ ]:
 
 import scipy
@@ -284,7 +302,7 @@ from skimage.filter.rank import entropy
 from skimage.morphology import disk
 from skimage import data, io, color
 from skimage.transform import resize, downscale_local_mean
-from skimage.filter import roberts, sobel,canny
+from skimage.filter import roberts, sobel, canny
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
@@ -300,15 +318,17 @@ if __name__ == '__main__':
     feature_arr = None
     for store in company:
         for i, category in enumerate(departments):
-            if os.path.exists('%s/%s' %(store, category)):
-                file_names = os.listdir('%s/%s' %(store, category))
+            if os.path.exists('%s/%s' % (store, category)):
+                file_names = os.listdir('%s/%s' % (store, category))
 
                 for file_name in file_names:
                     if '.jpg' in file_name:
                         label = i
                         target_lst.append(label)
 #                         print store, category, file_name
-                        image = data.imread('%s/%s/%s' %(store, category, file_name), as_grey=False).astype('int32')
+                        image = data.imread(
+                            '%s/%s/%s' %
+                            (store, category, file_name), as_grey=False).astype('int32')
                         resized_image = resize(image, (250, 250))
                         image_grey = color.rgb2gray(resized_image)
 
@@ -326,15 +346,14 @@ if __name__ == '__main__':
                             feature_arr = np.r_[feature_arr, img_arr]
     target_arr = np.array(target_lst)
 
-    train_feat, test_feat, train_target, test_target = train_test_split(feature_arr, target_arr, test_size=0.33)
+    train_feat, test_feat, train_target, test_target = train_test_split(
+        feature_arr, target_arr, test_size=0.33)
     rf = RandomForestClassifier()
     rf.fit(train_feat, train_target)
     print rf.score(test_feat, test_target)
 
 
 # In[ ]:
-
-
 
 
 # In[54]:
@@ -354,10 +373,9 @@ img_arr.shape
 
 # In[32]:
 
-scipy.misc.imread('%s/%s/%s' % (store, category,file_name)).astype('int32').shape
+scipy.misc.imread(
+    '%s/%s/%s' %
+    (store, category, file_name)).astype('int32').shape
 
 
 # In[ ]:
-
-
-
