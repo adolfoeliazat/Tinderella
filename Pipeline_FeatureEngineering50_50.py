@@ -1,16 +1,16 @@
+import os
+import sys
 import scipy
+import numpy as np
+import cPickle as pickle
 from scipy.sparse import *
 from scipy import ndimage
 from skimage import data, io, filter, color
 from skimage.transform import resize
-import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import StandardScaler
 from skimage.filter import roberts, sobel, canny, scharr, rank
-import os
-import matplotlib.pyplot as plt
-import sys
 from skimage.feature import CENSURE
 from skimage.feature import (match_descriptors, corner_harris,
 							 corner_peaks, ORB, plot_matches)
@@ -21,10 +21,8 @@ from skimage.filter import threshold_otsu
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from skimage.segmentation import mark_boundaries
 from skimage.util import img_as_float
-import cPickle as pickle
-
-
-# modules I wrote
+import matplotlib.pyplot as plt
+# import modules I wrote
 from Pipeline_CommonFunctions import clean_file_lst
 from test_color_clustering import Color_Clustering
 
@@ -195,11 +193,11 @@ class Feature_Engineer(object):
 		# return post-filter feature extraction
 		# dominant edges
 
-		'''
+		"""
 		Input: 2d filtered/transformed flattened image array
 		Methods: feature_detectors, local histogram equalization, 
 		Output: flattened post-transformed image array
-		'''
+		"""
 		# # initialize pre_trans vector
 		# # apply feature detection to filtered grayscaled image
 		feat_det_img_arr = self.feat_detect(trans_img_arr)
@@ -213,13 +211,13 @@ class Feature_Engineer(object):
 		return np.ravel(post_trans), feat_det_img_arr.shape
 
 	def create_feature_vector(self,pre_features, post_features,unflattened_image) :
-		'''
+		"""
 		  Unflattened image is the filtered image
 		  First ravel the unflattened filtered image 
 		  #column wise concatenate flattened filtered image to label, pre_features
 		  and post_features arrays.
 
-		'''
+		"""
 		flat_vect = np.ravel(unflattened_image)
 		feat_vec = np.concatenate((pre_features, post_features, flat_vect), axis=0)
 		
@@ -335,6 +333,5 @@ if __name__ == '__main__':
 
 	fm = Feature_Engineer(full_dir_path, cach_FeatVecs_path, target_size =(50,50))
 	X,y,f= fm.feature_preprocessing()
-	# m = open('/Volumes/hermanng_backup/Virginia_Capstone/FeatVecs/feature_matrix.pkl', 'w')
-	# pickle.dump(X, m)
+
 
