@@ -69,10 +69,10 @@ def results():
     if len(cards_liked) == 0:
         return redirect('/', code=302)
 
-    app.product_lst =
-    [item.strip('.jpg').split('_', 1) for item in app.images]
-    mean_img_array =
-    np.mean(np.array(app.feature_matrix[cards_liked]), axis=0)
+    app.product_lst = [
+        item.strip('.jpg').split('_', 1) for item in app.images]
+    mean_img_array = np.mean(
+        np.array(app.feature_matrix[cards_liked]), axis=0)
 
     neighbors = app.NN_model.kneighbors(
         mean_img_array,
@@ -105,8 +105,8 @@ def results():
 
 if __name__ == '__main__':
     # Load the feature matrix and model first
-    app.feature_matrix =
-    np.load('data/rescaled_new_feat_matrix_50_50_10e_test15k.npy')
+    app.feature_matrix = np.load(
+        'data/rescaled_new_feat_matrix_50_50_10e_test15k.npy')
     print('Feature matrix loaded')
 
     with open('data/NN_50_20neighbors.pkl', 'r') as m:
