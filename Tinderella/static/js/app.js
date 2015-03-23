@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'ionic.contrib.ui.tinderCards' is found in ionic.tdcards.js
 angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
-    
+
 .directive('noScroll', function() {
     return {
         restrict: 'A',
@@ -50,7 +50,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
             $scope.cardsArchive = $scope.cards.slice();
         },
-           
+
         error: function(err) {
           console.log(err);
         },
@@ -60,6 +60,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
     });
 
     $scope.cardSwipedLeft = function(index) {
+        mixpanel.track("card.dislike");
         console.log('Card disliked is ' + $scope.cards[index].id);
     };
 
@@ -70,6 +71,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
             $scope.cardsLiked.push(cardLiked.id);
         }
 
+        mixpanel.track("card.like");
         console.log('Card liked is ' + cardLiked.id);
     };
 
@@ -81,11 +83,12 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
             if ($scope.cardsLiked.length === 0) {
                 window.open('/', '_self');
             }
-            else {                
+            else {
                 $('#loader_section').show();
                 $('.like_dislike_buttons').css('display', 'none');
 
                 console.log('Processing results...');
+                mixpanel.track("results.view");
                 $.ajax({
                     url: '/results',
                     type: 'POST',
