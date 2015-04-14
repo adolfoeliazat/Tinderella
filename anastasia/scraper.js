@@ -8,4 +8,10 @@ var Saks = require('./saks.js');
 // 1. Overall scraper module that requires the individual modules and runs all the scrapers
 // in parallel (and can also run specific scrapers only, if passed an array).
 
-Barneys.scrapeShoes();
+async.parallel(
+    [
+        Barneys.scrapeShoes()
+    ],
+    function(err) {
+        console.log("All scraping complete");
+});
