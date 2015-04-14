@@ -1,17 +1,14 @@
-var _ = require('underscore'),
-    async = require('async'),
-    cheerio = require('cheerio'),
-    express = require('express'),
-    http = require('http'),
-    mongojs = require('mongojs'),
-    request = require('request');
+var _ = require('underscore');
+var async = require('async');
+var cheerio = require('cheerio');
+
+var fetchURL = require('./scraper_tools.js').fetchURL;
+var upsert = require('./scraper_tools.js').upsert;
 
 var BARNEYS = 'Barneys New York';
 var BARNEYS_BASE_URL = 'http://www.barneys.com/barneys-new-york/women/shoes';
-var TINDERELLA_DB = 'Tinderella';
-
-var db = mongojs(TINDERELLA_DB, ['shoes']);
-var parsedCount = 0, scrapedCount = 0;
+var parsedCount = 0;
+var scrapedCount = 0;
 var parseComplete = false;
 
 /*
@@ -25,20 +22,24 @@ var parseComplete = false;
  */
 var scrapeBarneysItemURLs = function(html) {
     $ = cheerio.load(html);
-    var items = $('#search-result-items .thumb-link').map(function() {
+    var itemURLs = $('#search-result-items .thumb-link').map(function() {
         return $(this).attr('href');
     }).get();
-    parsedCount += items.length;
+    parsedCount += itemURLs.length;
+
+    var fetchBarneysItem = function(url) {
+        fetchURL(url, scrapeBarneysItem);
+    };
 
     // Trigger async scrape for all the items
-    async.each(items, fetchItem, function(err) {
+    async.each(itemURLs, fetchBarneysItem, function(err) {
         console.log("Couldn't fetch item: " + err);
     });
 
     // Recursively scrape the next page of item URLs until we've reached the end
     var nextPage = $('.pagination .page-next.active').attr('href');
     if (nextPage) {
-        fetchItemURLs(nextPage);
+        fetchURL(nextPage, scrapeBarneysItemURLs);
     } else {
         console.log("URL scraping complete: " + parsedCount + " shoe URLs scraped");
         parseComplete = true;
@@ -79,19 +80,7 @@ var scrapeBarneysItem = function(html) {
         barneysItem.images.push(image);
     });
 
-    // Upsert into mongoDB
-    db.shoes.update(
-        {
-            retailer: barneysItem.retailer,
-            productId: barneysItem.productId
-        },
-        barneysItem,
-        { upsert: true },
-        function(err, doc) {
-            console.log('Saved to mongoDB: ' + barneysItem.productId);
-        }
-    );
-
+    upsert(barneysItem);
     scrapedCount++;
     if (parseComplete && scrapedCount === parsedCount) {
         console.log('All done');
@@ -99,35 +88,7 @@ var scrapeBarneysItem = function(html) {
     }
 };
 
-/*
- * fetchURL()
- *
- * Description:
- * Use the request library to fetch the URL and pass the HTML contents to
- * helper functions.
- *
- */
-var fetchURL = function(url, cb) {
-    request.get(url).on('response', function(res) {
-        var data = '';
-        res.setEncoding('utf8');
-        res.on('data', function(chunk) {
-            data += chunk;
-        });
-        res.on('end', function() {
-            cb(data);
-        });
-    });
+var scrapeShoes = function() {
+    fetchURL(BARNEYS_BASE_URL, scrapeBarneysItemURLs);
 };
-
-/* Helpers for fetchURL()
- */
-var fetchItem = function(url) {
-    fetchURL(url, scrapeBarneysItem);
-};
-var fetchItemURLs = function(url) {
-    fetchURL(url, scrapeBarneysItemURLs);
-};
-
-fetchItemURLs(BARNEYS_BASE_URL);
-
+module.exports.scrapeShoes = scrapeShoes;
