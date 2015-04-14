@@ -14,4 +14,5 @@ async.parallel(
     ],
     function(err) {
         console.log("All scraping complete");
-});
+    }
+);
