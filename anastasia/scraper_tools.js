@@ -2,6 +2,7 @@ var mongojs = require('mongojs');
 var request = require('request');
 
 var db = mongojs('Tinderella', ['shoes']);
+var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36'
 
 /*
  * fetchURL()
@@ -12,7 +13,14 @@ var db = mongojs('Tinderella', ['shoes']);
  *
  */
 var fetchURL = function(url, cb) {
-    request.get(url).on('response', function(res) {
+    var options = {
+        url: url,
+        headers: {
+            'User-Agent': USER_AGENT
+        }
+    };
+
+    request.get(options).on('response', function(res) {
         var data = '';
         res.setEncoding('utf8');
         res.on('data', function(chunk) {
