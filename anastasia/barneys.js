@@ -82,7 +82,7 @@ var scrapeItem = function(html) {
     upsert(item);
     scrapedCount++;
     if (parseComplete && scrapedCount === parsedCount) {
-        console.log('All done');
+        console.log('Barneys - All done');
         process.exit(0);
     }
 };

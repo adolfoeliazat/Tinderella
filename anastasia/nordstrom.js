@@ -89,7 +89,7 @@ var scrapeItem = function(html) {
 
         scrapedCount++;
         if (parseComplete && scrapedCount === parsedCount) {
-            console.log('All done');
+            console.log('Nordstrom - All done');
             process.exit(0);
         }
     };

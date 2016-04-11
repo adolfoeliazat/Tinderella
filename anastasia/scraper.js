@@ -10,7 +10,7 @@ var Saks = require('./saks.js');
 
 async.parallel(
     [
-        Barneys.scrapeShoes(),
+        //Barneys.scrapeShoes()
         Nordstrom.scrapeShoes()
         //Saks.scrapeShoes()
     ],
