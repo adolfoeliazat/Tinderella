@@ -1,14 +1,27 @@
 ## Tinderella - An Image-Based Shoe Recommender
 ====================================================================
-<a href="http://www.tinderellashoes.com" target="_blank">www.tinderellashoes.com</a> ![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Readme_Assets/tiny_logo.png)
+
+### New changes
+
+Folder structure
+* scraper (web scraper for Nordstrom, Saks, Barney's)
+* pipeline (standardizing images, feature extraction, recommendation engine server)
+* app (web server, frontend app)
+
+
+### To-do
+* Describe how to set up mongodb
+* Mongoose and schema validation
+* Where to put db definition files
+* Plan for static assets
 
 
 ### Summary
 
 The Tinderella capstone project is a full stack computer vision project that includes the following three major components: 
 
-* Data Engieering (two image pre-processing pipelines)
-* Data Science (feature engieering, testing and modeling building)
+* Data Engineering (two image pre-processing pipelines)
+* Data Science (feature engineering, testing and modeling building)
 * Front End Development
 
 The end-product is an image-based shoe recommender app called the [Tinderella](http://www.tinderellashoes.com) app. The app is both fun and efficient(generates recommendations within seconds). 
