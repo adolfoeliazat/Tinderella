@@ -1,5 +1,5 @@
 ## Tinderella Pipeline
-========================
+======
 
 The pipeline processes all the scraped images and metadata to produce a matrix of relations between similar shoes, available for querying through the recommendation server. 
 
