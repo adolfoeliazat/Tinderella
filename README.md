@@ -7,6 +7,7 @@ Folder structure
 * scraper (web scraper for Nordstrom, Saks, Barney's)
 * pipeline (standardizing images, feature extraction, recommendation engine server)
 * app (web server, frontend app)
+* labs (EDA files, not needed for production)
 
 
 ### To-do
