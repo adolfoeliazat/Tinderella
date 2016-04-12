@@ -12,6 +12,13 @@ The end result of the pipeline are two data models:
 2. 20 nearest neighbors (shoes) for all shoes
 
 
+### Set up Virtualenv
+
+1. Install virtualenv
+2. Run virtualenv on the pipeline folder to set up the environment: ```virtualenv pipeline/```
+3. Activate the environment whenever running any pipeline code: ```source bin/activate```
+
+
 ### Recommendation Server
 
 The recommendation server runs on port 8010 and exposes several API endpoints:
