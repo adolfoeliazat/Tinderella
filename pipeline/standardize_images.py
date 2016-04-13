@@ -1,10 +1,9 @@
 import os
+from shared.preprocessing import clean_file_lst, resize_to_square
 from skimage import io
-from skimage.transform import resize
-from shared_functions import clean_file_lst
 
 HOME_PATH = '../'
-IMAGES_DIRECTORY = os.path.join(HOME_PATH, 'images_subset/')
+IMAGES_DIRECTORY = os.path.join(HOME_PATH, 'images/')
 OUTPUT_DIRECTORY = os.path.join(HOME_PATH, 'data/standardized_images')
 
 
@@ -17,7 +16,7 @@ def standardize_images(img_size):
     Output: Standardized images in output directories
     (same directory structure)
 
-    img_size: Size of the generated output image (rows, cols[, dim]). If dim
+    img_size: Size of the generated output square image. If dim
     is not provided, the number of channels is preserved.
     """
 
@@ -40,9 +39,15 @@ def standardize_images(img_size):
             img_path = os.path.join(subdir_path, img_file)
             new_img_path = os.path.join(new_subdir_path, img_file)
             if os.path.exists(new_img_path): os.remove(new_img_path)
-            resized_img = resize(io.imread(img_path), img_size)
+
+            print 'Processing', img_path
+            resized_img = resize_to_square(io.imread(img_path), img_size)
             io.imsave(new_img_path, resized_img)
+            print 'Saved', new_img_path
 
 
 if __name__ == '__main__':
-    standardize_images((200, 200))
+    """
+    Move this all within one routine later if possible
+    """
+    standardize_images(200)
