@@ -1,5 +1,5 @@
 import os
-from shared.preprocessing import clean_file_lst, resize_to_square
+import shared.preprocessing as pp
 from skimage import io
 
 HOME_PATH = '../'
@@ -25,14 +25,14 @@ def standardize_images(img_size):
     if not os.path.exists(OUTPUT_DIRECTORY): os.mkdir(OUTPUT_DIRECTORY)
 
     # Resize and save images to output directories
-    subdirectories = clean_file_lst(os.listdir(IMAGES_DIRECTORY), False)
+    subdirectories = pp.clean_file_lst(os.listdir(IMAGES_DIRECTORY), False)
 
     for subdir in subdirectories:
         subdir_path = os.path.join(IMAGES_DIRECTORY, subdir)
         new_subdir_path = os.path.join(OUTPUT_DIRECTORY, subdir)
 
         if not os.path.exists(new_subdir_path): os.mkdir(new_subdir_path)
-        img_files = clean_file_lst(os.listdir(subdir_path), True)
+        img_files = pp.clean_file_lst(os.listdir(subdir_path), True)
 
         for img_file in img_files:
             # Reshape each image
@@ -40,10 +40,11 @@ def standardize_images(img_size):
             new_img_path = os.path.join(new_subdir_path, img_file)
             if os.path.exists(new_img_path): os.remove(new_img_path)
 
-            print 'Processing', img_path
-            resized_img = resize_to_square(io.imread(img_path), img_size)
+            print 'Processing image', img_path
+            img = io.imread(img_path)
+            resized_img = pp.resize_to_square(img,img_size)
             io.imsave(new_img_path, resized_img)
-            print 'Saved', new_img_path
+            print 'Saved image', new_img_path
 
 
 if __name__ == '__main__':

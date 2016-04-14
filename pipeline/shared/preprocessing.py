@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from skimage.transform import resize
-
+from skimage import io
 
 def clean_file_lst(file_name_lst, jpg=False):
     """
@@ -17,6 +17,23 @@ def clean_file_lst(file_name_lst, jpg=False):
         return [fname for fname in file_name_lst if not fname.startswith('.')]
     elif jpg:
         return [fname for fname in file_name_lst if '.jpg' in fname]
+
+
+def remove_borders(image):
+    """
+    Some of the shoe images have a faint grey border, affecting the
+    composition of the background colors in later pre-processing steps. This
+    function identifies any borders that exist in images and removes them,
+    thereby shrinking the image's dimensions.
+
+    input:
+    * image
+
+    output: resized image
+    """
+
+    # TO-DO
+    return image
 
 
 def resize_to_square(image, size, threshold=5):
