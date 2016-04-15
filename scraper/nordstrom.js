@@ -58,8 +58,8 @@ var scrapeItemURLs = function(html) {
  * for each color available for a shoe.
  *
  */
-var scrapeItem = function(html, scrapeColors) {
-    scrapeColors = scrapeColors || true;
+var scrapeItem = function(html, stopScrapingColors) {
+    stopScrapingColors = stopScrapingColors || false;
     $ = cheerio.load(html);
 
     var item = {
@@ -74,7 +74,7 @@ var scrapeItem = function(html, scrapeColors) {
         '?fashioncolor=' + encodeURIComponent(item.color);
 
     // Fetch the other colors for this item if specified
-    if (scrapeColors) {
+    if (!stopScrapingColors) {
         var otherColorURLs = [];
         $('.color-select option').each(function() {
             var color = $(this).html();
