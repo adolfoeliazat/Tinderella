@@ -139,7 +139,7 @@ var scrapeItem = function(html, stopScrapingColors) {
  *
  */
 var scrapeOneColorItem = function(html) {
-    scrapeItem(html, false);
+    scrapeItem(html, true);
 };
 
 var scrapeShoes = function() {

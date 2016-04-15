@@ -27,8 +27,10 @@ var fetchURL = function(url, cb, user_agent) {
     };
 
     request.get(options).on('response', function(res) {
-        if (res.statusCode != 200)
-            throw new Error("Item not found");
+        if (res.statusCode != 200) {
+            console.log("Error: " + res.statusCode);
+            return false;
+        }
 
         var data = '';
         res.setEncoding('utf8');
