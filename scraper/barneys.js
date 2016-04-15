@@ -34,6 +34,7 @@ var scrapeItemURLs = function(html) {
     // Trigger async scrape for all the items
     async.each(itemURLs, fetchItem, function(err) {
         console.log("Couldn't fetch item: " + err);
+        scrapedCount++;
     });
 
     // Recursively scrape the next page of items until we've reached the end
