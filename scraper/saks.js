@@ -14,9 +14,9 @@ var parseComplete = false;
  * scrapeItemURLs()
  *
  * Description:
- * Given the HTML contents of a list results page, find all the URLs that correspond to
- * individual product items. Trigger individual scrapes for each set of product
- * items scraped.
+ * Given the HTML contents of a list results page, find all the URLs that
+ * correspond to individual product items. Trigger individual scrapes for
+ * each set of product items scraped.
  *
  */
 var scrapeItemURLs = function(html) {
