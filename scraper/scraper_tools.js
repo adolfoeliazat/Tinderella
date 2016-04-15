@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 var mongojs = require('mongojs');
 var request = require('request');
 
@@ -43,14 +45,16 @@ var fetchURL = function(url, cb, user_agent) {
  * upsert()
  *
  * Description:
- * Upserts the object into the shoes collection
+ * Upserts the object into the shoes collection, given a unique combination
+ * of retailer, product ID, and item color
  *
  */
 var upsert = function(obj) {
     db.shoes.update(
         {
             retailer: obj.retailer,
-            productId: obj.productId
+            productId: obj.productId,
+            color: obj.color
         },
         obj,
         { upsert: true },
@@ -58,7 +62,9 @@ var upsert = function(obj) {
             console.log('Saved to mongoDB: ' +
                 obj.retailer +
                 ':' +
-                obj.productId
+                obj.productId +
+                ':' +
+                obj.color
             );
         }
     );
