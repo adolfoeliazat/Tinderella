@@ -67,6 +67,7 @@ var scrapeItem = function(html) {
             .attr('content'),
         designer: $('meta[property="product:brand"]').attr('content'),
         productName: $('#product-content .product-name').html(),
+        color: '',
         url: $('meta[property="og:url"]').attr('content'),
         price: $('meta[property="product:price:amount"]').attr('content'),
         priceCurrency: $('meta[property="product:price:currency"]')
