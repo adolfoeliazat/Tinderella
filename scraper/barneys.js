@@ -6,6 +6,7 @@ var fetchURL = require('./scraper_tools.js').fetchURL;
 var upsert = require('./scraper_tools.js').upsert;
 
 var BASE_URL = 'http://www.barneys.com/barneys-new-york/women/shoes';
+var BARNEYS_UA = 'Python-urllib/3.1';
 var parsedCount = 0;
 var scrapedCount = 0;
 var parseComplete = false;
@@ -14,9 +15,9 @@ var parseComplete = false;
  * scrapeItemURLs()
  *
  * Description:
- * Given the HTML contents of a list results page, find all the URLs that correspond to
- * individual product items. Trigger individual scrapes for each set of product
- * items scraped.
+ * Given the HTML contents of a list results page, find all the URLs that
+ * correspond to individual product items. Trigger individual scrapes for
+ * each set of product items scraped.
  *
  */
 var scrapeItemURLs = function(html) {
@@ -27,7 +28,7 @@ var scrapeItemURLs = function(html) {
     parsedCount += itemURLs.length;
 
     var fetchItem = function(url) {
-        fetchURL(url, scrapeItem);
+        fetchURL(url, scrapeItem, BARNEYS_UA);
     };
 
     // Trigger async scrape for all the items
@@ -35,12 +36,15 @@ var scrapeItemURLs = function(html) {
         console.log("Couldn't fetch item: " + err);
     });
 
-    // Recursively scrape the next page of item URLs until we've reached the end
+    // Recursively scrape the next page of items until we've reached the end
     var nextPage = $('.pagination .page-next.active').attr('href');
     if (nextPage) {
-        fetchURL(nextPage, scrapeItemURLs);
+        fetchURL(nextPage, scrapeItemURLs, BARNEYS_UA);
     } else {
-        console.log("URL scraping complete: " + parsedCount + " Barneys shoe URLs scraped");
+        console.log('URL scraping complete: ' +
+            parsedCount +
+            ' Barneys shoe URLs scraped'
+        );
         parseComplete = true;
     }
 };
@@ -49,8 +53,8 @@ var scrapeItemURLs = function(html) {
  * scrapeItem()
  *
  * Description:
- * Given the HTML contents of a product detail page, scrape the relevant contents
- * of the product and save the entry into MongoDB.
+ * Given the HTML contents of a product detail page, scrape the relevant
+ * contents of the product and save the entry into MongoDB.
  *
  */
 var scrapeItem = function(html) {
@@ -58,20 +62,23 @@ var scrapeItem = function(html) {
 
     var item = {
         retailer: 'Barneys New York',
-        productId: $('meta[property="og:isbn"]').attr('content'),
-        designer: $('#product-content .brand a').html(),
+        productId: $('meta[property="product:retailer_part_no"]')
+            .attr('content'),
+        designer: $('meta[property="product:brand"]').attr('content'),
         productName: $('#product-content .product-name').html(),
         url: $('meta[property="og:url"]').attr('content'),
         price: $('meta[property="product:price:amount"]').attr('content'),
-        priceCurrency: $('meta[property="product:price:currency"]').attr('content')
+        priceCurrency: $('meta[property="product:price:currency"]')
+            .attr('content')
     };
+
     var details = $('#collapseOne .panel-body.standard-p').html();
     item.details = details ? details.trim() : '';
 
     item.images = [];
     $('#product-image-carousel .item').each(function() {
         var image = {
-            url: $('.shoe', this).attr('src')
+            url: $('img', this).attr('src')
         };
         if ($('a', this).attr('data-index') === '0') {
             image.primary = true;
@@ -88,6 +95,6 @@ var scrapeItem = function(html) {
 };
 
 var scrapeShoes = function() {
-    fetchURL(BASE_URL, scrapeItemURLs);
+    fetchURL(BASE_URL, scrapeItemURLs, BARNEYS_UA);
 };
 module.exports.scrapeShoes = scrapeShoes;

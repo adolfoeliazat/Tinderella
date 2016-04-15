@@ -2,7 +2,9 @@ var mongojs = require('mongojs');
 var request = require('request');
 
 var db = mongojs('Tinderella', ['shoes']);
-var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36'
+var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
+    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
+    'Safari/537.36';
 
 /*
  * fetchURL()
@@ -12,15 +14,20 @@ var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/53
  * helper functions.
  *
  */
-var fetchURL = function(url, cb) {
+var fetchURL = function(url, cb, user_agent) {
+    user_agent = user_agent || USER_AGENT;
+
     var options = {
         url: url,
         headers: {
-            'User-Agent': USER_AGENT
+            'User-Agent': user_agent
         }
     };
 
     request.get(options).on('response', function(res) {
+        if (res.statusCode != 200)
+            throw new Error("Item not found");
+
         var data = '';
         res.setEncoding('utf8');
         res.on('data', function(chunk) {
@@ -48,7 +55,11 @@ var upsert = function(obj) {
         obj,
         { upsert: true },
         function(err, doc) {
-            console.log('Saved to mongoDB: ' + obj.retailer + ':' + obj.productId);
+            console.log('Saved to mongoDB: ' +
+                obj.retailer +
+                ':' +
+                obj.productId
+            );
         }
     );
 };
