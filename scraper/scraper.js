@@ -9,7 +9,7 @@ var sources = {
 };
 
 var db = mongojs('Tinderella', ['shoes']);
-var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
+var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
   'Safari/537.36';
 
@@ -21,13 +21,13 @@ var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
  * helper functions.
  *
  */
-var fetchURL = function(url, retailer, cb, user_agent) {
-  user_agent = user_agent || USER_AGENT;
+var fetchURL = function(url, retailer, cb, userAgent) {
+  userAgent = userAgent || DEFAULT_USER_AGENT;
 
   var options = {
     url: url,
     headers: {
-      'User-Agent': user_agent
+      'User-Agent': userAgent
     }
   };
 
@@ -87,11 +87,12 @@ var upsert = function(obj) {
  */
 var scrapeItemURLs = function(html, retailer) {
   var page = new sources[retailer].Listings(html);
+  var userAgent = sources[retailer].userAgent;
 
   // Trigger async scrape for all the items
   async.each(
     page.getItemURLs(),
-    function(url) { fetchURL(url, retailer, scrapeItem); },
+    function(url) { fetchURL(url, retailer, scrapeItem, userAgent); },
     function(err) {
       if (err) {
         console.log("Couldn't fetch item: " + err);
@@ -102,7 +103,7 @@ var scrapeItemURLs = function(html, retailer) {
   // Recursively scrape the next page until we've reached the end
   var nextPage = page.getNextPageURL();
   if (nextPage) {
-    fetchURL(nextPage, retailer, scrapeItemURLs);
+    fetchURL(nextPage, retailer, scrapeItemURLs, userAgent);
   } else {
     console.log('URL scraping complete');
   }
@@ -118,13 +119,18 @@ var scrapeItemURLs = function(html, retailer) {
  */
 var scrapeItem = function(html, retailer, stopScrapingColors) {
   var item = new sources[retailer].Item(html);
+  var userAgent = sources[retailer].userAgent;
+
+  // Save or update MongoDB
   upsert(item.data);
 
   // Fetch the other colors for this item if specified
-  if (!stopScrapingColors) {
+  if (item.getOtherColorURLs() && !stopScrapingColors) {
     async.each(
       item.getOtherColorURLs(),
-      function(url) { fetchURL(url, retailer, scrapeOneColorItem); },
+      function(url) {
+        fetchURL(url, retailer, scrapeOneColorItem, userAgent);
+      },
       function(err) {
         if (err) {
           console.log("Couldn't fetch item: " + err);
@@ -153,7 +159,9 @@ var scrapeOneColorItem = function(html, retailer) {
  *
  */
 var scrapeShoes = function(retailer) {
-  fetchURL(sources[retailer].listingsURL, retailer, scrapeItemURLs);
+  var url = sources[retailer].listingsURL;
+  var userAgent = sources[retailer].userAgent;
+  fetchURL(url, retailer, scrapeItemURLs, userAgent);
 };
 
 /*
