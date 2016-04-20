@@ -1,38 +1,184 @@
-var _ = require('underscore');
 var async = require('async');
+var mongojs = require('mongojs');
+var request = require('request');
 
-var Barneys = require('./barneys.js');
-var Nordstrom = require('./nordstrom.js');
-var Saks = require('./saks.js');
+var sources = {
+  barneys: require('./config/barneys.js'),
+  nordstrom: require('./config/nordstrom.js'),
+  saks: require('./config/saks.js')
+};
+
+var db = mongojs('Tinderella', ['shoes']);
+var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
+  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
+  'Safari/537.36';
 
 /*
- * Overall scraper module that requires the individual modules and runs all
- * the scrapers in parallel (and can also run specific scrapers only.
+ * fetchURL()
+ *
+ * Description:
+ * Use the request library to fetch the URL and pass the HTML contents to
+ * helper functions.
+ *
  */
+var fetchURL = function(url, retailer, cb, user_agent) {
+  user_agent = user_agent || USER_AGENT;
 
-if (process.argv[2]) {
-    switch (process.argv[2]) {
-        case 'barneys':
-            Barneys.scrapeShoes();
-            break;
-
-        case 'nordstrom':
-            Nordstrom.scrapeShoes();
-            break;
-
-        case 'saks':
-            Saks.scrapeShoes();
-            break;
+  var options = {
+    url: url,
+    headers: {
+      'User-Agent': user_agent
     }
-} else {
-    async.parallel(
-        [
-            Barneys.scrapeShoes(),
-            Nordstrom.scrapeShoes(),
-            Saks.scrapeShoes()
-        ],
-        function(err) {
-            console.log("All scraping complete");
+  };
+
+  request.get(options).on('response', function(res) {
+    if (res.statusCode != 200) {
+      console.log("Error: " + res.statusCode);
+      return false;
+    }
+
+    var data = '';
+    res.setEncoding('utf8');
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      cb(data, retailer);
+    });
+  });
+};
+
+/*
+ * upsert()
+ *
+ * Description:
+ * Upserts the object into the shoes collection, given a unique combination
+ * of retailer, product ID, and item color
+ *
+ */
+var upsert = function(obj) {
+  db.shoes.update(
+    {
+      retailer: obj.retailer,
+      productId: obj.productId,
+      color: obj.color
+    },
+    obj,
+    { upsert: true },
+    function(err, doc) {
+      console.log('Saved to mongoDB: ' +
+        obj.retailer +
+        ':' +
+        obj.productId +
+        ':' +
+        obj.color
+      );
+    }
+  );
+};
+
+/*
+ * scrapeItemURLs()
+ *
+ * Given the HTML contents of a list results page, find all the URLs that
+ * correspond to individual product items. Trigger individual scrapes for
+ * each set of product items scraped.
+ *
+ */
+var scrapeItemURLs = function(html, retailer) {
+  var page = new sources[retailer].Listings(html);
+
+  // Trigger async scrape for all the items
+  async.each(
+    page.getItemURLs(),
+    function(url) { fetchURL(url, retailer, scrapeItem); },
+    function(err) {
+      if (err) {
+        console.log("Couldn't fetch item: " + err);
+      }
+    }
+  );
+
+  // Recursively scrape the next page until we've reached the end
+  var nextPage = page.getNextPageURL();
+  if (nextPage) {
+    fetchURL(nextPage, retailer, scrapeItemURLs);
+  } else {
+    console.log('URL scraping complete');
+  }
+};
+
+/*
+ * scrapeItem()
+ *
+ * Given the HTML contents of a product detail page, scrape the relevant
+ * contents of the product and save the entry into MongoDB. Save a new entry
+ * for each color available for a shoe.
+ *
+ */
+var scrapeItem = function(html, retailer, stopScrapingColors) {
+  var item = new sources[retailer].Item(html);
+  upsert(item.data);
+
+  // Fetch the other colors for this item if specified
+  if (!stopScrapingColors) {
+    async.each(
+      item.getOtherColorURLs(),
+      function(url) { fetchURL(url, retailer, scrapeOneColorItem); },
+      function(err) {
+        if (err) {
+          console.log("Couldn't fetch item: " + err);
         }
+      }
     );
+  }
+};
+
+/*
+ * scrapeOneColorItem()
+ *
+ * Helper function that passes an additional parameter to scrapeItem, telling
+ * it not to scrape the other colors for that item, to avoid infinite
+ * recursion.
+ *
+ */
+var scrapeOneColorItem = function(html, retailer) {
+  scrapeItem(html, retailer, true);
+};
+
+/*
+ * scrapeShoes()
+ *
+ * Kicks off scraping for a specific retailer.
+ *
+ */
+var scrapeShoes = function(retailer) {
+  fetchURL(sources[retailer].listingsURL, retailer, scrapeItemURLs);
+};
+
+/*
+ * Main routine
+ *
+ */
+var retailer = process.argv[2];
+if (retailer) {
+  switch (retailer) {
+    case 'barneys':
+    case 'nordstrom':
+    case 'saks':
+      scrapeShoes(retailer);
+      break;
+  }
+} else {
+  async.each(
+    Object.keys(sources),
+    function(retailer) { scrapeShoes(retailer); },
+    function(err) {
+      if (err) {
+        console.log('Error scraping sources: ' + err);
+      } else {
+        console.log('All scraping complete.');
+      }
+    }
+  );
 }
