@@ -38,7 +38,8 @@ var setupItem = function($) {
     designer: $('.product-details .brand-title span').html(),
     productName: $('.product-details .product-title h1').html(),
     color: $('.immersive-color-filter-color-name').html(),
-    priceCurrency: 'USD'
+    priceCurrency: 'USD',
+    images: []
   };
 
   data.url = $('meta[property="og:url"]').attr('content') +
@@ -52,7 +53,6 @@ var setupItem = function($) {
   var details = $('.product-details-and-care p').html();
   data.details = details ? details.trim() : null;
 
-  data.images = [];
   $('.thumbnails li').each(function() {
     var image = {
         url: $('img', this).attr('src').split('?')[0]
@@ -68,20 +68,23 @@ var setupItem = function($) {
   return data;
 };
 
-Item.prototype.getOtherColorURLs = function() {
+Item.prototype.getOtherColors = function() {
   var $ = this.$;
   var that = this;
-  var otherColorURLs = [];
+  var urls = [];
   $('.color-select option').each(function() {
     var color = $(this).html();
     if (color !== 'Select a color' && color !== that.data.color) {
-      otherColorURLs.push(
+      urls.push(
         that.data.url.split('?')[0] + '?fashioncolor=' + color
       );
     }
   });
 
-  return otherColorURLs;
+  return {
+    type: 'url',
+    colors: urls
+  };
 };
 
 module.exports.listingsURL = listingsURL;

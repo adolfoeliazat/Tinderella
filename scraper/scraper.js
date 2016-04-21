@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var async = require('async');
 var mongojs = require('mongojs');
 var request = require('request');
@@ -125,18 +126,30 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
   upsert(item.data);
 
   // Fetch the other colors for this item if specified
-  if (item.getOtherColorURLs() && !stopScrapingColors) {
-    async.each(
-      item.getOtherColorURLs(),
-      function(url) {
-        fetchURL(url, retailer, scrapeOneColorItem, userAgent);
-      },
-      function(err) {
-        if (err) {
-          console.log("Couldn't fetch item: " + err);
-        }
-      }
-    );
+  var otherColors = item.getOtherColors();
+  if (!stopScrapingColors && otherColors) {
+    switch (otherColors.type) {
+      case 'url':
+        async.each(
+          otherColors,
+          function(url) {
+            fetchURL(url, retailer, scrapeOneColorItem, userAgent);
+          },
+          function(err) {
+            if (err) {
+              console.log("Couldn't fetch item: " + err);
+            }
+          }
+        );
+        break;
+
+      case 'text':
+        _.each(otherColors.colors, function(color) {
+          item.changeColor(color);
+          upsert(item.data);
+        });
+        break;
+    }
   }
 };
 
