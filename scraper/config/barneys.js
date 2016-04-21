@@ -42,13 +42,13 @@ var setupItem = function($) {
     url: $('meta[property="og:url"]').attr('content'),
     price: $('meta[property="product:price:amount"]').attr('content'),
     priceCurrency: $('meta[property="product:price:currency"]')
-      .attr('content')
+      .attr('content'),
+    images: []
   };
 
   var details = $('#collapseOne .panel-body.standard-p').html();
   data.details = details ? details.trim() : null;
 
-  data.images = [];
   $('#product-image-carousel .item').each(function() {
     var image = { url: $('img', this).attr('src') };
     if ($('a', this).attr('data-index') === '0') {
