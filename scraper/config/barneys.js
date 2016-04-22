@@ -7,6 +7,7 @@ var userAgent = 'Python-urllib/3.1';
  *
  */
 function Listings(html) {
+  this.html = html;
   this.$ = cheerio.load(html);
 }
 
@@ -28,6 +29,7 @@ Listings.prototype.getNextPageURL = function() {
  *
  */
 function Item(html) {
+  this.html = html;
   this.$ = cheerio.load(html);
   this.data = setupItem(this.$);
 }

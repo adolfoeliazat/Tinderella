@@ -6,6 +6,7 @@ var listingsURL = 'http://shop.nordstrom.com/c/womens-shoes';
  *
  */
 function Listings(html) {
+  this.html = html;
   this.$ = cheerio.load(html);
 }
 
@@ -27,6 +28,7 @@ Listings.prototype.getNextPageURL = function() {
  *
  */
 function Item(html) {
+  this.html = html;
   this.$ = cheerio.load(html);
   this.data = setupItem(this.$);
 }
