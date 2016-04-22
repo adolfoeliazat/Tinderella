@@ -1,1 +1,11 @@
 .DS_Store
+*.pyc
+node_modules/
+images/
+data/
+pipeline/bin
+pipeline/lib
+pipeline/.Python
+pipeline/include/
+pipeline/pip-selfcheck.json
+pipeline/share

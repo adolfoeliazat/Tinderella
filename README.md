@@ -1,31 +1,43 @@
 ## Tinderella - An Image-Based Shoe Recommender
 ====================================================================
-<a href="http://www.tinderellashoes.com" target="_blank">www.tinderellashoes.com</a> ![web app](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Readme_Assets/tiny_logo.png)
+
+### New changes
+
+Folder structure
+* scraper (web scraper for Nordstrom, Saks, Barney's)
+* pipeline (standardizing images, feature extraction, recommendation engine server)
+* app (web server, frontend app)
+* labs (EDA files, not needed for production)
+
+
+### To-do
+* Describe how to set up mongodb
+* Mongoose and schema validation
+* Where to put db definition files
+* Plan for static assets
 
 
 ### Summary
 
 The Tinderella capstone project is a full stack computer vision project that includes the following three major components: 
 
-* Data Engieering (two image pre-processing pipelines)
-* Data Science (feature engieering, testing and modeling building)
+* Data Engineering (two image pre-processing pipelines)
+* Data Science (feature engineering, testing and modeling building)
 * Front End Development
 
-The end-product is an image-based shoe recommender app called the [Tinderella](http://www.tinderellashoes.com) app. The app is both fun and efficient(generates recommendations within seconds). 
+The end-product is an image-based shoe recommender app called Tinderella. The app is both fun and efficient(generates recommendations within seconds). 
 **Please see the last section for user experience feedback from 30 users.**
 
 
 #### How To Use Tinderella?
 
-* To "Like" a shoe: Swipt right or Click on ![heart](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Readme_Assets/tiny_like_icon.png "Logo Title Text 1")
- button.
+* To "Like" a shoe: Swipe right or Click on the Heart icon.
 
+* To "Dislike" a shoe: Swipe left or Click on the "X" icon.
 
-* To "Dislike" a shoe: Swipt left or Click on ![X](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Readme_Assets/tiny_dislike_icon.png) button.
-
-* Result: all images that user "Liked" will appear along with new recommendations!  
-    * User can click on the "link" button and the original product page is opened in a new tab.  
-    * User can also click on the "pinit" button to pin image to Pinterest. 
+* Result: all images that the user "Liked" will appear along with new recommendations!
+    * The user can click on the "link" button and the original product page is opened in a new tab.
+    * The user can also click on the "Pin It" button to pin the image to Pinterest.
 * After results are loaded, if the user wishes to start over, scroll to bottom to click on "Start Over".
 
 
@@ -40,7 +52,7 @@ Tinderella utilizes techniques used in the field of computer vision and machine 
 
 #### Web Scraping and data storage:
 
-[Web Scraper](https://github.com/virginiayung/Tinderella_Capstone_Project/tree/master/Web_Scraping)
+Web Scraper
 
 * 16,000 images were scraped from 3 datasources (listed below) and stored in their respective subdirectories.  
     * 6 subdirectories created: boots, flats, pumps and slingbacks, sandals, sneakers, wedges
@@ -49,9 +61,7 @@ Tinderella utilizes techniques used in the field of computer vision and machine 
 
 #### First Pipeline - Image Labeling and Standardization
 
-[Pipeline I Standardization](https://github.com/virginiayung/Tinderella_Capstone_Project/blob/master/Pipeline_Standardize.py)
-
-Images are "pump" into this first pipeline from each subdirectory. Each image is then resized to the following 4 sizes and the appropriate file name (company name withe product id) is attached.
+Images are "pumped" into this first pipeline from each subdirectory. Each image is then resized to the following 4 sizes and the appropriate file name (company name withe product id) is attached.
 
 * 28-by-28 px
 * 50-by-50 px
@@ -61,11 +71,8 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 
 #### Second Pipeline - Feature Engineering
 
-[Pipeline II Feature Engineering](https://github.com/virginiayung/Tinderella_Capstone_Project/tree/master/Feature_Matrix_Tuning)
 
 ##### Pre-Transformation Feature Engineering(feature engineering on 3D ravel tensor)
-
-
 
 * 1\. Color Extraction with K Means Clustering   
 * 2\. Local Histogram Equalizer   
@@ -91,9 +98,8 @@ Images are "pump" into this first pipeline from each subdirectory. Each image is
 
 
 #### Testing and Modeling - 
-[Testing and Modeling]()
 
-#####Testing Methods(Use supervised learning and labels to test feature engineering results):
+#####Testing Methods (Use supervised learning and labels to test feature engineering results):
 The classification methods below were used to test both the original feature matrix and PCA transformed feature matrix(for dimensionality reduction).
 
 1. Random Forest with 5-fold Cross Validation: 
