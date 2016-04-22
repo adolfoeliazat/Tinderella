@@ -69,9 +69,9 @@ var upsert = function(obj) {
     function(err, doc) {
       console.log('Saved to mongoDB: ' +
         obj.retailer +
-        ':' +
+        ': ' +
         obj.productId +
-        ':' +
+        ': ' +
         obj.color
       );
     }
@@ -145,8 +145,9 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
 
       case 'text':
         _.each(otherColors.colors, function(color) {
-          item.changeColor(color);
-          upsert(item.data);
+          var newItem = new sources[retailer].Item(item.html);
+          newItem.changeColor(color);
+          upsert(newItem.data);
         });
         break;
     }
@@ -187,10 +188,12 @@ if (retailer) {
     case 'barneys':
     case 'nordstrom':
     case 'saks':
+      console.log("Starting scraping for " + retailer + '...');
       scrapeShoes(retailer);
       break;
   }
 } else {
+  console.log("Starting scraping for all retailers...");
   async.each(
     Object.keys(sources),
     function(retailer) { scrapeShoes(retailer); },
