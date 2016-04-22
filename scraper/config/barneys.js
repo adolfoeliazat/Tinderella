@@ -63,7 +63,7 @@ var setupItem = function($) {
   return data;
 };
 
-Item.prototype.getOtherColorURLs = function() {
+Item.prototype.getOtherColors = function() {
   // Barneys uses a separate product ID for each color
   return false;
 };
