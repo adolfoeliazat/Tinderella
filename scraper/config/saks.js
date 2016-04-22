@@ -20,8 +20,8 @@ Listings.prototype.getItemURLs = function() {
 
 Listings.prototype.getNextPageURL = function() {
   var $ = this.$;
-  var nextPage = $('.pa-enh-pagination-right-arrow').attr('href');
-  return nextPage ? (listingsURL + nextPage.split('?')[1]) : false;
+  var nextPage = $('.pa-enh-pagination-right-arrow a').attr('href');
+  return nextPage ? (listingsURL + '?' + nextPage.split('?')[1]) : false;
 };
 
 /*
@@ -42,32 +42,37 @@ var setupItem = function($) {
     designer: $('.product-overview__brand-link').html(),
     productName: $('.product-overview__short-description').html(),
     details: $('.product-description ul').html(),
-
-    // neef to account for multiple colors
-    color: $('.product-color-options__selected-value').html(),
     price: priceHTML.last().html(),
     priceCurrency: priceHTML.first().html(),
     url: $('meta[property="og:url"]').attr('content'),
-    images: getItemImages() || []
+    images: []
   };
+
+  // HTML structure is different for item with one vs multiple colors
+  if ($('.product-color-options').children().length === 1) {
+    data.color = $('.product-color-options__selected-value').html();
+  } else {
+    data.color = $('.product-color-options li').first().attr('title');
+  }
+  data.images = generateItemImages(data.productId, data.color);
 
   return data;
 };
 
-var getItemImages = function(color) {
+var generateItemImages = function(productId, color) {
   /*
    * Saks' default item page doesn't provide image URLs. Instead, we'll assume
    * that every item has 5 images, and use the known conventions to construct
    * the image URLs for each item.
    *
    */
-  var IMAGE_URL = 'http://s7d9.scene7.com/is/image/saks/' + data.productId;
+  var IMAGE_URL = 'http://s7d9.scene7.com/is/image/saks/';
 
   return _.map(_.range(5), function(i) {
-    var suffix = (i === 0) ? '' : '_A' + i;
-    var colorSuffix = color ? '_' + color.toUpperCase() : '';
+    var suffix = (i > 0) ? '_A' + i : '';
+    var cSuffix = (i === 0) ? '_' + color.replace(" ", "").toUpperCase() : '';
     var image = {
-      url: IMAGE_URL + suffix + colorSuffix
+      url: IMAGE_URL + productId + suffix + cSuffix
     };
     if (i === 0) {
       image.primary = true;
@@ -81,8 +86,7 @@ Item.prototype.getOtherColors = function() {
   var $ = this.$;
   var colorsHTML = $('.product-color-options');
 
-  // should return false if there is only one color
-  if (colorsHTML.children().length() === 1) {
+  if (colorsHTML.children().length === 1) {
     return false;
   } else {
     var colors = colorsHTML.find('li').map(function(i) {
@@ -99,7 +103,7 @@ Item.prototype.getOtherColors = function() {
 // Only needed for retailers whose other colors don't generate a new URL
 Item.prototype.changeColor = function(newColor) {
   this.data.color = newColor;
-  this.data.images = getItemImages(newColor);
+  this.data.images = generateItemImages(this.data.productId, newColor);
 };
 
 module.exports.listingsURL = listingsURL;
