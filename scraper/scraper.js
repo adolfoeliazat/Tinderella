@@ -32,7 +32,11 @@ var fetchURL = function(url, retailer, cb, userAgent) {
     }
   };
 
-  request.get(options).on('response', function(res) {
+  request.get(options, function(err) {
+    if (err) {
+      console.log("Request error: " + err);
+    }
+  }).on('response', function(res) {
     if (res.statusCode != 200) {
       console.log("Error: " + res.statusCode);
       return false;
