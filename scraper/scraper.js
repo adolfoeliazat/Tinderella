@@ -9,7 +9,6 @@ var sources = {
   saks: require('./config/saks.js')
 };
 
-var db = mongojs('Tinderella', ['shoes']);
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
   'Safari/537.36';
@@ -62,6 +61,7 @@ var fetchURL = function(url, retailer, cb, userAgent) {
  *
  */
 var upsert = function(obj) {
+  var db = mongojs('Tinderella', ['shoes']);
   db.shoes.update(
     {
       retailer: obj.retailer,
@@ -78,6 +78,7 @@ var upsert = function(obj) {
         ': ' +
         obj.color
       );
+      db.close();
     }
   );
 };
