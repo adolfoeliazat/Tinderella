@@ -2,6 +2,7 @@ var _ = require('underscore');
 var cheerio = require('cheerio');
 var listingsURL = 'http://www.saksfifthavenue.com/Shoes/shop/' +
   '_/N-52k0s7/Ne-6lvnb5';
+var userAgent = 'Googlebot/2.1';
 
 /*
  * Saks' Listings class
