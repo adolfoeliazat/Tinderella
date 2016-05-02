@@ -110,6 +110,7 @@ Item.prototype.changeColor = function(newColor) {
   this.data.images = generateItemImages(this.data.productId, newColor);
 };
 
-module.exports.listingsURL = listingsURL;
-module.exports.Listings = Listings;
 module.exports.Item = Item;
+module.exports.Listings = Listings;
+module.exports.listingsURL = listingsURL;
+module.exports.userAgent = userAgent;

@@ -69,7 +69,7 @@ Item.prototype.getOtherColors = function() {
   return false;
 };
 
+module.exports.Item = Item;
+module.exports.Listings = Listings;
 module.exports.listingsURL = listingsURL;
 module.exports.userAgent = userAgent;
-module.exports.Listings = Listings;
-module.exports.Item = Item;
