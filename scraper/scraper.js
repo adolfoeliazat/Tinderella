@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var async = require('async');
+var fs = require('fs');
 var mongojs = require('mongojs');
 var request = require('request');
 
@@ -9,6 +10,7 @@ var sources = {
   saks: require('./config/saks.js')
 };
 
+var IMAGE_PATH = '../data/images/';
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
   'Safari/537.36';
@@ -17,11 +19,11 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
  * fetchURL()
  *
  * Description:
- * Use the request library to fetch the URL and pass the HTML contents to
+ * Use the request library to fetch the URL and pass the contents to
  * helper functions.
  *
  */
-var fetchURL = function(url, retailer, cb, userAgent) {
+var fetchURL = function(url, encoding, cb, retailer, userAgent) {
   userAgent = userAgent || DEFAULT_USER_AGENT;
 
   var options = {
@@ -42,7 +44,7 @@ var fetchURL = function(url, retailer, cb, userAgent) {
     }
 
     var data = '';
-    res.setEncoding('utf8');
+    res.setEncoding(encoding);
     res.on('data', function(chunk) {
       data += chunk;
     });
@@ -53,34 +55,70 @@ var fetchURL = function(url, retailer, cb, userAgent) {
 };
 
 /*
- * upsert()
+ * downloadImage(obj)
+ *
+ * Description:
+ * Given a shoe object, fetch the primary image and save it to disk.
+ *
+ */
+var downloadImage = function(obj) {
+  var saveImage = function(img) {
+    var filePath = IMAGE_PATH + obj.retailerId + '_' + obj.productId + '.jpg';
+    fs.writeFile(filePath, img, 'binary', function(err) {
+      if (err) {
+        console.log('Error saving image: ' + filePath);
+      } else {
+        console.log('Image saved successfully: ' + filePath);
+      }
+    });
+  };
+
+  var imageURL = _.find(obj.images, function(img) {
+    return img.primary === true;
+  }).url;
+
+  fetchURL(imageURL, 'binary', saveImage);
+};
+
+/*
+ * upsertAndDownload()
  *
  * Description:
  * Upserts the object into the shoes collection, given a unique combination
- * of retailer, product ID, and item color
+ * of retailer, product ID, and item color.
+ *
+ * Download the primary image only if the record is upserted.
  *
  */
-var upsert = function(obj) {
+var upsertAndDownload = function(obj) {
   var db = mongojs('Tinderella', ['shoes']);
-  db.shoes.update(
-    {
-      retailer: obj.retailer,
+
+  db.shoes.findAndModify({
+    query: {
+      retailerId: obj.retailerId,
       productId: obj.productId,
       color: obj.color
     },
-    obj,
-    { upsert: true },
-    function(err, doc) {
-      console.log('Saved to mongoDB: ' +
-        obj.retailer +
-        ': ' +
-        obj.productId +
-        ': ' +
-        obj.color
-      );
-      db.close();
+    update: {
+      $setOnInsert: obj
+    },
+    new: false,
+    upsert: true
+  }, function(err, doc) {
+    if (err) {
+      console.log('Error upserting: ' + err);
+    } else {
+      if (!doc) {
+        console.log('New entry saved to mongoDB: ' +
+          obj.retailer + ': ' + obj.productId + ': ' + obj.color
+        );
+
+        downloadImage(obj);
+      }
     }
-  );
+
+    db.close();
+  });
 };
 
 /*
@@ -98,7 +136,7 @@ var scrapeItemURLs = function(html, retailer) {
   // Trigger async scrape for all the items
   async.each(
     page.getItemURLs(),
-    function(url) { fetchURL(url, retailer, scrapeItem, userAgent); },
+    function(url) { fetchURL(url, 'utf8', scrapeItem, retailer, userAgent); },
     function(err) {
       if (err) {
         console.log("Couldn't fetch item: " + err);
@@ -109,7 +147,7 @@ var scrapeItemURLs = function(html, retailer) {
   // Recursively scrape the next page until we've reached the end
   var nextPage = page.getNextPageURL();
   if (nextPage) {
-    fetchURL(nextPage, retailer, scrapeItemURLs, userAgent);
+    fetchURL(nextPage, 'utf8', scrapeItemURLs, retailer, userAgent);
   } else {
     console.log('URL scraping complete');
   }
@@ -128,7 +166,7 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
   var userAgent = sources[retailer].userAgent;
 
   // Save or update MongoDB
-  upsert(item.data);
+  upsertAndDownload(item.data);
 
   // Fetch the other colors for this item if specified
   var otherColors = item.getOtherColors();
@@ -138,7 +176,7 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
         async.each(
           otherColors,
           function(url) {
-            fetchURL(url, retailer, scrapeOneColorItem, userAgent);
+            fetchURL(url, 'utf8', scrapeOneColorItem, retailer, userAgent);
           },
           function(err) {
             if (err) {
@@ -152,7 +190,7 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
         _.each(otherColors.colors, function(color) {
           var newItem = new sources[retailer].Item(item.html);
           newItem.changeColor(color);
-          upsert(newItem.data);
+          upsertAndDownload(newItem.data);
         });
         break;
     }
@@ -180,7 +218,7 @@ var scrapeOneColorItem = function(html, retailer) {
 var scrapeShoes = function(retailer) {
   var url = sources[retailer].listingsURL;
   var userAgent = sources[retailer].userAgent;
-  fetchURL(url, retailer, scrapeItemURLs, userAgent);
+  fetchURL(url, 'utf8', scrapeItemURLs, retailer, userAgent);
 };
 
 /*
