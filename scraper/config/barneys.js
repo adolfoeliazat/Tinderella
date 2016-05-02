@@ -37,6 +37,7 @@ function Item(html) {
 var setupItem = function($) {
   var data = {
     retailer: 'Barneys New York',
+    retailerId: 'barneys',
     productId: $('meta[property="product:retailer_part_no"]').attr('content'),
     designer: $('meta[property="product:brand"]').attr('content'),
     productName: $('#product-content .product-name').html(),

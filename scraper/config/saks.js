@@ -41,6 +41,7 @@ var setupItem = function($) {
 
   var data = {
     retailer: 'Saks Fifth Avenue',
+    retailerId: 'saks',
     productId: $('.product-overview__product-code').html(),
     designer: $('.product-overview__brand-link').html(),
     productName: $('.product-overview__short-description').html(),

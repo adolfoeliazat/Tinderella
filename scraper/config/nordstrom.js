@@ -36,6 +36,7 @@ function Item(html) {
 var setupItem = function($) {
   var data = {
     retailer: 'Nordstrom',
+    retailerId: 'nordstrom',
     productId: $('.product-details .style-number').html().match(/\d+/)[0],
     designer: $('.product-details .brand-title span').html(),
     productName: $('.product-details .product-title h1').html(),
