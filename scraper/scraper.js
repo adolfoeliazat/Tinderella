@@ -35,11 +35,12 @@ var fetchURL = function(url, encoding, cb, retailer, userAgent) {
 
   request.get(options, function(err) {
     if (err) {
-      console.log("Request error: " + err);
+      console.log('Request error: ' + err + ' for URL: ' + url);
     }
   }).on('response', function(res) {
+    debugger;
     if (res.statusCode != 200) {
-      console.log("Error: " + res.statusCode);
+      console.log('Error: ' + res.statusCode + ' for URL: ' + url);
       return false;
     }
 
@@ -63,7 +64,9 @@ var fetchURL = function(url, encoding, cb, retailer, userAgent) {
  */
 var downloadImage = function(obj) {
   var saveImage = function(img) {
-    var filePath = IMAGE_PATH + obj.retailerId + '_' + obj.productId + '.jpg';
+    var fileName = obj.retailerId + '_' +
+      obj.productId + '_' + obj.color.replace(" ", "_") + '.jpg';
+    var filePath = IMAGE_PATH + fileName;
     fs.writeFile(filePath, img, 'binary', function(err) {
       if (err) {
         console.log('Error saving image: ' + filePath);
