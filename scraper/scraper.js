@@ -68,8 +68,8 @@ var fetchURL = function(url, encoding, cb, retailer, userAgent) {
  */
 var downloadImage = function(obj) {
   var saveImage = function(img) {
-    var fileName = obj.retailerId + '_' +
-      obj.productId + '_' + obj.color.replace(" ", "_") + '.jpg';
+    var fileName = obj.retailerId + '_' + obj.productId + '_'
+      + obj.color.replace(/ /g, "_").replace(/\//g, "") + '.jpg';
     var filePath = IMAGE_PATH + fileName;
     fs.writeFile(filePath, img, 'binary', function(err) {
       if (err) {

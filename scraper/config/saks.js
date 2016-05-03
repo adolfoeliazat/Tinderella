@@ -77,7 +77,7 @@ var generateItemImages = function(productId, color, singleColor) {
   return _.map(_.range(5), function(i) {
     var suffix = (i > 0) ? '_A' + i : '';
     var cSuffix = (!singleColor && i === 0) ?
-      '_' + color.replace(" ", "").toUpperCase() : '';
+      '_' + color.replace(/ /g, "").toUpperCase() : '';
     var image = {
       url: IMAGE_URL + productId + suffix + cSuffix
     };
