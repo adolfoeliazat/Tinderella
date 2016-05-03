@@ -42,7 +42,7 @@ var setupItem = function($) {
   var data = {
     retailer: 'Saks Fifth Avenue',
     retailerId: 'saks',
-    sku: $('.product-overview__product-code').html(),
+    altProductId: $('.product-overview__product-code').html(),
     designer: $('.product-overview__brand-link').html(),
     productName: $('.product-overview__short-description').html(),
     details: $('.product-description ul').html(),
@@ -61,12 +61,16 @@ var setupItem = function($) {
     data.color = $('.product-color-options li').first().attr('title');
   }
   data.productId = data.url.split('prd_id=')[1];
-  data.images = generateItemImages(data.sku, data.color, singleColor);
+  data.images = generateItemImages(
+    data.altProductId,
+    data.color,
+    singleColor
+  );
 
   return data;
 };
 
-var generateItemImages = function(sku, color, singleColor) {
+var generateItemImages = function(productId, color, singleColor) {
   /*
    * Saks' default item page doesn't provide image URLs. Instead, we'll assume
    * that every item has 5 images, and use the known conventions to construct
@@ -80,7 +84,7 @@ var generateItemImages = function(sku, color, singleColor) {
     var cSuffix = (!singleColor && i === 0) ?
       '_' + color.replace(/ /g, "").toUpperCase() : '';
     var image = {
-      url: IMAGE_URL + sku + suffix + cSuffix
+      url: IMAGE_URL + productId + suffix + cSuffix
     };
     if (i === 0) {
       image.primary = true;
@@ -111,7 +115,7 @@ Item.prototype.getOtherColors = function() {
 // Only needed for retailers whose other colors don't generate a new URL
 Item.prototype.changeColor = function(newColor) {
   this.data.color = newColor;
-  this.data.images = generateItemImages(this.data.sku, newColor);
+  this.data.images = generateItemImages(this.data.altProductId, newColor);
 };
 
 module.exports.Item = Item;

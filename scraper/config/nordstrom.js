@@ -37,8 +37,8 @@ var setupItem = function($) {
   var data = {
     retailer: 'Nordstrom',
     retailerId: 'nordstrom',
-    sku: $('.product-details .style-number').html().match(/\d+/)[0],
     productId: $('meta[itemprop="productID"]').attr('content'),
+    altProductId: $('.product-details .style-number').html().match(/\d+/)[0],
     designer: $('.product-details .brand-title span').html(),
     productName: $('.product-details .product-title h1').html(),
     color: $('.immersive-color-filter-color-name').html(),
