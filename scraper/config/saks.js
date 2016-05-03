@@ -54,16 +54,18 @@ var setupItem = function($) {
 
   // HTML structure is different for item with one vs multiple colors
   if ($('.product-color-options').children().length === 1) {
+    var singleColor = true;
     data.color = $('.product-color-options__selected-value').html();
   } else {
+    var singleColor = false;
     data.color = $('.product-color-options li').first().attr('title');
   }
-  data.images = generateItemImages(data.productId, data.color);
+  data.images = generateItemImages(data.productId, data.color, singleColor);
 
   return data;
 };
 
-var generateItemImages = function(productId, color) {
+var generateItemImages = function(productId, color, singleColor) {
   /*
    * Saks' default item page doesn't provide image URLs. Instead, we'll assume
    * that every item has 5 images, and use the known conventions to construct
@@ -74,7 +76,8 @@ var generateItemImages = function(productId, color) {
 
   return _.map(_.range(5), function(i) {
     var suffix = (i > 0) ? '_A' + i : '';
-    var cSuffix = (i === 0) ? '_' + color.replace(" ", "").toUpperCase() : '';
+    var cSuffix = (!singleColor && i === 0) ?
+      '_' + color.replace(" ", "").toUpperCase() : '';
     var image = {
       url: IMAGE_URL + productId + suffix + cSuffix
     };
