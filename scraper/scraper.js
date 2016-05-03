@@ -10,6 +10,10 @@ var sources = {
   saks: require('./config/saks.js')
 };
 
+var db = mongojs('Tinderella', ['shoes']);
+// NOTE: Need to call db.close() in the future to terminate the program
+// properly
+
 var IMAGE_PATH = '../data/images/';
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 ' +
@@ -94,7 +98,6 @@ var downloadImage = function(obj) {
  *
  */
 var upsertAndDownload = function(obj) {
-  var db = mongojs('Tinderella', ['shoes']);
 
   db.shoes.findAndModify({
     query: {
@@ -119,8 +122,6 @@ var upsertAndDownload = function(obj) {
         downloadImage(obj);
       }
     }
-
-    db.close();
   });
 };
 
