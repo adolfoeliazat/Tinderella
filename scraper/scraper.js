@@ -10,7 +10,7 @@ var sources = {
   saks: require('./config/saks.js')
 };
 
-var db = mongojs('Tinderella', ['shoes']);
+var db = mongojs('Tinderella', ['shoes', 'shoe_tags']);
 // NOTE: Need to call db.close() in the future to terminate the program
 // properly
 
@@ -27,7 +27,7 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
  * helper functions.
  *
  */
-var fetchURL = function(url, encoding, cb, retailer, userAgent) {
+var fetchURL = function(url, encoding, cb, retailerId, userAgent) {
   userAgent = userAgent || DEFAULT_USER_AGENT;
 
   var options = {
@@ -42,7 +42,6 @@ var fetchURL = function(url, encoding, cb, retailer, userAgent) {
       console.log('Request error: ' + err + ' for URL: ' + url);
     }
   }).on('response', function(res) {
-    debugger;
     if (res.statusCode != 200) {
       console.log('Error: ' + res.statusCode + ' for URL: ' + url);
       return false;
@@ -54,7 +53,7 @@ var fetchURL = function(url, encoding, cb, retailer, userAgent) {
       data += chunk;
     });
     res.on('end', function() {
-      cb(data, retailer);
+      cb(data, retailerId);
     });
   });
 };
@@ -88,17 +87,10 @@ var downloadImage = function(obj) {
 };
 
 /*
- * upsertAndDownload()
- *
- * Description:
- * Upserts the object into the shoes collection, given a unique combination
- * of retailer, product ID, and item color.
- *
- * Download the primary image only if the record is upserted.
+ * upsertShoe()
  *
  */
-var upsertAndDownload = function(obj) {
-
+var upsertShoe = function(obj, cb) {
   db.shoes.findAndModify({
     query: {
       retailerId: obj.retailerId,
@@ -112,14 +104,50 @@ var upsertAndDownload = function(obj) {
     upsert: true
   }, function(err, doc) {
     if (err) {
-      console.log('Error upserting: ' + err);
+      console.log('Error upserting to shoes: ' + err);
     } else {
       if (!doc) {
-        console.log('New entry saved to mongoDB: ' +
-          obj.retailer + ': ' + obj.productId + ': ' + obj.color
+        console.log('New entry saved to mongoDB.shoes: ' +
+          obj.retailerId + ': ' + obj.productId + ': ' + obj.color
         );
 
-        downloadImage(obj);
+        cb(obj);
+      }
+    }
+  });
+};
+
+/*
+ * upsertShoeTag()
+ *
+ */
+var upsertShoeTag = function(obj) {
+  db.shoe_tags.findAndModify({
+    query: {
+      retailerId: obj.retailerId,
+      productId: obj.productId
+    },
+    update: {
+      $setOnInsert: {
+        retailerId: obj.retailerId,
+        productId: obj.productId
+      },
+      $addToSet: {
+        tags: {
+          $each: obj.tags
+        }
+      }
+    },
+    new: false,
+    upsert: true
+  }, function(err, doc) {
+    if (err) {
+      console.log('Error upserting to shoe_tags: ' + err);
+    } else {
+      if (!doc) {
+        console.log('New entry saved to mongoDB.shoe_tags: ' +
+          obj.retailerId + ': ' + obj.productId
+        );
       }
     }
   });
@@ -133,14 +161,16 @@ var upsertAndDownload = function(obj) {
  * each set of product items scraped.
  *
  */
-var scrapeItemURLs = function(html, retailer) {
-  var page = new sources[retailer].Listings(html);
-  var userAgent = sources[retailer].userAgent;
+var scrapeItemURLs = function(html, retailerId) {
+  var page = new sources[retailerId].Listings(html);
+  var userAgent = sources[retailerId].userAgent;
 
   // Trigger async scrape for all the items
   async.each(
     page.getItemURLs(),
-    function(url) { fetchURL(url, 'utf8', scrapeItem, retailer, userAgent); },
+    function(url) {
+      fetchURL(url, 'utf8', scrapeItem, retailerId, userAgent);
+    },
     function(err) {
       if (err) {
         console.log("Couldn't fetch item: " + err);
@@ -151,9 +181,9 @@ var scrapeItemURLs = function(html, retailer) {
   // Recursively scrape the next page until we've reached the end
   var nextPage = page.getNextPageURL();
   if (nextPage) {
-    fetchURL(nextPage, 'utf8', scrapeItemURLs, retailer, userAgent);
+    fetchURL(nextPage, 'utf8', scrapeItemURLs, retailerId, userAgent);
   } else {
-    console.log('URL scraping complete');
+    console.log('Shoe URL scraping complete');
   }
 };
 
@@ -165,12 +195,12 @@ var scrapeItemURLs = function(html, retailer) {
  * for each color available for a shoe.
  *
  */
-var scrapeItem = function(html, retailer, stopScrapingColors) {
-  var item = new sources[retailer].Item(html);
-  var userAgent = sources[retailer].userAgent;
+var scrapeItem = function(html, retailerId, stopScrapingColors) {
+  var item = new sources[retailerId].Item(html);
+  var userAgent = sources[retailerId].userAgent;
 
   // Save or update MongoDB
-  upsertAndDownload(item.data);
+  upsertShoe(item.data, downloadImage);
 
   // Fetch the other colors for this item if specified
   var otherColors = item.getOtherColors();
@@ -180,7 +210,7 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
         async.each(
           otherColors,
           function(url) {
-            fetchURL(url, 'utf8', scrapeOneColorItem, retailer, userAgent);
+            fetchURL(url, 'utf8', scrapeOneColorItem, retailerId, userAgent);
           },
           function(err) {
             if (err) {
@@ -192,9 +222,9 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
 
       case 'text':
         _.each(otherColors.colors, function(color) {
-          var newItem = new sources[retailer].Item(item.html);
+          var newItem = new sources[retailerId].Item(item.html);
           newItem.changeColor(color);
-          upsertAndDownload(newItem.data);
+          upsertShoe(newItem.data, downloadImage);
         });
         break;
     }
@@ -209,41 +239,110 @@ var scrapeItem = function(html, retailer, stopScrapingColors) {
  * recursion.
  *
  */
-var scrapeOneColorItem = function(html, retailer) {
-  scrapeItem(html, retailer, true);
+var scrapeOneColorItem = function(html, retailerId) {
+  scrapeItem(html, retailerId, true);
 };
 
 /*
  * scrapeShoes()
  *
- * Kicks off scraping for a specific retailer.
+ * Kicks off scraping shoe data for a specific retailer.
  *
  */
-var scrapeShoes = function(retailer) {
-  var url = sources[retailer].listingsURL;
-  var userAgent = sources[retailer].userAgent;
-  fetchURL(url, 'utf8', scrapeItemURLs, retailer, userAgent);
+var scrapeShoes = function(retailerId) {
+  var url = sources[retailerId].listingsURL;
+  var userAgent = sources[retailerId].userAgent;
+  fetchURL(url, 'utf8', scrapeItemURLs, retailerId, userAgent);
+};
+
+/*
+ * scrapeProductIds()
+ *
+ * Looks for all the product IDs referenced in a listings page. Used to
+ * populate the list of products matching a specific category from a retailer.
+ *
+ */
+var scrapeProductIds = function(html, retailerId, tags) {
+  var page = new sources[retailerId].Listings(html);
+  var userAgent = sources[retailerId].userAgent;
+  var productIds = page.getProductIds();
+
+  _.each(productIds, function(productId) {
+    var obj = {
+      retailerId: retailerId,
+      productId: productId,
+      tags: tags
+    };
+
+    upsertShoeTag(obj);
+  });
+
+  // Recursively scrape the next page until we've reached the end
+  var nextPage = page.getNextPageURL();
+  if (nextPage) {
+    var wrapper = function(html, retailerId) {
+      scrapeProductIds(html, retailerId, tags);
+    };
+
+    fetchURL(nextPage, 'utf8', wrapper, retailerId, userAgent);
+  } else {
+    console.log('Shoe tags URL scraping complete for tags ' + tags);
+  }
+};
+
+/*
+ * scrapeTags()
+ *
+ * Kicks off scraping all the shoes that match all applicable tags.
+ *
+ */
+var scrapeTags = function(retailerId) {
+  var categories = sources[retailerId].categories;
+  var userAgent = sources[retailerId].userAgent;
+
+  // Kick off each url's scraping synchronously to manage concurrent threads
+  async.each(
+    categories,
+    function(category) {
+      var wrapper = function(html, retailerId) {
+        scrapeProductIds(html, retailerId, category.tags);
+      };
+
+      fetchURL(category.url, 'utf8', wrapper, retailerId, userAgent);
+    },
+    function(err) {
+      if (err) {
+        console.log('Error scraping product IDs: ' + err);
+      } else {
+        console.log('Finished scraping product IDs');
+      }
+    }
+  );
 };
 
 /*
  * Main routine
  *
  */
-var retailer = process.argv[2];
-if (retailer) {
-  switch (retailer) {
+var retailerId = process.argv[2];
+if (retailerId) {
+  switch (retailerId) {
     case 'barneys':
     case 'nordstrom':
     case 'saks':
-      console.log("Starting scraping for " + retailer + '...');
-      scrapeShoes(retailer);
+      console.log("Starting scraping for " + retailerId + '...');
+      scrapeShoes(retailerId);
+      scrapeTags(retailerId);
       break;
   }
 } else {
   console.log("Starting scraping for all retailers...");
   async.each(
     Object.keys(sources),
-    function(retailer) { scrapeShoes(retailer); },
+    function(retailerId) {
+      scrapeShoes(retailerId);
+      scrapeTags(retailerId);
+    },
     function(err) {
       if (err) {
         console.log('Error scraping sources: ' + err);
