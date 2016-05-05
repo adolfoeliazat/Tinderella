@@ -10,6 +10,7 @@ var sources = {
   saks: require('./config/saks.js')
 };
 
+var urls = require('./config/urls.js');
 var db = mongojs('Tinderella', ['shoes', 'shoe_tags']);
 // NOTE: Need to call db.close() in the future to terminate the program
 // properly
@@ -297,7 +298,7 @@ var scrapeProductIds = function(html, retailerId, tags) {
  *
  */
 var scrapeTags = function(retailerId) {
-  var categories = sources[retailerId].categories;
+  var categories = urls[retailerId];
   var userAgent = sources[retailerId].userAgent;
 
   // Kick off each url's scraping synchronously to manage concurrent threads

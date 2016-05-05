@@ -1,5 +1,6 @@
 var cheerio = require('cheerio');
-var listingsURL = 'http://shop.nordstrom.com/c/womens-shoes';
+var BASE_URL = require('./urls').NORDSTROM_BASE_URL;
+var listingsURL = BASE_URL + '/c/womens-shoes';
 
 /*
  * Nordstrom's Listings class
@@ -15,6 +16,11 @@ Listings.prototype.getItemURLs = function() {
   return $('.nui-product-module .product-photo-href').map(function() {
     return $(this).attr('href');
   }).get();
+};
+
+Listings.prototype.getProductIds = function() {
+  var $ = this.$;
+  // TO DO
 };
 
 Listings.prototype.getNextPageURL = function() {
