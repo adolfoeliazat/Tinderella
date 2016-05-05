@@ -1,5 +1,85 @@
+var BARNEYS_BASE_URL = 'http://www.barneys.com/barneys-new-york/women/shoes';
 var NORDSTROM_BASE_URL = 'http://shop.nordstrom.com';
 var SAKS_BASE_URL = 'http://www.saksfifthavenue.com';
+
+/*
+ * Barneys New York's list of categories/subcategories and their URLs
+ *
+ */
+var barneys = [
+  {
+    tags: ['Boots', 'Ankle Boots'],
+    url: BARNEYS_BASE_URL + '/boots/ankle-boots'
+  },
+  {
+    tags: ['Boots', 'Knee Boots'],
+    url: BARNEYS_BASE_URL + '/boots/knee-boots'
+  },
+  {
+    tags: ['Boots', 'Over the Knee Boots'],
+    url: BARNEYS_BASE_URL + '/boots/over-the-knee-boots'
+  },
+  {
+    tags: ['Espadrilles'],
+    url: BARNEYS_BASE_URL + '/espadrilles'
+  },
+  {
+    tags: ['Evening'],
+    url: BARNEYS_BASE_URL + '/evening'
+  },
+  {
+    tags: ['Flats', 'Ballet Flats'],
+    url: BARNEYS_BASE_URL + '/flats/ballet-flats'
+  },
+  {
+    tags: ['Flats', 'Lace-Ups'],
+    url: BARNEYS_BASE_URL + '/flats/lace-ups'
+  },
+  {
+    tags: ['Flats', 'Loafers'],
+    url: BARNEYS_BASE_URL + '/flats/loafers'
+  },
+  {
+    tags: ['Flats', 'Sandals'],
+    url: BARNEYS_BASE_URL + '/flats/sandals'
+  },
+  {
+    tags: ['Heels', 'Mary-Janes'],
+    url: BARNEYS_BASE_URL + '/heels/mary-jane'
+  },
+  {
+    tags: ['Heels', 'Peep-Toe'],
+    url: BARNEYS_BASE_URL + '/heels/peeptoe'
+  },
+  {
+    tags: ['Heels', 'Pumps'],
+    url: BARNEYS_BASE_URL + '/heels/pump'
+  },
+  {
+    tags: ['Heels', 'Sandals'],
+    url: BARNEYS_BASE_URL + '/heels/sandals'
+  },
+  {
+    tags: ['Heels', 'Slingbacks'],
+    url: BARNEYS_BASE_URL + '/heels/slingback'
+  },
+  {
+    tags: ['Platforms'],
+    url: BARNEYS_BASE_URL + '/platforms'
+  },
+  {
+    tags: ['Sandals', 'Flats'],
+    url: BARNEYS_BASE_URL + '/sandals/flats'
+  },
+  {
+    tags: ['Sneakers'],
+    url: BARNEYS_BASE_URL + '/sneakers'
+  },
+  {
+    tags: ['Wedges'],
+    url: BARNEYS_BASE_URL + '/wedges'
+  }
+];
 
 /*
  * Nordstrom's list of categories/subcategories and their URLs
@@ -43,7 +123,7 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/gladiator-sandals'
   },
   {
-    tags: ['Sandals', 'Lace-Up'],
+    tags: ['Sandals', 'Lace-Ups'],
     url: NORDSTROM_BASE_URL + '/c/womens-lace-up-sandals'
   },
   {
@@ -91,7 +171,7 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/womens-espadrille-flats'
   },
   {
-    tags: ['Flats', 'Lace-Up'],
+    tags: ['Flats', 'Lace-Ups'],
     url: NORDSTROM_BASE_URL + '/c/womens-lace-up-flats'
   },
   {
@@ -147,7 +227,7 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/womens-kitten-heels'
   },
   {
-    tags: ['Heels', 'Lace-Up'],
+    tags: ['Heels', 'Lace-Ups'],
     url: NORDSTROM_BASE_URL + '/c/lace-up-heels'
   },
   {
@@ -267,7 +347,7 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/heeled-booties'
   },
   {
-    tags: ['Booties', 'Lace-Up'],
+    tags: ['Booties', 'Lace-Ups'],
     url: NORDSTROM_BASE_URL + '/c/lace-up-booties'
   },
   {
@@ -435,7 +515,7 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/womens-knee-high'
   },
   {
-    tags: ['Boots', 'Lace-Up'],
+    tags: ['Boots', 'Lace-Ups'],
     url: NORDSTROM_BASE_URL + '/c/lace-up-boots-women'
   },
   {
@@ -658,7 +738,9 @@ var saks = [
   }
 ];
 
+module.exports.barneys = barneys;
 module.exports.nordstrom = nordstrom;
 module.exports.saks = saks;
+module.exports.BARNEYS_BASE_URL = BARNEYS_BASE_URL;
 module.exports.NORDSTROM_BASE_URL = NORDSTROM_BASE_URL;
 module.exports.SAKS_BASE_URL = SAKS_BASE_URL;

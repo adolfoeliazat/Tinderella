@@ -1,5 +1,5 @@
 var cheerio = require('cheerio');
-var listingsURL = 'http://www.barneys.com/barneys-new-york/women/shoes';
+var BASE_URL = require('./urls.js').BARNEYS_BASE_URL;
 var userAgent = 'Python-urllib/3.1';
 
 /*
@@ -15,6 +15,13 @@ Listings.prototype.getItemURLs = function() {
   var $ = this.$;
   return $('#search-result-items .thumb-link').map(function() {
     return $(this).attr('href');
+  }).get();
+};
+
+Listings.prototype.getProductIds = function() {
+  var $ = this.$;
+  return $('.product-tile').map(function() {
+    return $(this).attr('data-itemid');
   }).get();
 };
 
@@ -71,5 +78,5 @@ Item.prototype.getOtherColors = function() {
 
 module.exports.Item = Item;
 module.exports.Listings = Listings;
-module.exports.listingsURL = listingsURL;
+module.exports.listingsURL = BASE_URL;
 module.exports.userAgent = userAgent;
