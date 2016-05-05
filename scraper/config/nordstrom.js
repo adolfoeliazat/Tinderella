@@ -1,5 +1,6 @@
+var _ = require('underscore');
 var cheerio = require('cheerio');
-var BASE_URL = require('./urls').NORDSTROM_BASE_URL;
+var BASE_URL = require('./urls.js').NORDSTROM_BASE_URL;
 var listingsURL = BASE_URL + '/c/womens-shoes';
 
 /*
@@ -9,18 +10,20 @@ var listingsURL = BASE_URL + '/c/womens-shoes';
 function Listings(html) {
   this.html = html;
   this.$ = cheerio.load(html);
+
+  // Nordstrom's product listings data is stored within the React javascript
+  // code embedded within the webpage.
+  this.products = JSON.parse(
+    html.split('"Products":')[1].split(',"SortOptions":')[0]
+  );
 }
 
 Listings.prototype.getItemURLs = function() {
-  var $ = this.$;
-  return $('.nui-product-module .product-photo-href').map(function() {
-    return $(this).attr('href');
-  }).get();
+  return _.pluck(this.products, 'ProductPageUrl');
 };
 
 Listings.prototype.getProductIds = function() {
-  var $ = this.$;
-  // TO DO
+  return _.pluck(this.products, 'Id');
 };
 
 Listings.prototype.getNextPageURL = function() {
@@ -36,21 +39,33 @@ Listings.prototype.getNextPageURL = function() {
 function Item(html) {
   this.html = html;
   this.$ = cheerio.load(html);
-  this.data = setupItem(this.$);
+
+  // Nordstrom's product data is stored within the React javascript code
+  // embedded within the webpage.
+  this.rawData = JSON.parse(
+    html.split('"StyleModel":')[1].split(',"AnalyticModel":')[0]
+  );
+  this.data = setupItem(this.$, this.rawData);
 }
 
-var setupItem = function($) {
+var setupItem = function($, rawData) {
   var data = {
     retailer: 'Nordstrom',
     retailerId: 'nordstrom',
-    productId: $('meta[itemprop="productID"]').attr('content'),
+    productId: '' + rawData.Id,
     altProductId: $('.product-details .style-number').html().match(/\d+/)[0],
-    designer: $('.product-details .brand-title span').html(),
-    productName: $('.product-details .product-title h1').html(),
-    color: $('.immersive-color-filter-color-name').html(),
-    priceCurrency: 'USD',
+    designer: rawData.Brand.Name,
+    productName: rawData.Name,
+    priceCurrency: rawData.CurrencyCode,
     images: []
   };
+
+  var currentColor = $('.immersive-color-filter-color-name').html();
+  if (currentColor) {
+    data.color = currentColor;
+  } else {
+    data.color = rawData.DefaultColor;
+  }
 
   data.url = $('meta[property="og:url"]').attr('content') +
     '?fashioncolor=' +
@@ -60,19 +75,21 @@ var setupItem = function($) {
   var discount = $('.price-display-item .price-current').html();
   data.price= (discount ? discount : fullPrice).match(/\d+.\d+/)[0];
 
-  var details = $('.product-details-and-care p').html();
+  var details = rawData.Description;
   data.details = details ? details.trim() : null;
 
-  $('.thumbnails li').each(function() {
-    var image = {
-        url: $('img', this).attr('src').split('?')[0]
-    };
+  _.each(rawData.StyleMedia, function(media) {
+    if (media.ColorName === data.color) {
+      var image = {
+        url: media.ImageMediaUri.Gigantic
+      };
 
-    if ($(this).hasClass('selected')) {
+      if (media.MediaGroupType === 'Main') {
         image.primary = true;
-    }
+      }
 
-    data.images.push(image);
+      data.images.push(image);
+    }
   });
 
   return data;

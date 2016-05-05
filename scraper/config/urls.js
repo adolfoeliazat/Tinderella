@@ -11,12 +11,520 @@ var nordstrom = [
     url: NORDSTROM_BASE_URL + '/c/shoes-ankle-straps'
   },
   {
-    tags: ['Sandals', 'Block Heel'],
+    tags: ['Sandals', 'Block Heels'],
     url: NORDSTROM_BASE_URL + '/c/womens-block-heel-sandals'
   },
   {
     tags: ['Sandals', 'Cage'],
     url: NORDSTROM_BASE_URL + '/c/cage-sandals'
+  },
+  {
+    tags: ['Sandals', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-sandals-for-women'
+  },
+  {
+    tags: ['Sandals', 'Espadrilles'],
+    url: NORDSTROM_BASE_URL + '/c/womens-espadrille-sandals'
+  },
+  {
+    tags: ['Sandals', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/womens-flat-sandals'
+  },
+  {
+    tags: ['Sandals', 'Flip-Flops'],
+    url: NORDSTROM_BASE_URL + '/c/womens-flip-flop-sandals'
+  },
+  {
+    tags: ['Sandals', 'Footbed'],
+    url: NORDSTROM_BASE_URL + '/c/womens-footbed-sandals'
+  },
+  {
+    tags: ['Sandals', 'Gladiators'],
+    url: NORDSTROM_BASE_URL + '/c/gladiator-sandals'
+  },
+  {
+    tags: ['Sandals', 'Lace-Up'],
+    url: NORDSTROM_BASE_URL + '/c/womens-lace-up-sandals'
+  },
+  {
+    tags: ['Sandals', 'Mules'],
+    url: NORDSTROM_BASE_URL + '/c/womens-mule-sandals'
+  },
+  {
+    tags: ['Sandals', 'Party & Evening'],
+    url: NORDSTROM_BASE_URL + '/c/party-evening-sandals'
+  },
+  {
+    tags: ['Sandals', 'Platforms'],
+    url: NORDSTROM_BASE_URL + '/c/womens-platform-sandals'
+  },
+  {
+    tags: ['Sandals', 'Slides'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slide-sandals'
+  },
+  {
+    tags: ['Sandals', 'Sport'],
+    url: NORDSTROM_BASE_URL + '/c/sport-sandals'
+  },
+  {
+    tags: ['Sandals', 'T-Strap'],
+    url: NORDSTROM_BASE_URL + '/c/womens-tstrap-sandals'
+  },
+  {
+    tags: ['Sandals', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/womens-wedge-sandals'
+  },
+  {
+    tags: ['Sandals', 'Wooden Sole'],
+    url: NORDSTROM_BASE_URL + '/c/wooden-sole-sandals'
+  },
+  {
+    tags: ['Flats', 'Ballet'],
+    url: NORDSTROM_BASE_URL + '/c/womens-ballet-flats'
+  },
+  {
+    tags: ['Flats', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-shoes-for-women'
+  },
+  {
+    tags: ['Flats', 'Espadrilles'],
+    url: NORDSTROM_BASE_URL + '/c/womens-espadrille-flats'
+  },
+  {
+    tags: ['Flats', 'Lace-Up'],
+    url: NORDSTROM_BASE_URL + '/c/womens-lace-up-flats'
+  },
+  {
+    tags: ['Flats', 'Loafers & Moccasins'],
+    url: NORDSTROM_BASE_URL + '/c/womens-flat-loafer-moccasin'
+  },
+  {
+    tags: ['Flats', 'Oxfords'],
+    url: NORDSTROM_BASE_URL + '/c/womens-flat-oxfords'
+  },
+  {
+    tags: ['Flats', 'Party & Evening'],
+    url: NORDSTROM_BASE_URL + '/c/party-evening-flats'
+  },
+  {
+    tags: ['Flats', 'Pointed Toe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-pointed-toe-flats'
+  },
+  {
+    tags: ['Flats', 'Slip-On'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slip-ons'
+  },
+  {
+    tags: ['Heels', 'Pumps'],
+    url: NORDSTROM_BASE_URL + '/c/womens-pumps-heels'
+  },
+  {
+    tags: ['Heels', 'Sandals'],
+    url: NORDSTROM_BASE_URL + '/c/womens-sandals-heels'
+  },
+  {
+    tags: ['Heels', 'Ankle Strap'],
+    url: NORDSTROM_BASE_URL + '/c/womens-ankle-strap-heels'
+  },
+  {
+    tags: ['Heels', 'Block Heels'],
+    url: NORDSTROM_BASE_URL + '/c/womens-block-heels'
+  },
+  {
+    tags: ['Heels', 'Cage'],
+    url: NORDSTROM_BASE_URL + '/c/womens-cage-heels'
+  },
+  {
+    tags: ['Heels', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-heels'
+  },
+  {
+    tags: ['Heels', "D'Orsay"],
+    url: NORDSTROM_BASE_URL + '/c/womens-dorsay-heels'
+  },
+  {
+    tags: ['Heels', 'Kitten Heels'],
+    url: NORDSTROM_BASE_URL + '/c/womens-kitten-heels'
+  },
+  {
+    tags: ['Heels', 'Lace-Up'],
+    url: NORDSTROM_BASE_URL + '/c/lace-up-heels'
+  },
+  {
+    tags: ['Heels', 'Mary Jane'],
+    url: NORDSTROM_BASE_URL + '/c/womens-mary-jane-heels'
+  },
+  {
+    tags: ['Heels', 'Party & Evening'],
+    url: NORDSTROM_BASE_URL + '/c/party-evening-heels'
+  },
+  {
+    tags: ['Heels', 'Peep Toe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-peep-toe-heels'
+  },
+  {
+    tags: ['Heels', 'Platforms'],
+    url: NORDSTROM_BASE_URL + '/c/womens-platform-heels'
+  },
+  {
+    tags: ['Heels', 'Pointed Toe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-pointed-toe-heels'
+  },
+  {
+    tags: ['Heels', 'Slingbacks'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slingback-heels'
+  },
+  {
+    tags: ['Heels', 'Strappy'],
+    url: NORDSTROM_BASE_URL + '/c/womens-strappy-heels'
+  },
+  {
+    tags: ['Heels', 'T-Strap'],
+    url: NORDSTROM_BASE_URL + '/c/womens-tstrap-heels'
+  },
+  {
+    tags: ['Sneakers', 'Designer Sneakers'],
+    url: NORDSTROM_BASE_URL + '/c/designer-sneakers-for-women'
+  },
+  {
+    tags: ['Sneakers', 'Canvas'],
+    url: NORDSTROM_BASE_URL + '/c/canvas-sneakers-for-women'
+  },
+  {
+    tags: ['Sneakers', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-sneakers-for-women'
+  },
+  {
+    tags: ['Sneakers', 'Retro'],
+    url: NORDSTROM_BASE_URL + '/c/womens-retro-sneakers'
+  },
+  {
+    tags: ['Sneakers', 'Slip-On'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slip-on-sneakers'
+  },
+  {
+    tags: ['Athletic', 'Running'],
+    url: NORDSTROM_BASE_URL + '/c/womens-running-shoes'
+  },
+  {
+    tags: ['Athletic', 'Training'],
+    url: NORDSTROM_BASE_URL + '/c/womens-training-shoes'
+  },
+  {
+    tags: ['Athletic', 'Walking'],
+    url: NORDSTROM_BASE_URL + '/c/womens-walking-shoes'
+  },
+  {
+    tags: ['Athletic', 'Hiking'],
+    url: NORDSTROM_BASE_URL + '/c/womens-hiking-shoes'
+  },
+  {
+    tags: ['Athletic', 'Tennis'],
+    url: NORDSTROM_BASE_URL + '/c/womens-tennis-shoes'
+  },
+  {
+    tags: ['Wedges', 'Boots'],
+    url: NORDSTROM_BASE_URL + '/c/boot-wedges-for-women'
+  },
+  {
+    tags: ['Wedges', 'Booties'],
+    url: NORDSTROM_BASE_URL + '/c/booties-wedges-for-women'
+  },
+  {
+    tags: ['Wedges', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-wedges'
+  },
+  {
+    tags: ['Wedges', 'Pumps'],
+    url: NORDSTROM_BASE_URL + '/c/wedge-pumps-for-women'
+  },
+  {
+    tags: ['Wedges', 'Sandals'],
+    url: NORDSTROM_BASE_URL + '/c/wedge-sandals-for-women'
+  },
+  {
+    tags: ['Wedges', 'Sneakers'],
+    url: NORDSTROM_BASE_URL + '/c/wedge-sneakers-for-women'
+  },
+  {
+    tags: ['Booties', 'Block Heel'],
+    url: NORDSTROM_BASE_URL + '/c/block-heel-booties'
+  },
+  {
+    tags: ['Booties', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-booties'
+  },
+  {
+    tags: ['Booties', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/flat-booties'
+  },
+  {
+    tags: ['Booties', 'Fringe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-fringe-booties'
+  },
+  {
+    tags: ['Booties', 'Heels'],
+    url: NORDSTROM_BASE_URL + '/c/heeled-booties'
+  },
+  {
+    tags: ['Booties', 'Lace-Up'],
+    url: NORDSTROM_BASE_URL + '/c/lace-up-booties'
+  },
+  {
+    tags: ['Booties', 'Moto & Combat'],
+    url: NORDSTROM_BASE_URL + '/c/moto-combat-booties'
+  },
+  {
+    tags: ['Booties', 'Peep Toe'],
+    url: NORDSTROM_BASE_URL + '/c/peep-toe-booties'
+  },
+  {
+    tags: ['Booties', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/wedge-booties'
+  },
+  {
+    tags: ['Booties', 'Western'],
+    url: NORDSTROM_BASE_URL + '/c/western-booties'
+  },
+  {
+    tags: ['Pumps', 'Block Heel'],
+    url: NORDSTROM_BASE_URL + '/c/block-heel-pumps'
+  },
+  {
+    tags: ['Pumps', 'Classic'],
+    url: NORDSTROM_BASE_URL + '/c/womens-classic-pumps'
+  },
+  {
+    tags: ['Pumps', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-pumps-for-women'
+  },
+  {
+    tags: ['Pumps', "D'Orsay"],
+    url: NORDSTROM_BASE_URL + '/c/womens-dorsay-pumps'
+  },
+  {
+    tags: ['Pumps', 'Kitten Heel'],
+    url: NORDSTROM_BASE_URL + '/c/womens-kitten-heel-pumps'
+  },
+  {
+    tags: ['Pumps', 'Mary Jane'],
+    url: NORDSTROM_BASE_URL + '/c/womens-mary-jane-pumps'
+  },
+  {
+    tags: ['Pumps', 'Party & Evening'],
+    url: NORDSTROM_BASE_URL + '/c/party-evening-pumps'
+  },
+  {
+    tags: ['Pumps', 'Peep Toe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-peep-toe-pumps'
+  },
+  {
+    tags: ['Pumps', 'Platforms'],
+    url: NORDSTROM_BASE_URL + '/c/womens-platform-pumps'
+  },
+  {
+    tags: ['Pumps', 'Pointed Toe'],
+    url: NORDSTROM_BASE_URL + '/c/pointed-toe-pumps'
+  },
+  {
+    tags: ['Pumps', 'Slingbacks'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slingback-pumps'
+  },
+  {
+    tags: ['Pumps', 'Stilettos'],
+    url: NORDSTROM_BASE_URL + '/c/womens-stiletto-pumps'
+  },
+  {
+    tags: ['Pumps', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/womens-wedge-pumps'
+  },
+  {
+    tags: ['Comfort', 'Boots'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-boots'
+  },
+  {
+    tags: ['Comfort', 'Booties'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-booties'
+  },
+  {
+    tags: ['Comfort', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-flats'
+  },
+  {
+    tags: ['Comfort', 'Heels'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-heels'
+  },
+  {
+    tags: ['Comfort', 'Pumps'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-pumps'
+  },
+  {
+    tags: ['Comfort', 'Sneakers'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-sneakers'
+  },
+  {
+    tags: ['Comfort', 'Sandals'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-sandals'
+  },
+  {
+    tags: ['Comfort', 'Mules & Clogs'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-mules-clogs'
+  },
+  {
+    tags: ['Comfort', 'Oxfords'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-oxfords'
+  },
+  {
+    tags: ['Comfort', 'Slippers'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-slippers'
+  },
+  {
+    tags: ['Comfort', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/womens-comfort-wedges'
+  },
+  {
+    tags: ['Party & Evening', 'Sandals'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-sandals'
+  },
+  {
+    tags: ['Party & Evening', 'Pumps'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-pumps'
+  },
+  {
+    tags: ['Party & Evening', 'Peep-Toe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-peep-toe'
+  },
+  {
+    tags: ['Party & Evening', 'Slingbacks'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-slingbacks'
+  },
+  {
+    tags: ['Party & Evening', 'Platforms'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-platform'
+  },
+  {
+    tags: ['Party & Evening', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/womens-party-and-evening-comfort-shoes'
+  },
+  {
+    tags: ['Party & Evening', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/womens-evening-shoes-flats'
+  },
+  {
+    tags: ['Boots', 'Booties'],
+    url: NORDSTROM_BASE_URL + '/c/womens-shoes-booties'
+  },
+  {
+    tags: ['Boots', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-boots-women'
+  },
+  {
+    tags: ['Boots', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/flat-boots'
+  },
+  {
+    tags: ['Boots', 'Fringe'],
+    url: NORDSTROM_BASE_URL + '/c/womens-fringe-boots'
+  },
+  {
+    tags: ['Boots', 'Heeled'],
+    url: NORDSTROM_BASE_URL + '/c/heeled-boots'
+  },
+  {
+    tags: ['Boots', 'Knee High'],
+    url: NORDSTROM_BASE_URL + '/c/womens-knee-high'
+  },
+  {
+    tags: ['Boots', 'Lace-Up'],
+    url: NORDSTROM_BASE_URL + '/c/lace-up-boots-women'
+  },
+  {
+    tags: ['Boots', 'Mid-Calf'],
+    url: NORDSTROM_BASE_URL + '/c/mid-calf-boots-for-women'
+  },
+  {
+    tags: ['Boots', 'Moto & Combat'],
+    url: NORDSTROM_BASE_URL + '/c/womens-moto-combat-boots'
+  },
+  {
+    tags: ['Boots', 'Over the Knee'],
+    url: NORDSTROM_BASE_URL + '/c/womens-over-the-knee-boots'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Extreme Cold'],
+    url: NORDSTROM_BASE_URL + '/c/womens-extreme-cold-boots'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Insulated'],
+    url: NORDSTROM_BASE_URL + '/c/insulated-boots-for-women'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Rain'],
+    url: NORDSTROM_BASE_URL + '/c/womens-rain-boots'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Snow'],
+    url: NORDSTROM_BASE_URL + '/c/snow-boots-for-women'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Water Resistant'],
+    url: NORDSTROM_BASE_URL + '/c/water-resistant-boots-for-women'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Waterproof'],
+    url: NORDSTROM_BASE_URL + '/c/waterproof-boots-for-women'
+  },
+  {
+    tags: ['Boots', 'Rain & Winter', 'Winter'],
+    url: NORDSTROM_BASE_URL + '/c/womens-winter-snow-boots'
+  },
+  {
+    tags: ['Boots', 'Riding'],
+    url: NORDSTROM_BASE_URL + '/c/riding-boots'
+  },
+  {
+    tags: ['Boots', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/wedge-boots'
+  },
+  {
+    tags: ['Espadrilles', 'Comfort'],
+    url: NORDSTROM_BASE_URL + '/c/comfort-espadrilles-for-women'
+  },
+  {
+    tags: ['Espadrilles', 'Flats'],
+    url: NORDSTROM_BASE_URL + '/c/espadrille-flats-for-women'
+  },
+  {
+    tags: ['Espadrilles', 'Sandals'],
+    url: NORDSTROM_BASE_URL + '/c/espadrille-sandals-for-women'
+  },
+  {
+    tags: ['Espadrilles', 'Sneakers'],
+    url: NORDSTROM_BASE_URL + '/c/espadrille-sneakers'
+  },
+  {
+    tags: ['Espadrilles', 'Wedges'],
+    url: NORDSTROM_BASE_URL + '/c/espadrille-wedges-for-women'
+  },
+  {
+    tags: ['Mules'],
+    url: NORDSTROM_BASE_URL + '/c/womens-mules'
+  },
+  {
+    tags: ['Clogs'],
+    url: NORDSTROM_BASE_URL + '/c/womens-clogs'
+  },
+  {
+    tags: ['Slippers', 'Boots'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slippers-booties'
+  },
+  {
+    tags: ['Slippers', 'Loafers & Moccasins'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slippers-loafer-moccasin'
+  },
+  {
+    tags: ['Slippers', 'Slip-On'],
+    url: NORDSTROM_BASE_URL + '/c/womens-slippers-slip-on'
   }
 ];
 
