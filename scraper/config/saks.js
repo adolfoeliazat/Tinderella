@@ -1,7 +1,8 @@
 var _ = require('underscore');
 var cheerio = require('cheerio');
-var listingsURL = 'http://www.saksfifthavenue.com/Shoes/shop/' +
-  '_/N-52k0s7/Ne-6lvnb5';
+var BASE_URL = require('./urls').SAKS_BASE_URL;
+var listingsURL = BASE_URL + '/Shoes/shop/_/N-52k0s7';
+var userAgent = 'Googlebot/2.1';
 
 /*
  * Saks' Listings class
@@ -19,10 +20,18 @@ Listings.prototype.getItemURLs = function() {
   }).get();
 };
 
+Listings.prototype.getProductIds = function() {
+  var $ = this.$;
+  return $('.product-text a').map(function() {
+    var url = $(this).attr('href');
+    return url.match(/prd_id=\d+/)[0].split(/=/)[1];
+  }).get();
+};
+
 Listings.prototype.getNextPageURL = function() {
   var $ = this.$;
   var nextPage = $('.pa-enh-pagination-right-arrow a').attr('href');
-  return nextPage ? (listingsURL + '?' + nextPage.split('?')[1]) : false;
+  return nextPage ? (BASE_URL + nextPage) : false;
 };
 
 /*
@@ -40,7 +49,8 @@ var setupItem = function($) {
 
   var data = {
     retailer: 'Saks Fifth Avenue',
-    productId: $('.product-overview__product-code').html(),
+    retailerId: 'saks',
+    altProductId: $('.product-overview__product-code').html(),
     designer: $('.product-overview__brand-link').html(),
     productName: $('.product-overview__short-description').html(),
     details: $('.product-description ul').html(),
@@ -52,16 +62,23 @@ var setupItem = function($) {
 
   // HTML structure is different for item with one vs multiple colors
   if ($('.product-color-options').children().length === 1) {
+    var singleColor = true;
     data.color = $('.product-color-options__selected-value').html();
   } else {
+    var singleColor = false;
     data.color = $('.product-color-options li').first().attr('title');
   }
-  data.images = generateItemImages(data.productId, data.color);
+  data.productId = data.url.split('prd_id=')[1];
+  data.images = generateItemImages(
+    data.altProductId,
+    data.color,
+    singleColor
+  );
 
   return data;
 };
 
-var generateItemImages = function(productId, color) {
+var generateItemImages = function(productId, color, singleColor) {
   /*
    * Saks' default item page doesn't provide image URLs. Instead, we'll assume
    * that every item has 5 images, and use the known conventions to construct
@@ -72,7 +89,8 @@ var generateItemImages = function(productId, color) {
 
   return _.map(_.range(5), function(i) {
     var suffix = (i > 0) ? '_A' + i : '';
-    var cSuffix = (i === 0) ? '_' + color.replace(" ", "").toUpperCase() : '';
+    var cSuffix = (!singleColor && i === 0) ?
+      '_' + color.replace(/ /g, "").toUpperCase() : '';
     var image = {
       url: IMAGE_URL + productId + suffix + cSuffix
     };
@@ -105,9 +123,10 @@ Item.prototype.getOtherColors = function() {
 // Only needed for retailers whose other colors don't generate a new URL
 Item.prototype.changeColor = function(newColor) {
   this.data.color = newColor;
-  this.data.images = generateItemImages(this.data.productId, newColor);
+  this.data.images = generateItemImages(this.data.altProductId, newColor);
 };
 
-module.exports.listingsURL = listingsURL;
-module.exports.Listings = Listings;
 module.exports.Item = Item;
+module.exports.Listings = Listings;
+module.exports.listingsURL = listingsURL;
+module.exports.userAgent = userAgent;

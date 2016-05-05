@@ -12,7 +12,11 @@ Every new shoe that the scraper identifies is upserted into the Tinderella
 Mongo database, and all the corresponding images for the shoes are saved
 locally as well.
 
+Additionally, the scraper identifies all the descriptive tags and categories
+for each pair of shoes and saves them into a separate Mongo collection.
+
 
 ### Requirements
-Create a mongo DB named Tinderella, and then a collection named `shoes`.
+Create a mongo DB named Tinderella, and then two collection named `shoes` and
+`shoe_tags`.
 
