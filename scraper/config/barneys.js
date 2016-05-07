@@ -61,7 +61,8 @@ var setupItem = function($) {
 
   $('#product-image-carousel .item').each(function() {
     var image = { url: $('img', this).attr('src') };
-    if ($('a', this).attr('data-index') === '0') {
+
+    if (image.url.match(/shoefrontqtr/i)) {
       image.primary = true;
     }
 

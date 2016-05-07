@@ -41,6 +41,7 @@ var fetchURL = function(url, encoding, cb, retailerId, userAgent) {
   request.get(options, function(err) {
     if (err) {
       console.log('Request error: ' + err + ' for URL: ' + url);
+      return false;
     }
   }).on('response', function(res) {
     if (res.statusCode != 200) {
@@ -68,9 +69,11 @@ var fetchURL = function(url, encoding, cb, retailerId, userAgent) {
  */
 var downloadImage = function(obj) {
   var saveImage = function(img) {
-    var fileName = obj.retailerId + '_' + obj.productId + '_'
-      + obj.color.replace(/ /g, "_").replace(/\//g, "") + '.jpg';
-    var filePath = IMAGE_PATH + fileName;
+    var fileName = obj.retailerId + '_' + obj.productId;
+    if (obj.color) {
+      fileName += '_' + obj.color.replace(/ /g, "_").replace(/\//g, "");
+    }
+    var filePath = IMAGE_PATH + fileName + '.jpg';
     fs.writeFile(filePath, img, 'binary', function(err) {
       if (err) {
         console.log('Error saving image: ' + filePath);
@@ -80,11 +83,15 @@ var downloadImage = function(obj) {
     });
   };
 
-  var imageURL = _.find(obj.images, function(img) {
+  var primaryImage = _.find(obj.images, function(img) {
     return img.primary === true;
-  }).url;
+  });
 
-  fetchURL(imageURL, 'binary', saveImage);
+  if (!primaryImage) {
+    primaryImage = obj.images[0];
+  }
+
+  fetchURL(primaryImage.url, 'binary', saveImage);
 };
 
 /*
