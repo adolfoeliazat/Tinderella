@@ -6,9 +6,10 @@ var userAgent = 'Python-urllib/3.1';
  * Barneys' Listings class
  *
  */
-function Listings(html) {
+function Listings(html, url) {
   this.html = html;
   this.$ = cheerio.load(html);
+  this.url = url || BASE_URL;
 }
 
 Listings.prototype.getItemURLs = function() {

@@ -7,9 +7,10 @@ var listingsURL = BASE_URL + '/c/womens-shoes';
  * Nordstrom's Listings class
  *
  */
-function Listings(html) {
+function Listings(html, url) {
   this.html = html;
   this.$ = cheerio.load(html);
+  this.url = url || listingsURL;
 
   // Nordstrom's product listings data is stored within the React javascript
   // code embedded within the webpage.
@@ -23,13 +24,15 @@ Listings.prototype.getItemURLs = function() {
 };
 
 Listings.prototype.getProductIds = function() {
-  return _.pluck(this.products, 'Id');
+  return _.map(_.pluck(this.products, 'Id'), function(id) {
+    return '' + id;
+  });
 };
 
 Listings.prototype.getNextPageURL = function() {
   var $ = this.$;
   var nextPage = $('.page-arrow.page-next a').attr('href');
-  return nextPage ? (listingsURL + nextPage) : false;
+  return nextPage ? (this.url + nextPage) : false;
 };
 
 /*

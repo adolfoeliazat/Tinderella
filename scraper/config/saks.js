@@ -8,9 +8,10 @@ var userAgent = 'Googlebot/2.1';
  * Saks' Listings class
  *
  */
-function Listings(html) {
+function Listings(html, url) {
   this.html = html;
   this.$ = cheerio.load(html);
+  this.url = url || listingsURL;
 }
 
 Listings.prototype.getItemURLs = function() {
