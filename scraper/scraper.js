@@ -156,6 +156,8 @@ var upsertShoeTag = function(obj) {
         console.log('New entry saved to mongoDB.shoe_tags: ' +
           obj.retailerId + ': ' + obj.productId
         );
+      } else {
+        console.log('shoe_tags entry exists, skipping...');
       }
     }
   });
@@ -270,8 +272,8 @@ var scrapeShoes = function(retailerId) {
  * populate the list of products matching a specific category from a retailer.
  *
  */
-var scrapeProductIds = function(html, retailerId, tags) {
-  var page = new sources[retailerId].Listings(html);
+var scrapeProductIds = function(html, retailerId, category, cb) {
+  var page = new sources[retailerId].Listings(html, category.url);
   var userAgent = sources[retailerId].userAgent;
   var productIds = page.getProductIds();
 
@@ -279,7 +281,7 @@ var scrapeProductIds = function(html, retailerId, tags) {
     var obj = {
       retailerId: retailerId,
       productId: productId,
-      tags: tags
+      tags: category.tags
     };
 
     upsertShoeTag(obj);
@@ -289,12 +291,13 @@ var scrapeProductIds = function(html, retailerId, tags) {
   var nextPage = page.getNextPageURL();
   if (nextPage) {
     var wrapper = function(html, retailerId) {
-      scrapeProductIds(html, retailerId, tags);
+      scrapeProductIds(html, retailerId, category, cb);
     };
 
     fetchURL(nextPage, 'utf8', wrapper, retailerId, userAgent);
   } else {
-    console.log('Shoe tags URL scraping complete for tags ' + tags);
+    console.log('Shoe tags URL scraping complete for tags ' + category.tags);
+    cb();
   }
 };
 
@@ -302,30 +305,53 @@ var scrapeProductIds = function(html, retailerId, tags) {
  * scrapeTags()
  *
  * Kicks off scraping all the shoes that match all applicable tags.
- *
  */
 var scrapeTags = function(retailerId) {
   var categories = urls[retailerId];
   var userAgent = sources[retailerId].userAgent;
 
-  // Kick off each url's scraping synchronously to manage concurrent threads
-  async.each(
-    categories,
-    function(category) {
+  var categoryFunctions = _.map(categories, function(category) {
+    return (function(cb) {
       var wrapper = function(html, retailerId) {
-        scrapeProductIds(html, retailerId, category.tags);
+        scrapeProductIds(html, retailerId, category, cb);
       };
 
       fetchURL(category.url, 'utf8', wrapper, retailerId, userAgent);
-    },
-    function(err) {
-      if (err) {
-        console.log('Error scraping product IDs: ' + err);
-      } else {
-        console.log('Finished scraping product IDs');
+    });
+  });
+
+  // Kick off each url's scraping synchronously to manage concurrent threads
+  async.series(categoryFunctions);
+};
+
+/*
+ * startScrape()
+ *
+ * Launch function, decides which scraper(s) to kick off.
+ */
+var startScrape = function(retailerId) {
+  var scrapeSources = sources[retailerId] ? retailerId : _.keys(sources);
+
+  if (!scrapeSources) {
+    console.log("Please specify a matching retailer to start scraping.");
+    process.exit(1);
+  } else {
+    console.log("Starting scrape for: " + scrapeSources);
+    async.each(
+      scrapeSources,
+      function(retailerId) {
+        scrapeShoes(retailerId);
+        scrapeTags(retailerId);
+      },
+      function(err) {
+        if (err) {
+          console.log('Error scraping sources: ' + err);
+        } else {
+          console.log('All scraping complete for ' + scrapeSources);
+        }
       }
-    }
-  );
+    );
+  }
 };
 
 /*
@@ -333,30 +359,9 @@ var scrapeTags = function(retailerId) {
  *
  */
 var retailerId = process.argv[2];
-if (retailerId) {
-  switch (retailerId) {
-    case 'barneys':
-    case 'nordstrom':
-    case 'saks':
-      console.log("Starting scraping for " + retailerId + '...');
-      scrapeShoes(retailerId);
-      scrapeTags(retailerId);
-      break;
-  }
+
+if (!retailerId) {
+  startScrape();
 } else {
-  console.log("Starting scraping for all retailers...");
-  async.each(
-    Object.keys(sources),
-    function(retailerId) {
-      scrapeShoes(retailerId);
-      scrapeTags(retailerId);
-    },
-    function(err) {
-      if (err) {
-        console.log('Error scraping sources: ' + err);
-      } else {
-        console.log('All scraping complete.');
-      }
-    }
-  );
+  startScrape(retailerId);
 }
