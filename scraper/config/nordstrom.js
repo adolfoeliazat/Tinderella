@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var cheerio = require('cheerio');
 var BASE_URL = require('./urls.js').NORDSTROM_BASE_URL;
+var categories = require('./urls.js').nordstrom;
 var listingsURL = BASE_URL + '/c/womens-shoes';
 
 /*
@@ -117,6 +118,8 @@ Item.prototype.getOtherColors = function() {
   };
 };
 
+module.exports.id = 'nordstrom';
+module.exports.categories = categories;
 module.exports.Item = Item;
 module.exports.Listings = Listings;
 module.exports.listingsURL = listingsURL;

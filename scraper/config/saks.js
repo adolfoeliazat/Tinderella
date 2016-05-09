@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var cheerio = require('cheerio');
 var BASE_URL = require('./urls').SAKS_BASE_URL;
+var categories = require('./urls.js').saks;
 var listingsURL = BASE_URL + '/Shoes/shop/_/N-52k0s7';
 var userAgent = 'Googlebot/2.1';
 
@@ -127,6 +128,8 @@ Item.prototype.changeColor = function(newColor) {
   this.data.images = generateItemImages(this.data.altProductId, newColor);
 };
 
+module.exports.id = 'saks';
+module.exports.categories = categories;
 module.exports.Item = Item;
 module.exports.Listings = Listings;
 module.exports.listingsURL = listingsURL;

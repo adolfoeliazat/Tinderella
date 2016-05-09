@@ -1,5 +1,6 @@
 var cheerio = require('cheerio');
 var BASE_URL = require('./urls.js').BARNEYS_BASE_URL;
+var categories = require('./urls.js').barneys;
 var userAgent = 'Python-urllib/3.1';
 
 /*
@@ -78,6 +79,8 @@ Item.prototype.getOtherColors = function() {
   return false;
 };
 
+module.exports.id = 'barneys';
+module.exports.categories = categories;
 module.exports.Item = Item;
 module.exports.Listings = Listings;
 module.exports.listingsURL = BASE_URL;
