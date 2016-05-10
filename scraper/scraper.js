@@ -20,6 +20,20 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) ' +
   'Safari/537.36';
 
 /*
+ * checkRetry(options)
+ *
+ * Re-invoke fetchURL() once if the HTTP request encounters an error.
+ */
+var checkRetry = function(options, cb) {
+  if (!options.stopRetrying) {
+    return fetchURL(_.extend(options, { stopRetrying: true }), cb);
+  } else {
+    console.log("Confirmed error retrieving URL: " + options.url);
+    return false;
+  }
+};
+
+/*
  * fetchURL()
  *
  * Description:
@@ -40,12 +54,12 @@ var fetchURL = function(options, cb) {
   request.get(requestOptions, function(err) {
     if (err) {
       console.log('Request error: ' + err + ' for URL: ' + options.url);
-      return false;
+      return checkRetry(options, cb);
     }
   }).on('response', function(res) {
     if (res.statusCode != 200) {
       console.log('Error: ' + res.statusCode + ' for URL: ' + options.url);
-      return false;
+      return checkRetry(options, cb);
     }
 
     var data = '';
@@ -162,8 +176,6 @@ var upsertShoeTag = function(obj) {
         console.log('New entry saved to mongoDB.shoe_tags: ' +
           obj.retailer.id + ': ' + obj.productId
         );
-      } else {
-        console.log('shoe_tags entry exists, skipping...');
       }
     }
   });
@@ -180,7 +192,11 @@ var upsertShoeTag = function(obj) {
 var scrapeItemURLs = function(html, options) {
   var retailer = options.retailer;
   var nextRetailer = options.nextRetailer;
-  var page = new retailer.Listings(html);
+  var page = new retailer.Listings(html, options.url);
+
+  if (!page.url) {
+    return checkRetry(options, scrapeItemURLs);
+  }
 
   // Trigger async scrape for all the items
   async.each(
@@ -224,7 +240,10 @@ var scrapeItemURLs = function(html, options) {
  */
 var scrapeItem = function(html, options) {
   var retailer = options.retailer;
-  var item = new retailer.Item(html);
+  var item = new retailer.Item(html, options.url);
+  if (!item.data) {
+    return checkRetry(options, scrapeItem);
+  }
 
   // Save or update MongoDB
   upsertShoe(item.data, downloadImage);
@@ -254,7 +273,7 @@ var scrapeItem = function(html, options) {
 
       case 'text':
         _.each(otherColors.colors, function(color) {
-          var newItem = new retailer.Item(item.html);
+          var newItem = new retailer.Item(item.html, options.url);
           newItem.changeColor(color);
           upsertShoe(newItem.data, downloadImage);
         });
@@ -369,7 +388,7 @@ var startScrape = function(retailerId) {
       });
     };
 
-    async.series(generateFunctions(scrapeShoes));
+    // async.series(generateFunctions(scrapeShoes));
     async.series(generateFunctions(scrapeTags));
   }
 };
