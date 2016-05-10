@@ -63,9 +63,14 @@ var setupItem = function($) {
   };
 
   // HTML structure is different for item with one vs multiple colors
-  if ($('.product-color-options').children().length === 1) {
+  var numColors = $('.product-color-options').children().length;
+  if (numColors < 2) {
     var singleColor = true;
-    data.color = $('.product-color-options__selected-value').html();
+    if (numColors === 1) {
+      data.color = $('.product-color-options__selected-value').html();
+    } else {
+      data.color = '';
+    }
   } else {
     var singleColor = false;
     data.color = $('.product-color-options li').first().attr('title');
@@ -108,7 +113,7 @@ Item.prototype.getOtherColors = function() {
   var $ = this.$;
   var colorsHTML = $('.product-color-options');
 
-  if (colorsHTML.children().length === 1) {
+  if (colorsHTML.children().length < 2) {
     return false;
   } else {
     var colors = colorsHTML.find('li').map(function(i) {
