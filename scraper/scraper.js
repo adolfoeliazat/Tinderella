@@ -388,7 +388,7 @@ var startScrape = function(retailerId) {
       });
     };
 
-    // async.series(generateFunctions(scrapeShoes));
+    async.series(generateFunctions(scrapeShoes));
     async.series(generateFunctions(scrapeTags));
   }
 };
