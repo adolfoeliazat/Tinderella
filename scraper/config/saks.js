@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var cheerio = require('cheerio');
 var BASE_URL = require('./urls').SAKS_BASE_URL;
+var categories = require('./urls.js').saks;
 var listingsURL = BASE_URL + '/Shoes/shop/_/N-52k0s7';
 var userAgent = 'Googlebot/2.1';
 
@@ -8,9 +9,10 @@ var userAgent = 'Googlebot/2.1';
  * Saks' Listings class
  *
  */
-function Listings(html) {
+function Listings(html, url) {
   this.html = html;
   this.$ = cheerio.load(html);
+  this.url = url || listingsURL;
 }
 
 Listings.prototype.getItemURLs = function() {
@@ -61,9 +63,14 @@ var setupItem = function($) {
   };
 
   // HTML structure is different for item with one vs multiple colors
-  if ($('.product-color-options').children().length === 1) {
+  var numColors = $('.product-color-options').children().length;
+  if (numColors < 2) {
     var singleColor = true;
-    data.color = $('.product-color-options__selected-value').html();
+    if (numColors === 1) {
+      data.color = $('.product-color-options__selected-value').html();
+    } else {
+      data.color = '';
+    }
   } else {
     var singleColor = false;
     data.color = $('.product-color-options li').first().attr('title');
@@ -106,7 +113,7 @@ Item.prototype.getOtherColors = function() {
   var $ = this.$;
   var colorsHTML = $('.product-color-options');
 
-  if (colorsHTML.children().length === 1) {
+  if (colorsHTML.children().length < 2) {
     return false;
   } else {
     var colors = colorsHTML.find('li').map(function(i) {
@@ -126,6 +133,8 @@ Item.prototype.changeColor = function(newColor) {
   this.data.images = generateItemImages(this.data.altProductId, newColor);
 };
 
+module.exports.id = 'saks';
+module.exports.categories = categories;
 module.exports.Item = Item;
 module.exports.Listings = Listings;
 module.exports.listingsURL = listingsURL;

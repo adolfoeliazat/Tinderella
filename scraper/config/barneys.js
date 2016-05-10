@@ -1,14 +1,16 @@
 var cheerio = require('cheerio');
 var BASE_URL = require('./urls.js').BARNEYS_BASE_URL;
+var categories = require('./urls.js').barneys;
 var userAgent = 'Python-urllib/3.1';
 
 /*
  * Barneys' Listings class
  *
  */
-function Listings(html) {
+function Listings(html, url) {
   this.html = html;
   this.$ = cheerio.load(html);
+  this.url = url || BASE_URL;
 }
 
 Listings.prototype.getItemURLs = function() {
@@ -61,7 +63,8 @@ var setupItem = function($) {
 
   $('#product-image-carousel .item').each(function() {
     var image = { url: $('img', this).attr('src') };
-    if ($('a', this).attr('data-index') === '0') {
+
+    if (image.url.match(/shoefrontqtr/i)) {
       image.primary = true;
     }
 
@@ -76,6 +79,8 @@ Item.prototype.getOtherColors = function() {
   return false;
 };
 
+module.exports.id = 'barneys';
+module.exports.categories = categories;
 module.exports.Item = Item;
 module.exports.Listings = Listings;
 module.exports.listingsURL = BASE_URL;
